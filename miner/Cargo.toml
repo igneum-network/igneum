@@ -1,0 +1,40 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/igneum-worker-proto",
+    "crates/igneum-pow-sys",
+    "crates/igneum-supervisor",
+    "crates/igneum-worker-stub",
+    "crates/igneum-worker-cpu",
+    "crates/igneum-cli",
+    "app/src-tauri",
+]
+# the old miner's engine (docs/product-a/OLD-BASE.md, Ember's base) is its own workspace with its own lockfile until the
+# worker layer lands (step 2 of the plan); the restart's workspace leaves it out
+exclude = ["base/app/igneum-app"]
+
+[workspace.package]
+version = "0.2.40"
+edition = "2021"
+rust-version = "1.80"
+license = "MIT"
+repository = "https://github.com/igneum-network/igneum"
+
+[workspace.dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
+log = "0.4"
+sha2 = "0.10"
+sha3 = "0.10"
+clap = { version = "4.5", features = ["derive"] }
+ed25519-dalek = { version = "2.1", features = ["std"] }
+igneum-worker-proto = { path = "crates/igneum-worker-proto" }
+igneum-pow-sys = { path = "crates/igneum-pow-sys" }
+igneum-supervisor = { path = "crates/igneum-supervisor" }
+
+[profile.release]
+codegen-units = 1
+lto = "thin"
+strip = "symbols"
+panic = "unwind"

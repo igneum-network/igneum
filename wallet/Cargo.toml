@@ -1,0 +1,49 @@
+# Igneum Wallet (product engineer B). Design: docs/product-b/DESIGN.md, section 1.
+# Three processes: the window host (app/, Tauri 2), the engine (engine/, the local service the window talks to) and
+# the signer (signer/, the only process that touches a key). core/ is the library they share; cli/ is the test surface.
+# Built and tested on the assigned box only (builder seven), never on the coordinating Mac.
+[workspace]
+resolver = "2"
+members = ["core", "rpc", "authority", "signer", "engine", "cli", "money", "app/src-tauri"]
+default-members = ["core", "rpc", "authority", "signer", "engine", "cli", "money"]
+
+[workspace.package]
+version = "0.0.25"
+edition = "2021"
+license = "MIT"
+rust-version = "1.80"
+
+[workspace.dependencies]
+# the signer's set (DESIGN.md 1.12): every entry is pinned to a minor line; a new entry needs a written reason
+k256 = { version = "0.13", default-features = false, features = ["ecdsa", "std"] }
+sha3 = "0.10"
+bip39 = { version = "2", default-features = false, features = ["std", "rand_core", "zeroize"] }
+bip32 = { version = "0.5", default-features = false, features = ["alloc", "std", "secp256k1"] }
+argon2 = { version = "0.5", default-features = false, features = ["alloc", "std"] }
+chacha20poly1305 = { version = "0.10", default-features = false, features = ["alloc", "std"] }
+zeroize = { version = "1", features = ["derive"] }
+rand_core = { version = "0.6", features = ["getrandom"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# the engine and the CLI add these
+ureq = { version = "2", default-features = false, features = ["json", "tls"] }
+clap = { version = "4", features = ["derive"] }
+# the authority crate's set (never the signer's): the lottery's and the receipts' hash, and the Ed25519 keys of the
+# bond, the signer and the pool's receipts (11 October 2026, the bonded-identity actions; reason recorded in
+# DESIGN.md 1.13)
+blake3 = { version = "1", default-features = false, features = ["std"] }
+ed25519-dalek = { version = "2", default-features = false, features = ["std", "fast"] }
+# the engine's updater (OLD-BASE.md step 3, fourth piece): the release key's SSH signature over the latest manifest
+# and the sums is checked here (SHA-512 inside the signature, the package's sha256 after the download)
+sha2 = { version = "0.10", default-features = false }
+# the Money shielded wallet's set (ADR-0001 section 4.3, 18 October 2026; reason recorded in wallet/money/src/lib.rs):
+# note encryption to the recipient is ML-KEM-768 (FIPS 203), the formally verified libcrux implementation, never a
+# hand-rolled lattice; the AEAD and the hash come from the lines already pinned above
+libcrux-ml-kem = { version = "0.0.11", default-features = false, features = ["std", "mlkem768"] }
+
+[profile.release]
+opt-level = 2
+debug = false
+strip = true
+lto = "thin"
+codegen-units = 1

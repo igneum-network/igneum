@@ -1,0 +1,20 @@
+[package]
+name = "igneum-wallet-app"
+description = "Igneum Wallet window host (Tauri 2): starts the engine, opens the kept look on it, holds no secret"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+# nothing in this workspace is published to a registry; the crates reference each other by path
+publish = false
+
+[[bin]]
+name = "igneum-wallet-app"
+path = "src/main.rs"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde_json = { workspace = true }

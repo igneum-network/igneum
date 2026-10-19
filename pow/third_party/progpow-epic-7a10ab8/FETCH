@@ -1,0 +1,27 @@
+# upstream: https://github.com/EpicCash/progpow-rust
+# commit: 7a10ab826479af4d0e61de4d6cccd420e0b8ce8e
+# licence: pp_full/lib: GPL-3.0 (pp_full/lib/LICENSE); the Rust crate: see Cargo.toml
+# vendored unchanged (the in-house rule's named-source form); verify: fetch.sh progpow-epic-7a10ab8 re-fetches and checks every blob sha
+README.md 95ff078cf6f7d7c489acc07adb64bf97de16c058 976
+Cargo.toml 53d0fe8402a19844e8b8df81e55a6af292d12b7c 655
+pp_light/Cargo.toml c3289a4a179af15e083fa69dc44a81136a35d160 343
+pp_light/src/lib.rs 5149d6cb56680a0bb47e6e6456d4a5787d1a0feb 358
+pp_light/src/progpow.rs 15c57621036526f67ff54696e52aa579438e2c97 16896
+pp_light/src/compute.rs 004aeacec74fbb87414fae455cf181c8236fb1e0 13803
+pp_light/src/cache.rs c855594b0e311b35d4244cfaf44cc297b29aae22 9979
+pp_light/src/keccak.rs 13a053abc66fecdfa4eaac4c66996af63bbbb557 1891
+pp_light/src/seed_compute.rs d830ebb52109a0ded0aebfc83d45723490b55834 3262
+pp_light/src/shared.rs 8ec3997a2414eab342b905297b2a638721d76a61 4216
+pp_light/res/progpow_testvectors.json 2939f7106c0df6ace56046ebbd20649c71e192bf 3098
+pp_full/lib/LICENSE 5055c143449e804ad42d7a78e2cfd5346740344c 35100
+pp_full/lib/libprogpow/ProgPow.h afb555302cb8b455b10b1b96d1b66781c17b6e81 1332
+pp_full/lib/libprogpow/ProgPow.cpp 23066b87ceb2f5ef874d59c09110b0ee678d14c8 9289
+pp_full/lib/libethash/ethash.h 657fc6386ec7787206e7f12663ada1ac867f9be5 2669
+pp_full/lib/libethash/internal.c 7a744418359fb85326aa2413efd41748ba3b1f50 8315
+pp_full/lib/libethash/internal.h 6d99b97555c3bf60458f19dc124ab14bd57340eb 2014
+pp_full/lib/libethash/data_sizes.h 83cc30bcbabe720420a1587e89d0f2eb729ba59a 54270
+pp_full/lib/libethash/fnv.h d23c4e24740505bd4173ca6293591f1540889806 1018
+pp_full/lib/libethash/sha3.c e72fe10184f5b62da193e08e51c382332e84eea7 3846
+pp_full/lib/libethash/sha3.h a38006292f4355fdff6482013ae8e4f8fc73fbe7 543
+pp_full/lib/libethash/endian.h 6ca6cc036494d4683595a15338a6358b32d988c6 2345
+pp_full/lib/libethash/compiler.h 9695871cdc8a62fb8d8ec83f58c458bf946e332d 1006

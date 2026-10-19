@@ -1,0 +1,1727 @@
+{
+  "_about": "Ember Tune tiers per card class under class v5 (floor lane 4, the honest denominator, 8 October 2026; docs/analysis/class-v6/floor/denominator.md). One entry per card class: the three tiers (efficiency, balanced, max) as rows in the shape the app reads back from a card's state (src/ember.rs tier_from_json: id, clock_mhz, power_pct, mem_mhz, limit_w, mhs, w; mhw and source as Tier::json writes them), plus the fields this table adds: label (measured or estimated), uj (microjoules per hash at that point under class v5), note and src. clock_mhz 0 = unlocked; power_pct is percent of the card's default limit (50 to 100); AMD rows carry the ADLX offsets in core_offset_mhz and power_offset_pct instead (the app's AMD knob, 0.1.25). A card with no lever (Apple, Intel) has one tier, max, source stock. Nothing here is interpolated between measured rows: an estimated row is a prior the card's own search starts from and replaces; a measured row is the search's own result on that card.",
+  "class": "v5",
+  "class_string": "mx8-era<seed>+sh256x27+state (class v4's shape, 256 x 27 shadow, plus the state leaves)",
+  "v5_over_v4": {
+    "rate_pct": 0.0,
+    "watts_pct": 2.0,
+    "source": "the hash lane's v5lock job, 8 October 2026: at the 5090's 1,300 MHz knee class v5 125.93 MH/s at 299.8 W against class v4 125.92 at 294.0 W"
+  },
+  "tier_ids": [
+    "efficiency",
+    "balanced",
+    "max"
+  ],
+  "tier_rule": "efficiency = the best MH per watt row of the card's search outright (the knee or one rung past it); balanced = the best MH per watt row within 1 percent of the top rate (the default from install); max = the stock row (unlocked, 100 percent). The search measures; this table is where it starts and what it ships when it cannot run.",
+  "remeasure_rule": {
+    "stale_when": "the card's program class differs from the tiers' class (src/ember.rs tiers_stale): a set measured under class v4 never applies as current under class v5",
+    "on_flip": "the stored efficiency and balanced points are the provisional start of the re-measure, not its result: the search begins at the stored point and walks one rung either way (clock and power), the fingerprint checked on every step; the max tier is stock and is never stale",
+    "measured_flip": "v4 to v5 on the RTX 5090 at the 1,300 MHz lock: 0.0 percent of rate, +2.0 percent of watts (the v5lock job); the knee did not move",
+    "expected_flip_cost": "any class change that keeps the shadow's op count and mix inside the latency-bound band moves the knee by 0 to 1 rung; a change that doubles the op count moves the knee up (the 5090 at 431 W binds at 210,000 ops), so a class whose shadow leaves the band re-measures from stock, not from the stored point",
+    "period": "the stored set also re-measures weekly (PERIOD_S) and on a driver major change (the prior key carries driver major and class)"
+  },
+  "cards": [
+    {
+      "card": "NVIDIA GeForce RTX 5090",
+      "match": [
+        "5090"
+      ],
+      "vendor": "nvidia",
+      "arch": "blackwell",
+      "memory_gb": 32,
+      "label": "measured",
+      "stock": {
+        "mhs": 136.8,
+        "w": 475.5,
+        "uj": 3.48,
+        "class": "v4"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 1200,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 575,
+          "mhs": 133.8,
+          "w": 311.2,
+          "mhw": 0.4299,
+          "source": "measured",
+          "label": "measured",
+          "uj": 2.33,
+          "note": "class v4 best MH per watt (133.80 MH/s at 305.1 W, 2.2 percent of rate given); under class v5 +2.0 percent watts: 311.2 W, 2.33"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 1300,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 575,
+          "mhs": 134.76,
+          "w": 318.8,
+          "mhw": 0.4227,
+          "source": "measured",
+          "label": "measured",
+          "uj": 2.37,
+          "note": "the knee: class v4 134.76 MH/s at 312.5 W on the efficiency pass; under class v5 +2.0 percent watts: 318.8 W, 2.37 (the v5lock job read class v5 125.93 at 299.8 W with the one-warp-per-block worker: 2.38, the same energy at a lower rate)"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 575,
+          "mhs": 136.8,
+          "w": 475.5,
+          "mhw": 0.2877,
+          "source": "stock",
+          "label": "measured",
+          "uj": 3.48,
+          "note": "the power cap is flat on this hash (0.41 MH/W under every limit), so no power rung is used on any tier"
+        }
+      ],
+      "src": "docs/bench-log.md, the class v4 efficiency passes 7 to 8 October 2026 (the first Windows machine); counter-asic-4-research.md 20.3"
+    },
+    {
+      "card": "NVIDIA GeForce RTX 5080",
+      "match": [
+        "5080"
+      ],
+      "vendor": "nvidia",
+      "arch": "blackwell",
+      "memory_gb": 16,
+      "label": "measured",
+      "stock": {
+        "mhs": 71.35,
+        "w": 248.0,
+        "uj": 3.48,
+        "class": "v5"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 1100,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 360,
+          "mhs": 71.2,
+          "w": 146.6,
+          "mhw": 0.4857,
+          "source": "measured",
+          "label": "measured",
+          "uj": 2.06,
+          "note": "class v4 best MH per watt; the draw floors from 1,500 MHz down; the knee is between 1,000 and 900 MHz (900 costs 5.2 percent); class v5 about 2.10"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 1100,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 360,
+          "mhs": 71.2,
+          "w": 146.6,
+          "mhw": 0.4857,
+          "source": "measured",
+          "label": "measured",
+          "uj": 2.06,
+          "note": "the same row: the rate at 1,100 MHz is within 0.3 percent of unlocked"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 360,
+          "mhs": 71.35,
+          "w": 248.0,
+          "mhw": 0.2877,
+          "source": "stock",
+          "label": "measured",
+          "uj": 3.48,
+          "note": "class v5 measured on a Vast 5080 (13:49 UK): 71.35 MH/s at 248.0 W (3.48, 39 samples, SM 2,769, memory 14,801); class v3 71.16 at 159.4 W on the same host; the first Windows machine read class v4 71.41 at 253.1 W: the three agree within 3 percent on this card; stock, lock owed on the rented host"
+        }
+      ],
+      "src": "the fleet's cardbench rows file, the denominator sweep (2026-10-08-denominator-v5, class v5 kit, 200 batches of 2^24 under the 1 Hz sampler, 13:4x to 13:5x UK); stock, lock owed"
+    },
+    {
+      "card": "NVIDIA GeForce RTX 5070 Ti",
+      "match": [
+        "5070 TI",
+        "5070TI"
+      ],
+      "vendor": "nvidia",
+      "arch": "blackwell",
+      "memory_gb": 16,
+      "label": "estimated",
+      "stock": {
+        "mhs": 78.8,
+        "w": 224.0,
+        "uj": 2.84,
+        "class": "v4"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 1100,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 300,
+          "mhs": 78.7,
+          "w": 131.0,
+          "mhw": 0.6008,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 1.7,
+          "note": "the Blackwell shape applied to the measured stock rows (the v3 draw x0.63, the premium x0.5): band 1.6 to 2.0; the rented host refused -lgc, so the knee is the search's to find"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 1300,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 300,
+          "mhs": 78.8,
+          "w": 140.0,
+          "mhw": 0.5629,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 1.81,
+          "note": "one rung above the efficiency point"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 300,
+          "mhs": 78.8,
+          "w": 224.0,
+          "mhw": 0.3518,
+          "source": "stock",
+          "label": "measured",
+          "uj": 2.84,
+          "note": "rented pod 8 October 10:09Z: class v3 78.69 MH/s at 140.8 W, class v4 78.78 at 224.0 W; the class v5 sweep rented this card twice (14:08 and 14:13 UK) and neither host ever accepted the fleet key"
+        }
+      ],
+      "src": "docs/design/class-v6-rotating-family.md section 0 (the 5070 Ti column); the knee modelled on the 5080 and 5090 ladders"
+    },
+    {
+      "card": "NVIDIA GeForce RTX 5070",
+      "match": [
+        "5070"
+      ],
+      "vendor": "nvidia",
+      "arch": "blackwell",
+      "memory_gb": 12,
+      "label": "estimated",
+      "stock": {
+        "mhs": 58.9,
+        "w": 176.1,
+        "uj": 2.99,
+        "class": "v4"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 1100,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 250,
+          "mhs": 58.9,
+          "w": 103.0,
+          "mhw": 0.5718,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 1.75,
+          "note": "the Blackwell shape on the measured stock rows (paired class v3 113 W): band 1.7 to 2.1"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 1300,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 250,
+          "mhs": 58.9,
+          "w": 110.0,
+          "mhw": 0.5355,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 1.87,
+          "note": "one rung above the efficiency point"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 250,
+          "mhs": 58.9,
+          "w": 176.1,
+          "mhw": 0.3344,
+          "source": "stock",
+          "label": "measured",
+          "uj": 2.99,
+          "note": "rented v4watts pod 8 October; the 7 October pod read class v3 52.0 MH/s at 102.8 W (the rate differs by host); the class v5 sweep rented this card twice (14:08 and 14:13 UK) and neither host ever accepted the fleet key"
+        }
+      ],
+      "src": "the fleet's cardbench rows file, the 8 October v4watts rows"
+    },
+    {
+      "card": "NVIDIA GeForce RTX 5060 Ti",
+      "match": [
+        "5060 TI",
+        "5060TI"
+      ],
+      "vendor": "nvidia",
+      "arch": "blackwell",
+      "memory_gb": 16,
+      "label": "estimated",
+      "stock": {
+        "mhs": 30.84,
+        "w": 123.9,
+        "uj": 4.02,
+        "class": "v5"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 1100,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 180,
+          "mhs": 30.84,
+          "w": 72.7,
+          "mhw": 0.4243,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 2.36,
+          "note": "the Blackwell shape on the the second Windows machine stock row: band 2.2 to 2.6; re-based on the measured class v5 stock row of 13:5x UK (the architecture's shape on the measured v3 draw and the measured premium)"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 1300,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 180,
+          "mhs": 30.84,
+          "w": 80.5,
+          "mhw": 0.3829,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 2.61,
+          "note": "one rung above the efficiency point"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 180,
+          "mhs": 30.84,
+          "w": 123.9,
+          "mhw": 0.2489,
+          "source": "stock",
+          "label": "measured",
+          "uj": 4.02,
+          "note": "class v5 measured on a Vast 5060 Ti (13:5x UK): 30.84 MH/s at 123.9 W (4.02, 96 samples, SM 2,835); class v3 30.75 at 82.6 W on the same host; the second Windows machine's enclosure row read class v4 30.9 at 114.8 W; stock, lock owed"
+        }
+      ],
+      "src": "the fleet's cardbench rows file, the denominator sweep (2026-10-08-denominator-v5, class v5 kit, 200 batches of 2^24 under the 1 Hz sampler, 13:4x to 13:5x UK); stock, lock owed"
+    },
+    {
+      "card": "NVIDIA GeForce RTX 5060",
+      "match": [
+        "5060"
+      ],
+      "vendor": "nvidia",
+      "arch": "blackwell",
+      "memory_gb": 8,
+      "label": "estimated",
+      "stock": {
+        "mhs": 30.8,
+        "w": 115.7,
+        "uj": 3.76,
+        "class": "v5"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 1100,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 145,
+          "mhs": 30.8,
+          "w": 68.1,
+          "mhw": 0.4523,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 2.21,
+          "note": "class v3 measured 31.27 MH/s at 75.4 W; re-based on the measured class v5 stock row of 13:5x UK (the architecture's shape on the measured v3 draw and the measured premium)"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 1300,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 145,
+          "mhs": 30.8,
+          "w": 75.5,
+          "mhw": 0.4082,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 2.45,
+          "note": "one rung above the efficiency point"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 145,
+          "mhs": 30.8,
+          "w": 115.7,
+          "mhw": 0.2662,
+          "source": "stock",
+          "label": "measured",
+          "uj": 3.76,
+          "note": "class v5 measured (13:51 UK): 30.80 MH/s at 115.7 W (3.76, 99 samples, SM 2,715, memory 13,801); class v3 30.76 at 78.8 W on the same host (the shadow +37 W = 12 pJ per op); stock, lock owed"
+        }
+      ],
+      "src": "the fleet's cardbench rows file, the denominator sweep (2026-10-08-denominator-v5, class v5 kit, 200 batches of 2^24 under the 1 Hz sampler, 13:4x to 13:5x UK); stock, lock owed"
+    },
+    {
+      "card": "NVIDIA GeForce RTX 4090",
+      "match": [
+        "4090"
+      ],
+      "vendor": "nvidia",
+      "arch": "ada",
+      "memory_gb": 24,
+      "label": "estimated",
+      "stock": {
+        "mhs": 70.63,
+        "w": 353.5,
+        "uj": 5.0,
+        "class": "v4"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 1860,
+          "power_pct": 60,
+          "mem_mhz": 0,
+          "limit_w": 450,
+          "mhs": 70.63,
+          "w": 252.5,
+          "mhw": 0.2797,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 3.58,
+          "note": "the Ada shape (the 4070's measured tune: v3 x0.72, the premium x0.7) on the measured stock rows (class v3 253.4 W, class v4 353.5 W, floor lane 1, 8 October): band 3.3 to 4.0; re-based on the measured class v5 stock row of 13:5x UK (the architecture's shape on the measured v3 draw and the measured premium)"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 2400,
+          "power_pct": 80,
+          "mem_mhz": 0,
+          "limit_w": 450,
+          "mhs": 70.63,
+          "w": 282.8,
+          "mhw": 0.2498,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 4.0,
+          "note": "the Ada prior (a cap holds the rate until the SM clock falls under about 2,400 MHz)"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 450,
+          "mhs": 70.63,
+          "w": 353.5,
+          "mhw": 0.1998,
+          "source": "stock",
+          "label": "measured",
+          "uj": 5.0,
+          "note": "floor lane 1's rented 4090 at a 450 W limit: class v3 70.63 MH/s at 253.4 W (3.59), class v4 70.63 at 353.5 W (5.0); the denominator sweep's Vast 4090 carried a 250 W host limit: class v5 62.68 at 249.9 W (3.99, the SM at 2,579 MHz) and class v3 62.40 at 200.5 W, so a 250 W cap held 89 percent of the rate at 71 percent of the draw (an Ada cap row measured); stock, lock owed"
+        }
+      ],
+      "src": "the fleet's cardbench rows file, the denominator sweep (2026-10-08-denominator-v5, class v5 kit, 200 batches of 2^24 under the 1 Hz sampler, 13:4x to 13:5x UK); stock, lock owed"
+    },
+    {
+      "card": "NVIDIA GeForce RTX 4080",
+      "match": [
+        "4080"
+      ],
+      "vendor": "nvidia",
+      "arch": "ada",
+      "memory_gb": 16,
+      "label": "estimated",
+      "stock": {
+        "mhs": 40.8,
+        "w": 200.7,
+        "uj": 4.92,
+        "class": "v5"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 1860,
+          "power_pct": 60,
+          "mem_mhz": 0,
+          "limit_w": 320,
+          "mhs": 40.8,
+          "w": 143.3,
+          "mhw": 0.2847,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 3.51,
+          "note": "the Ada shape on the measured stock rows (class v3 128.6 W, class v4 185.6 W): band 3.1 to 3.7; re-based on the measured class v5 stock row of 13:5x UK (the architecture's shape on the measured v3 draw and the measured premium)"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 2400,
+          "power_pct": 80,
+          "mem_mhz": 0,
+          "limit_w": 320,
+          "mhs": 40.8,
+          "w": 160.6,
+          "mhw": 0.2541,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 3.94,
+          "note": "the Ada prior"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 320,
+          "mhs": 40.8,
+          "w": 200.7,
+          "mhw": 0.2033,
+          "source": "stock",
+          "label": "measured",
+          "uj": 4.92,
+          "note": "class v5 measured (13:50 UK): 40.80 MH/s at 200.7 W (4.92, 72 samples, SM 2,760); class v3 40.69 at 141.5 W on the same host; the v4watts pod read class v4 40.74 at 185.6 W; stock, lock owed"
+        }
+      ],
+      "src": "the fleet's cardbench rows file, the denominator sweep (2026-10-08-denominator-v5, class v5 kit, 200 batches of 2^24 under the 1 Hz sampler, 13:4x to 13:5x UK); stock, lock owed"
+    },
+    {
+      "card": "NVIDIA GeForce RTX 4070",
+      "match": [
+        "4070"
+      ],
+      "vendor": "nvidia",
+      "arch": "ada",
+      "memory_gb": 12,
+      "label": "measured",
+      "stock": {
+        "mhs": 28.43,
+        "w": 165.5,
+        "uj": 5.82,
+        "class": "v5"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 1860,
+          "power_pct": 50,
+          "mem_mhz": 0,
+          "limit_w": 200,
+          "mhs": 31.08,
+          "w": 111.2,
+          "mhw": 0.2795,
+          "source": "measured",
+          "label": "measured",
+          "uj": 3.58,
+          "note": "Ember run 6's tune point (1,863 MHz at 50 percent) under class v4 (sh256x27): 31.08 MH/s at 109.0 W, +30 W over class v3 at the same point for no rate; class v5 about 3.58; the ladder below 1,860 under class v4 is owed (band 3.2 to 3.6)"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 2173,
+          "power_pct": 50,
+          "mem_mhz": 0,
+          "limit_w": 200,
+          "mhs": 31.1,
+          "w": 112.0,
+          "mhw": 0.2777,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 3.6,
+          "note": "Ember run 6's 2,173 MHz rung (77.7 W on class v3) plus the measured 30 W class v4 premium"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 200,
+          "mhs": 28.43,
+          "w": 165.5,
+          "mhw": 0.1718,
+          "source": "stock",
+          "label": "measured",
+          "uj": 5.82,
+          "note": "class v5 measured on a Vast 4070 (13:54 UK): 28.43 MH/s at 165.5 W (5.82, 108 samples, SM 2,820, memory 9,801, a 210 W host limit not binding); class v3 28.40 at 116.3 W on the same host (the shadow +49 W = 17 pJ per op at the stock clock); Ember run 6's the first Windows machine stock on class v3 read 28.72 at 106.0 W; the tune point (1,860 MHz, 50 percent) under class v4 measured 31.08 at 109.0 W (3.51), so the lock takes 34 percent of this card's class v5 draw for no rate"
+        }
+      ],
+      "src": "docs/plans/counter-asic-3-status.md item 8 (the 4070 rows, 6 October); docs/bench-log.md Ember run 6"
+    },
+    {
+      "card": "NVIDIA GeForce RTX 4070 Ti",
+      "match": [
+        "4070 TI",
+        "4070TI"
+      ],
+      "vendor": "nvidia",
+      "arch": "ada",
+      "memory_gb": 12,
+      "label": "estimated",
+      "stock": {
+        "mhs": 31.26,
+        "w": 155.3,
+        "uj": 4.97,
+        "class": "v4"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 1860,
+          "power_pct": 60,
+          "mem_mhz": 0,
+          "limit_w": 285,
+          "mhs": 31.26,
+          "w": 111.0,
+          "mhw": 0.2816,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 3.6,
+          "note": "the Ada shape on the measured stock rows (class v3 95.4 W, class v4 155.3 W); the 4070 Super at a 110 W host cap held 31.26 MH/s at 108.4 W under class v4 (3.47): a cap row measured on a sibling"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 2400,
+          "power_pct": 80,
+          "mem_mhz": 0,
+          "limit_w": 285,
+          "mhs": 31.26,
+          "w": 125.0,
+          "mhw": 0.2501,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 4.08,
+          "note": "the Ada prior"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 285,
+          "mhs": 31.26,
+          "w": 155.3,
+          "mhw": 0.2013,
+          "source": "stock",
+          "label": "measured",
+          "uj": 4.97,
+          "note": "rented pods 8 October"
+        }
+      ],
+      "src": "the fleet's cardbench rows file, 8 October"
+    },
+    {
+      "card": "NVIDIA GeForce RTX 4060 Ti",
+      "match": [
+        "4060 TI",
+        "4060TI"
+      ],
+      "vendor": "nvidia",
+      "arch": "ada",
+      "memory_gb": 16,
+      "label": "estimated",
+      "stock": {
+        "mhs": 18.75,
+        "w": 99.8,
+        "uj": 5.32,
+        "class": "v5"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 1860,
+          "power_pct": 60,
+          "mem_mhz": 0,
+          "limit_w": 165,
+          "mhs": 18.75,
+          "w": 71.4,
+          "mhw": 0.2625,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 3.81,
+          "note": "the Ada shape (the 4070's measured tune: v3 x0.72, the premium x0.7) on the measured class v5 stock row; band 3.5 to 4.2"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 2400,
+          "power_pct": 80,
+          "mem_mhz": 0,
+          "limit_w": 165,
+          "mhs": 18.75,
+          "w": 79.8,
+          "mhw": 0.2348,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 4.26,
+          "note": "the Ada prior"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 165,
+          "mhs": 18.75,
+          "w": 99.8,
+          "mhw": 0.1879,
+          "source": "stock",
+          "label": "measured",
+          "uj": 5.32,
+          "note": "class v5 measured on a Vast 4060 Ti (14:27 UK): 18.75 MH/s at 99.8 W (5.32) under a 140 W host limit; class v3 18.74 at 79.1 W on the same host (the shadow +21 W = 11 pJ per op; this host read 7 percent under the 7 October pod's 20.10 MH/s); the v4watts pod read class v4 20.10 at 102.3 W (5.09); stock, lock owed"
+        }
+      ],
+      "src": "the fleet's cardbench rows file, the denominator sweep (2026-10-08-denominator-v5); stock, lock owed"
+    },
+    {
+      "card": "NVIDIA GeForce RTX 4060",
+      "match": [
+        "4060"
+      ],
+      "vendor": "nvidia",
+      "arch": "ada",
+      "memory_gb": 8,
+      "label": "estimated",
+      "stock": {
+        "mhs": 19.09,
+        "w": 95.0,
+        "uj": 4.98,
+        "class": "v4"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 1860,
+          "power_pct": 60,
+          "mem_mhz": 0,
+          "limit_w": 115,
+          "mhs": 19.09,
+          "w": 72.0,
+          "mhw": 0.2651,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 3.77,
+          "note": "19.09 MH/s measured on three rented hosts, the watts unread on every one (no power sensor): the watts are the 4060 Ti's shape; band 3.7 to 4.2"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 2400,
+          "power_pct": 80,
+          "mem_mhz": 0,
+          "limit_w": 115,
+          "mhs": 19.09,
+          "w": 80.0,
+          "mhw": 0.2386,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 4.19,
+          "note": "the Ada prior"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 115,
+          "mhs": 19.09,
+          "w": 95.0,
+          "mhw": 0.2009,
+          "source": "stock",
+          "label": "estimated",
+          "uj": 4.98,
+          "note": "watts OWED: every rented 4060 host exposed no power sensor"
+        }
+      ],
+      "src": "the fleet's cardbench rows file, 7 and 8 October (the rate); the watts modelled"
+    },
+    {
+      "card": "NVIDIA GeForce RTX 3090",
+      "match": [
+        "3090"
+      ],
+      "vendor": "nvidia",
+      "arch": "ampere",
+      "memory_gb": 24,
+      "label": "estimated",
+      "stock": {
+        "mhs": 61.49,
+        "w": 309.4,
+        "uj": 5.03,
+        "class": "v5"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 1800,
+          "power_pct": 80,
+          "mem_mhz": 0,
+          "limit_w": 350,
+          "mhs": 61.0,
+          "w": 275.0,
+          "mhw": 0.2218,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 4.51,
+          "note": "the Ampere cap lever (10 to 15 percent of the draw; a cap that takes the SM under 1,800 MHz costs rate) on the measured class v5 stock row; the 3090 Ti read class v3 61.95 MH/s at 249.5 W (4.03)"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 0,
+          "power_pct": 90,
+          "mem_mhz": 0,
+          "limit_w": 350,
+          "mhs": 61.49,
+          "w": 290.0,
+          "mhw": 0.212,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 4.72,
+          "note": "one power rung under stock, no lock"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 350,
+          "mhs": 61.49,
+          "w": 309.4,
+          "mhw": 0.1987,
+          "source": "stock",
+          "label": "measured",
+          "uj": 5.03,
+          "note": "the denominator sweep, a rented pod, 8 October 13:25 UK: class v3 60.01 MH/s at 294.6 W (4.91), class v5 61.49 at 309.4 W (5.03, 46 samples, SM 1,673 MHz, memory 9,501); the class v5 premium on this card 5 percent at stock; stock, lock owed (the host refused -lgc and -lmc)"
+        }
+      ],
+      "src": "the fleet's cardbench rows file, the denominator sweep 8 October (sweep 2026-10-08-denominator-v5)"
+    },
+    {
+      "card": "NVIDIA GeForce RTX 3080",
+      "match": [
+        "3080"
+      ],
+      "vendor": "nvidia",
+      "arch": "ampere",
+      "memory_gb": 10,
+      "label": "estimated",
+      "stock": {
+        "mhs": 50.71,
+        "w": 230.0,
+        "uj": 4.54,
+        "class": "v5 (modelled watts: the host's 170 W limit bound)"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 1800,
+          "power_pct": 80,
+          "mem_mhz": 0,
+          "limit_w": 320,
+          "mhs": 50.0,
+          "w": 210.0,
+          "mhw": 0.2381,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 4.2,
+          "note": "the Ampere cap lever (10 percent, no lower: a 170 W cap took 34 percent of the class v5 rate on this card, a 180 W cap 11 percent)"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 0,
+          "power_pct": 90,
+          "mem_mhz": 0,
+          "limit_w": 320,
+          "mhs": 50.71,
+          "w": 220.0,
+          "mhw": 0.2305,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 4.34,
+          "note": "one power rung under stock"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 320,
+          "mhs": 50.71,
+          "w": 230.0,
+          "mhw": 0.2205,
+          "source": "stock",
+          "label": "estimated",
+          "uj": 4.54,
+          "note": "the sweep's two 3080 hosts both carried a limit under the class v5 draw: at 170 W class v3 50.71 MH/s at 169.2 W (3.34) held the rate and class v5 fell to 33.37 MH/s at 169.9 W (5.09) with the SM at 689 MHz; at 180 W class v3 49.83 at 177.8 W and class v5 44.31; the uncapped class v5 stock by the 3080 Ti's +30 percent: about 230 W (4.54); the Ampere cap under the shadow costs rate one for one: measured twice"
+        }
+      ],
+      "src": "the fleet's cardbench rows file, the denominator sweep (2026-10-08-denominator-v5, class v5 kit, 200 batches of 2^24 under the 1 Hz sampler, 13:4x to 13:5x UK); stock, lock owed"
+    },
+    {
+      "card": "NVIDIA GeForce RTX 3070",
+      "match": [
+        "3070"
+      ],
+      "vendor": "nvidia",
+      "arch": "ampere",
+      "memory_gb": 8,
+      "label": "estimated",
+      "stock": {
+        "mhs": 37.11,
+        "w": 196.4,
+        "uj": 5.29,
+        "class": "v4"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 1800,
+          "power_pct": 80,
+          "mem_mhz": 0,
+          "limit_w": 220,
+          "mhs": 37.1,
+          "w": 178.0,
+          "mhw": 0.2084,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 4.8,
+          "note": "the Ampere cap lever on the measured stock rows (class v3 142.3 W, class v4 196.4 W); the 3070 Ti 38.98 MH/s at 177.1 / 267.6 W"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 0,
+          "power_pct": 90,
+          "mem_mhz": 0,
+          "limit_w": 220,
+          "mhs": 37.11,
+          "w": 186.0,
+          "mhw": 0.1995,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 5.01,
+          "note": "one power rung under stock"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 220,
+          "mhs": 37.11,
+          "w": 196.4,
+          "mhw": 0.189,
+          "source": "stock",
+          "label": "measured",
+          "uj": 5.29,
+          "note": "rented pods 8 October; the class v5 sweep's two 3070 hosts closed the connection mid-bench"
+        }
+      ],
+      "src": "the fleet's cardbench rows file, 8 October"
+    },
+    {
+      "card": "NVIDIA GeForce RTX 3060",
+      "match": [
+        "3060"
+      ],
+      "vendor": "nvidia",
+      "arch": "ampere",
+      "memory_gb": 12,
+      "label": "estimated",
+      "stock": {
+        "mhs": 26.53,
+        "w": 169.8,
+        "uj": 6.4,
+        "class": "v5"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 1800,
+          "power_pct": 80,
+          "mem_mhz": 0,
+          "limit_w": 170,
+          "mhs": 26.5,
+          "w": 153.0,
+          "mhw": 0.1732,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 5.77,
+          "note": "the Ampere cap lever (10 percent) on the measured class v4 stock row; the 3060 Ti at a 130 W host cap held 33.06 MH/s at 128.7 W under class v4 (3.89): a cap row measured on a sibling"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 0,
+          "power_pct": 90,
+          "mem_mhz": 0,
+          "limit_w": 170,
+          "mhs": 26.53,
+          "w": 161.0,
+          "mhw": 0.1648,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 6.07,
+          "note": "one power rung under stock"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 170,
+          "mhs": 26.53,
+          "w": 169.8,
+          "mhw": 0.1562,
+          "source": "stock",
+          "label": "measured",
+          "uj": 6.4,
+          "note": "class v5 measured on a Vast 3060 (13:53 UK): 26.53 MH/s at 169.8 W (6.40) at the host's 170 W limit (the limit binding: the class v4 pod read 26.89 at 166.1 W, 6.18); class v3 26.53 at 120.4 W on the same host; stock, lock owed"
+        }
+      ],
+      "src": "the fleet's cardbench rows file, the denominator sweep (2026-10-08-denominator-v5); stock, lock owed"
+    },
+    {
+      "card": "AMD Radeon RX 9070 XT",
+      "match": [
+        "9070 XT",
+        "9070XT",
+        "GFX1201"
+      ],
+      "vendor": "amd",
+      "arch": "rdna4",
+      "memory_gb": 16,
+      "label": "measured",
+      "stock": {
+        "mhs": 18.9,
+        "w": 202.0,
+        "uj": 10.7,
+        "class": "v4"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 0,
+          "power_pct": 70,
+          "mem_mhz": 0,
+          "core_offset_mhz": -500,
+          "power_offset_pct": -30,
+          "limit_w": 304,
+          "mhs": 18.9,
+          "w": 149.3,
+          "mhw": 0.1266,
+          "source": "measured",
+          "label": "measured",
+          "uj": 7.9,
+          "note": "the ADLX grid (24 rows, the first Windows machine): the rate flat at 18.9 MH/s across the grid, the best point -500 MHz core and -30 percent power, 24 percent under stock; class v5 about 8.1"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 0,
+          "power_pct": 85,
+          "mem_mhz": 0,
+          "core_offset_mhz": -300,
+          "power_offset_pct": -15,
+          "limit_w": 304,
+          "mhs": 18.9,
+          "w": 172.0,
+          "mhw": 0.1099,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 9.1,
+          "note": "inside the flat band, half the offsets"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "core_offset_mhz": 0,
+          "power_offset_pct": 0,
+          "limit_w": 304,
+          "mhs": 18.9,
+          "w": 202.0,
+          "mhw": 0.0936,
+          "source": "stock",
+          "label": "measured",
+          "uj": 10.7,
+          "note": "the app's own power reading at the stock point, 8 October 07:11 UK"
+        }
+      ],
+      "src": "the hash lane's the first Windows machine AMD grid, 8 October 2026 12:13 UK; site/miner-bench.json"
+    },
+    {
+      "card": "AMD Radeon RX 7900 XTX",
+      "match": [
+        "7900 XTX",
+        "7900XTX"
+      ],
+      "vendor": "amd",
+      "arch": "rdna3",
+      "memory_gb": 24,
+      "label": "estimated",
+      "stock": {
+        "mhs": 28.0,
+        "w": 300.0,
+        "uj": 10.7,
+        "class": "v4"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 0,
+          "power_pct": 70,
+          "mem_mhz": 0,
+          "core_offset_mhz": -500,
+          "power_offset_pct": -30,
+          "limit_w": 355,
+          "mhs": 28.0,
+          "w": 224.0,
+          "mhw": 0.125,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 8.0,
+          "note": "not rentable, not owned: the 9070 XT's dependent-read rate per channel (150 M per second per 32-bit channel) on 24 channels; the knob by the 9070 XT grid"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 0,
+          "power_pct": 85,
+          "mem_mhz": 0,
+          "core_offset_mhz": -300,
+          "power_offset_pct": -15,
+          "limit_w": 355,
+          "mhs": 28.0,
+          "w": 255.0,
+          "mhw": 0.1098,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 9.1,
+          "note": "half the offsets"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "core_offset_mhz": 0,
+          "power_offset_pct": 0,
+          "limit_w": 355,
+          "mhs": 28.0,
+          "w": 300.0,
+          "mhw": 0.0933,
+          "source": "stock",
+          "label": "estimated",
+          "uj": 10.7,
+          "note": "modelled"
+        }
+      ],
+      "src": "modelled on the 9070 XT rows"
+    },
+    {
+      "card": "AMD Radeon RX 7800 XT",
+      "match": [
+        "7800 XT",
+        "7800XT"
+      ],
+      "vendor": "amd",
+      "arch": "rdna3",
+      "memory_gb": 16,
+      "label": "estimated",
+      "stock": {
+        "mhs": 18.0,
+        "w": 230.0,
+        "uj": 12.8,
+        "class": "v4"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 0,
+          "power_pct": 70,
+          "mem_mhz": 0,
+          "core_offset_mhz": -500,
+          "power_offset_pct": -30,
+          "limit_w": 263,
+          "mhs": 18.0,
+          "w": 171.0,
+          "mhw": 0.1053,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 9.5,
+          "note": "16 channels of GDDR6 at the 9070 XT's per-channel rate; the knob by the 9070 XT grid"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 0,
+          "power_pct": 85,
+          "mem_mhz": 0,
+          "core_offset_mhz": -300,
+          "power_offset_pct": -15,
+          "limit_w": 263,
+          "mhs": 18.0,
+          "w": 195.0,
+          "mhw": 0.0923,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 10.8,
+          "note": "half the offsets"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "core_offset_mhz": 0,
+          "power_offset_pct": 0,
+          "limit_w": 263,
+          "mhs": 18.0,
+          "w": 230.0,
+          "mhw": 0.0783,
+          "source": "stock",
+          "label": "estimated",
+          "uj": 12.8,
+          "note": "modelled"
+        }
+      ],
+      "src": "modelled on the 9070 XT rows"
+    },
+    {
+      "card": "AMD Radeon RX 7600 XT",
+      "match": [
+        "7600 XT",
+        "7600XT"
+      ],
+      "vendor": "amd",
+      "arch": "rdna3",
+      "memory_gb": 16,
+      "label": "estimated",
+      "stock": {
+        "mhs": 9.0,
+        "w": 160.0,
+        "uj": 17.8,
+        "class": "v4"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 0,
+          "power_pct": 70,
+          "mem_mhz": 0,
+          "core_offset_mhz": -500,
+          "power_offset_pct": -30,
+          "limit_w": 190,
+          "mhs": 9.0,
+          "w": 117.0,
+          "mhw": 0.0769,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 13.0,
+          "note": "8 channels; the card-in queue holds one for a PC measurement"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 0,
+          "power_pct": 85,
+          "mem_mhz": 0,
+          "core_offset_mhz": -300,
+          "power_offset_pct": -15,
+          "limit_w": 190,
+          "mhs": 9.0,
+          "w": 136.0,
+          "mhw": 0.0662,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 15.1,
+          "note": "half the offsets"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "core_offset_mhz": 0,
+          "power_offset_pct": 0,
+          "limit_w": 190,
+          "mhs": 9.0,
+          "w": 160.0,
+          "mhw": 0.0563,
+          "source": "stock",
+          "label": "estimated",
+          "uj": 17.8,
+          "note": "modelled"
+        }
+      ],
+      "src": "modelled on the 9070 XT rows"
+    },
+    {
+      "card": "AMD Radeon RX 9060 XT",
+      "match": [
+        "9060 XT",
+        "9060XT"
+      ],
+      "vendor": "amd",
+      "arch": "rdna4",
+      "memory_gb": 16,
+      "label": "estimated",
+      "stock": {
+        "mhs": 9.5,
+        "w": 130.0,
+        "uj": 13.7,
+        "class": "v4"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 0,
+          "power_pct": 70,
+          "mem_mhz": 0,
+          "core_offset_mhz": -500,
+          "power_offset_pct": -30,
+          "limit_w": 160,
+          "mhs": 9.5,
+          "w": 95.0,
+          "mhw": 0.1,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 10.0,
+          "note": "8 channels of GDDR6 on RDNA 4; the card-in queue holds one"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 0,
+          "power_pct": 85,
+          "mem_mhz": 0,
+          "core_offset_mhz": -300,
+          "power_offset_pct": -15,
+          "limit_w": 160,
+          "mhs": 9.5,
+          "w": 110.0,
+          "mhw": 0.0864,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 11.6,
+          "note": "half the offsets"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "core_offset_mhz": 0,
+          "power_offset_pct": 0,
+          "limit_w": 160,
+          "mhs": 9.5,
+          "w": 130.0,
+          "mhw": 0.0731,
+          "source": "stock",
+          "label": "estimated",
+          "uj": 13.7,
+          "note": "modelled"
+        }
+      ],
+      "src": "modelled on the 9070 XT rows"
+    },
+    {
+      "card": "NVIDIA H100 80GB HBM3",
+      "match": [
+        "H100"
+      ],
+      "vendor": "nvidia",
+      "arch": "hopper",
+      "memory_gb": 80,
+      "label": "estimated",
+      "stock": {
+        "mhs": 241.3,
+        "w": 621.6,
+        "uj": 2.58,
+        "class": "v5"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 1400,
+          "power_pct": 80,
+          "mem_mhz": 0,
+          "limit_w": 700,
+          "mhs": 250.0,
+          "w": 500.0,
+          "mhw": 0.5,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 2.0,
+          "note": "the premium 240 to 280 W at stock says half of it is the clock; a lock on an owned host (Hopper at 1,980 MHz boost, HBM3-bound): about 500 W (2.0); band 1.9 to 2.4; rented hosts refuse -lgc"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 1600,
+          "power_pct": 90,
+          "mem_mhz": 0,
+          "limit_w": 700,
+          "mhs": 250.6,
+          "w": 560.0,
+          "mhw": 0.4475,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 2.23,
+          "note": "one rung above"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 700,
+          "mhs": 241.3,
+          "w": 621.6,
+          "mhw": 0.3882,
+          "source": "stock",
+          "label": "measured",
+          "uj": 2.58,
+          "note": "the denominator sweep, a rented pod, 13:25 UK: class v3 252.96 MH/s at 382.4 W (1.51), class v5 241.34 at 621.6 W (2.58, 7 samples, the SM throttled to 1,590 MHz under the 700 W cap); the 7 and 8 October pods read class v4 250.6 at 695.1 W (2.77); -lmc answered 'use --lock-memory-clocks-deferred' and the memory clock stayed 2,619; stock, lock owed"
+        }
+      ],
+      "src": "the fleet's cardbench rows file, 8 October"
+    },
+    {
+      "card": "NVIDIA L40S",
+      "match": [
+        "L40S"
+      ],
+      "vendor": "nvidia",
+      "arch": "ada",
+      "memory_gb": 48,
+      "label": "estimated",
+      "stock": {
+        "mhs": 56.49,
+        "w": 298.7,
+        "uj": 5.29,
+        "class": "v5"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 1860,
+          "power_pct": 60,
+          "mem_mhz": 0,
+          "limit_w": 350,
+          "mhs": 56.49,
+          "w": 213.5,
+          "mhw": 0.2646,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 3.78,
+          "note": "the Ada shape on the measured stock rows (class v3 220.7 W, class v4 277.6 W); re-based on the measured class v5 stock row of 13:5x UK (the architecture's shape on the measured v3 draw and the measured premium)"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 2400,
+          "power_pct": 80,
+          "mem_mhz": 0,
+          "limit_w": 350,
+          "mhs": 56.49,
+          "w": 239.0,
+          "mhw": 0.2364,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 4.23,
+          "note": "the Ada prior"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 350,
+          "mhs": 56.49,
+          "w": 298.7,
+          "mhw": 0.1891,
+          "source": "stock",
+          "label": "measured",
+          "uj": 5.29,
+          "note": "class v5 measured (13:49 UK): 56.49 MH/s at 298.7 W (5.29, 46 samples, SM 2,520); class v3 56.35 at 221.5 W on the same host; the v4watts pod read class v4 56.4 at 277.6 W; stock, lock owed"
+        }
+      ],
+      "src": "the fleet's cardbench rows file, the denominator sweep (2026-10-08-denominator-v5, class v5 kit, 200 batches of 2^24 under the 1 Hz sampler, 13:4x to 13:5x UK); stock, lock owed"
+    },
+    {
+      "card": "NVIDIA A100-SXM4-80GB",
+      "match": [
+        "A100"
+      ],
+      "vendor": "nvidia",
+      "arch": "ampere",
+      "memory_gb": 80,
+      "label": "estimated",
+      "stock": {
+        "mhs": 133.1,
+        "w": 398.1,
+        "uj": 2.99,
+        "class": "v5"
+      },
+      "tiers": [
+        {
+          "id": "efficiency",
+          "clock_mhz": 1200,
+          "power_pct": 80,
+          "mem_mhz": 0,
+          "limit_w": 400,
+          "mhs": 133.0,
+          "w": 385.0,
+          "mhw": 0.3455,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 2.89,
+          "note": "the card already runs at 1,410 MHz and the 400 W host limit binds under class v5 (SM clock gives); a cap under it costs rate on Ampere, so the floor is within 5 percent of the measured stock row"
+        },
+        {
+          "id": "balanced",
+          "clock_mhz": 0,
+          "power_pct": 90,
+          "mem_mhz": 0,
+          "limit_w": 400,
+          "mhs": 133.1,
+          "w": 392.0,
+          "mhw": 0.3396,
+          "source": "measured",
+          "label": "estimated",
+          "uj": 2.95,
+          "note": "one power rung under stock"
+        },
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 400,
+          "mhs": 133.1,
+          "w": 398.1,
+          "mhw": 0.3343,
+          "source": "stock",
+          "label": "measured",
+          "uj": 2.99,
+          "note": "the denominator sweep, a rented pod, 13:24 UK: class v3 138.06 MH/s at 294.9 W (2.14), class v5 133.11 at 398.1 W (2.99, 19 samples, at the host's 400 W limit, memory 1,593 MHz); the v4watts pod on a 500 W host read class v4 138.0 at 489.3 W (3.54); -lmc 'not supported' on this card; stock, lock owed"
+        }
+      ],
+      "src": "the fleet's cardbench rows file, 8 October"
+    },
+    {
+      "card": "Intel Arc B580",
+      "match": [
+        "B580"
+      ],
+      "vendor": "intel",
+      "arch": "battlemage",
+      "memory_gb": 12,
+      "label": "estimated",
+      "stock": {
+        "mhs": 10.6,
+        "w": 110.0,
+        "uj": 10.4,
+        "class": "v4"
+      },
+      "tiers": [
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 190,
+          "mhs": 10.6,
+          "w": 110.0,
+          "mhw": 0.0964,
+          "source": "stock",
+          "label": "estimated",
+          "uj": 10.4,
+          "note": "10.6 to 11 MH/s measured on the second Windows machine (the enclosure), the watts unread; about 110 W by the board's class (OWED); no clock lever in the app for Intel"
+        }
+      ],
+      "src": "docs/bench-log.md, 7 October; site/miner-bench.json"
+    },
+    {
+      "card": "Intel Arc A750",
+      "match": [
+        "A750"
+      ],
+      "vendor": "intel",
+      "arch": "alchemist",
+      "memory_gb": 8,
+      "label": "estimated",
+      "stock": {
+        "mhs": 8.0,
+        "w": 150.0,
+        "uj": 18.8,
+        "class": "v4"
+      },
+      "tiers": [
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 225,
+          "mhs": 8.0,
+          "w": 150.0,
+          "mhw": 0.0533,
+          "source": "stock",
+          "label": "estimated",
+          "uj": 18.8,
+          "note": "unmeasured; modelled from the B580 and the Alchemist board"
+        }
+      ],
+      "src": "modelled"
+    },
+    {
+      "card": "Apple M5 Max",
+      "match": [
+        "M5 MAX"
+      ],
+      "vendor": "apple",
+      "arch": "apple-m5",
+      "memory_gb": 0,
+      "label": "measured",
+      "stock": {
+        "mhs": 26.67,
+        "w": 37.3,
+        "uj": 1.4,
+        "class": "v4"
+      },
+      "tiers": [
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 0,
+          "mhs": 26.67,
+          "w": 37.3,
+          "mhw": 0.715,
+          "source": "stock",
+          "label": "measured",
+          "uj": 1.4,
+          "note": "the GPU and DRAM channels of the IOReport meter (not the wall): class v3 27.08 MH/s at 21.0 W (0.78), class v4 26.67 at 37.3 W (1.40), class v5 about 1.43; the package about 17 W more; no lever (no clock cap on Apple silicon)"
+        }
+      ],
+      "src": "docs/analysis/latency-shadow-2026-10-06.md section 3; docs/plans/ember-tune.md (the package figure)"
+    },
+    {
+      "card": "Apple M4 Max",
+      "match": [
+        "M4 MAX"
+      ],
+      "vendor": "apple",
+      "arch": "apple-m4",
+      "memory_gb": 0,
+      "label": "estimated",
+      "stock": {
+        "mhs": 26.0,
+        "w": 40.0,
+        "uj": 1.55,
+        "class": "v5"
+      },
+      "tiers": [
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 0,
+          "mhs": 26.0,
+          "w": 40.0,
+          "mhw": 0.65,
+          "source": "stock",
+          "label": "estimated",
+          "uj": 1.55,
+          "note": "the same 512-bit LPDDR5X (8,533 against 9,600 MT/s) and a 40-core GPU on N3E: about 26 MH/s; class v3 about 0.85 at the meter, class v5 about 1.55 (the M5 Max's rows scaled); a devnet row from an unnamed Apple laptop read 24.3 MH/s on class v4"
+        }
+      ],
+      "src": "modelled on the M5 Max rows"
+    },
+    {
+      "card": "Apple M4 Pro",
+      "match": [
+        "M4 PRO"
+      ],
+      "vendor": "apple",
+      "arch": "apple-m4",
+      "memory_gb": 0,
+      "label": "estimated",
+      "stock": {
+        "mhs": 13.5,
+        "w": 22.0,
+        "uj": 1.65,
+        "class": "v5"
+      },
+      "tiers": [
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 0,
+          "mhs": 13.5,
+          "w": 22.0,
+          "mhw": 0.6136,
+          "source": "stock",
+          "label": "estimated",
+          "uj": 1.65,
+          "note": "256-bit LPDDR5X and a 20-core GPU: about 13.5 MH/s; the shadow's per-hash premium does not shrink with the part, so class v5 reads about 1.65 at the meter"
+        }
+      ],
+      "src": "modelled on the M5 Max rows"
+    },
+    {
+      "card": "Apple M3 Max",
+      "match": [
+        "M3 MAX"
+      ],
+      "vendor": "apple",
+      "arch": "apple-m3",
+      "memory_gb": 0,
+      "label": "estimated",
+      "stock": {
+        "mhs": 24.0,
+        "w": 42.0,
+        "uj": 1.75,
+        "class": "v5"
+      },
+      "tiers": [
+        {
+          "id": "max",
+          "clock_mhz": 0,
+          "power_pct": 100,
+          "mem_mhz": 0,
+          "limit_w": 0,
+          "mhs": 24.0,
+          "w": 42.0,
+          "mhw": 0.5714,
+          "source": "stock",
+          "label": "estimated",
+          "uj": 1.75,
+          "note": "512-bit LPDDR5-6400 and a 40-core GPU on N3B: about 24 MH/s; class v5 about 1.75 at the meter"
+        }
+      ],
+      "src": "modelled on the M5 Max rows"
+    }
+  ]
+}

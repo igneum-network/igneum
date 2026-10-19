@@ -1,0 +1,20 @@
+[package]
+name = "pi-guest"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+# The guest-builder image of risc0-build's docker mode (r0.1.88.0) carries rustc 1.88.0-dev; the MSRV-aware resolver
+# locks the guest's dependencies to what it accepts (11 Oct 2026: ruint 1.20.1 and enum-ordinalize 4.4.2 asked 1.89 and
+# 1.90 under a lock made by the 1.97 toolchain, and the docker build refused). The lock beside this file is the pin.
+rust-version = "1.88"
+
+[workspace]
+
+[dependencies]
+risc0-zkvm = { version = "3.0.6", default-features = false, features = ["std"] }
+blake3 = { version = "1.8", default-features = false, features = ["pure"] }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1

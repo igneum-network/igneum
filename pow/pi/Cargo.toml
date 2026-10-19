@@ -1,0 +1,18 @@
+# The proof pi of SPEC-R0A-v0.md section 0.9.1: the carried shares bound to the bond's public key.
+# Proof system 2 (RISC Zero 3.0.6, Apache-2.0; docs/igneumhash/pi/PI-NOTES.md section 0 is the licence and version row).
+# Its own workspace: the gate builds miner/ and node/, not this tree (the guest needs the riscv32im toolchain that rzup
+# installs; build on a build box, never on the Mac). The ffi member (the node's verifier, a C ABI staticlib) builds with
+# plain cargo on any box: `cargo build --release -p igneum-pi-ffi` needs neither the guest toolchain nor docker, since
+# the verifier carries the image id as a pinned constant (PI_IMAGE_ID in host/src/lib.rs) and never the guest.
+[workspace]
+resolver = "2"
+members = ["host", "methods", "ffi"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+
+[profile.release]
+debug = 1
+lto = true

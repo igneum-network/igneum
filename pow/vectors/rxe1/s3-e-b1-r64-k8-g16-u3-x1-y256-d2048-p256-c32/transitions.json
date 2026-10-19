@@ -1,0 +1,23 @@
+{
+  "candidate": "rxe1",
+  "class": "transitions",
+  "generator": "ignpow abi 0 build 7c742f16; kawpow-0.9.4 = ravencoin-ethash@22549129 (v4.8.0, progpow 0.9.4, epoch 7500); autolykos-2 = ergo v6.0.7 AutolykosPowScheme (k 32, n 26, in-house BLAKE2b); igneumhash = IgneumHash-R0A versions 0 and 1 (SPEC-R0A-v0.md revision 0.4) and the R0B schedule version 2 (SPEC-R0B-schedule-v0.md), BLAKE3 1.8.2 portable; rxe1 = RXE1 experimental family (SPEC-TEXT-v0.1.md sections 6 to 8; dataset: the R0A v1 builder; BLAKE3 1.8.2 portable)",
+  "seed": "20261009",
+  "params": {"schema": 3, "mode": 2, "blocks": 1, "rounds": 64, "registers": 8, "group": 16, "route": 3, "chunks": 1, "payload_bytes": 256, "dataset_bytes": 2147483648},
+  "count": 13,
+  "vectors": [
+    {"height": 0, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "mix": "8a9caa8ec1e0f21c5888d1ab0211a1c423f7a26229af630f4f5a6b75030aca7b", "hash": "6f601ef69c51befeebcdd3f63d21b156ff7d63bcd5b92e8a68ce30f02a8a8ea5"},
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "mix": "8a9caa8ec1e0f21c5888d1ab0211a1c423f7a26229af630f4f5a6b75030aca7b", "hash": "6f601ef69c51befeebcdd3f63d21b156ff7d63bcd5b92e8a68ce30f02a8a8ea5"},
+    {"height": 2, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "mix": "8a9caa8ec1e0f21c5888d1ab0211a1c423f7a26229af630f4f5a6b75030aca7b", "hash": "6f601ef69c51befeebcdd3f63d21b156ff7d63bcd5b92e8a68ce30f02a8a8ea5"},
+    {"height": 3, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "mix": "8a9caa8ec1e0f21c5888d1ab0211a1c423f7a26229af630f4f5a6b75030aca7b", "hash": "6f601ef69c51befeebcdd3f63d21b156ff7d63bcd5b92e8a68ce30f02a8a8ea5"},
+    {"height": 5, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "mix": "8a9caa8ec1e0f21c5888d1ab0211a1c423f7a26229af630f4f5a6b75030aca7b", "hash": "6f601ef69c51befeebcdd3f63d21b156ff7d63bcd5b92e8a68ce30f02a8a8ea5"},
+    {"height": 6, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "mix": "8a9caa8ec1e0f21c5888d1ab0211a1c423f7a26229af630f4f5a6b75030aca7b", "hash": "6f601ef69c51befeebcdd3f63d21b156ff7d63bcd5b92e8a68ce30f02a8a8ea5"},
+    {"height": 4095, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "mix": "8a9caa8ec1e0f21c5888d1ab0211a1c423f7a26229af630f4f5a6b75030aca7b", "hash": "6f601ef69c51befeebcdd3f63d21b156ff7d63bcd5b92e8a68ce30f02a8a8ea5"},
+    {"height": 4096, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "mix": "a8354ca2f92df7c68ad2ef53af88984952ea9c204be066665a97150692b1317a", "hash": "47fd58b0c6d2ca88c6763ca2f5a05ad865573ff30117aaf1994c8bb2d5fb6060"},
+    {"height": 4097, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "mix": "a8354ca2f92df7c68ad2ef53af88984952ea9c204be066665a97150692b1317a", "hash": "47fd58b0c6d2ca88c6763ca2f5a05ad865573ff30117aaf1994c8bb2d5fb6060"},
+    {"height": 1835007, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "mix": "f246b51a586c9958980fd977e4821e67a469a56f0104e9db63a8cb0dda2c1192", "hash": "94d004ad6607aa13be0c42425c038df8573cd5bc6fbfe158371220883d71127d"},
+    {"height": 1835008, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "mix": "e50240a8ff41b1cbeb2f60ffeab80a2ccf29ebeac99e235462b6f01fe2c204fd", "hash": "54f9663d19f6405753f891070d4c8c8f12c33bf6c2a9d5ce1f7ae2bd38f53a24"},
+    {"height": 2452183, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "mix": "deebcda24aa98179c18de53e077983b0551e7a343e528d3cf113b3d029c0f79c", "hash": "ffd221c4e698ebf89246437ddfc5687e564943ae4992a0d78bd1a66019a72d29"},
+    {"height": 2452184, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "mix": "deebcda24aa98179c18de53e077983b0551e7a343e528d3cf113b3d029c0f79c", "hash": "ffd221c4e698ebf89246437ddfc5687e564943ae4992a0d78bd1a66019a72d29"}
+  ]
+}

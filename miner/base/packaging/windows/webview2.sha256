@@ -1,0 +1,3 @@
+# The sha256 of MicrosoftEdgeWebview2Setup.exe (the evergreen bootstrapper, from developer.microsoft.com/microsoft-edge/webview2) the
+# payload may carry; make-payload.sh refuses any other. The shipper writes the line when it fetches the bootstrapper at a cut; empty
+# (this state) means no bootstrapper rides and the rights step logs the missing-runtime line instead of installing.

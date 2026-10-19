@@ -1,0 +1,179 @@
+// Device code of the Igneum CUDA worker, KAWPOW family (ProgPoW 0.9.4 with the
+// Ravencoin constants). Compiled at run time by NVRTC. The host prepends the
+// typedefs and the vendored keccak permutations (k800::ethash_keccakf800 and
+// k1600::ethash_keccakf1600, byte for byte the Apache-2.0 upstream files) and
+// substitutes the program marker (the last occurrence of the marker word in
+// this file, inside the search kernel's round loop) with the period's program.
+//
+// Arithmetic is the reference's: fixed-width unsigned with wrap, rotates on
+// (count & 31), clz(0) = 32, little-endian words throughout. Any divergence
+// from pow/ref on the HW-01 corpus is a defect here, never in the reference.
+
+#define FNV_PRIME 0x01000193u
+#define FNV_OFFSET 0x811c9dc5u
+#define PROGPOW_LANES 16
+#define PROGPOW_REGS 32
+#define L1_WORDS 4096
+#ifndef DATASET_PARENTS
+#define DATASET_PARENTS 512
+#endif
+#ifndef PROGPOW_EPIC
+#define PROGPOW_EPIC 0
+#endif
+
+__device__ __forceinline__ uint32_t fnv1(uint32_t u, uint32_t v) { return (u * FNV_PRIME) ^ v; }
+__device__ __forceinline__ uint32_t fnv1a(uint32_t u, uint32_t v) { return (u ^ v) * FNV_PRIME; }
+
+struct kiss99_t { uint32_t z, w, jsr, jcong; };
+__device__ __forceinline__ uint32_t kiss99(kiss99_t& s) {
+    s.z = 36969u * (s.z & 0xffffu) + (s.z >> 16);
+    s.w = 18000u * (s.w & 0xffffu) + (s.w >> 16);
+    s.jcong = 69069u * s.jcong + 1234567u;
+    s.jsr ^= (s.jsr << 17); s.jsr ^= (s.jsr >> 13); s.jsr ^= (s.jsr << 5);
+    return (((s.z << 16) + s.w) ^ s.jcong) + s.jsr;
+}
+
+__device__ __forceinline__ uint32_t rotl32(uint32_t a, uint32_t b) { return __funnelshift_l(a, a, b); }
+__device__ __forceinline__ uint32_t rotr32(uint32_t a, uint32_t b) { return __funnelshift_r(a, a, b); }
+__device__ __forceinline__ uint32_t clz32(uint32_t a) { return (uint32_t)__clz((int)a); }
+__device__ __forceinline__ uint32_t popcount32(uint32_t a) { return (uint32_t)__popc((int)a); }
+__device__ __forceinline__ uint32_t mul_hi32(uint32_t a, uint32_t b) { return __umulhi(a, b); }
+__device__ __forceinline__ uint32_t umin32(uint32_t a, uint32_t b) { return a < b ? a : b; }
+__device__ __forceinline__ uint32_t bswap32(uint32_t a) { return __byte_perm(a, 0, 0x0123); }
+
+__constant__ uint32_t c_kawpow[15] = {0x72, 0x41, 0x56, 0x45, 0x4E, 0x43, 0x4F, 0x49, 0x4E, 0x4B, 0x41, 0x57, 0x50, 0x4F, 0x57};
+
+// keccak-512 of one 64-byte block (the ethash cache and dataset item hash):
+// rate 72 bytes, original keccak padding 0x01 ... 0x80, little-endian lanes.
+__device__ __forceinline__ void keccak512_64(uint32_t w[16]) {
+    uint64_t st[25];
+    for (int i = 0; i < 8; ++i) st[i] = ((uint64_t)w[2 * i + 1] << 32) | (uint64_t)w[2 * i];
+    st[8] = 0x8000000000000001ull;
+    for (int i = 9; i < 25; ++i) st[i] = 0;
+    k1600::ethash_keccakf1600(st);
+    for (int i = 0; i < 8; ++i) { w[2 * i] = (uint32_t)st[i]; w[2 * i + 1] = (uint32_t)(st[i] >> 32); }
+}
+
+// Dataset generation: one thread per 512-bit item, from the light cache
+// (hash512 items as 16 words). Matches calculate_dataset_item_512 of the
+// vendored ethash.cpp; the ProgPoW 2048-bit item i is 512-bit items 4i..4i+3.
+extern "C" __global__ void dag_gen(const uint32_t* __restrict__ cache, uint32_t cache_items,
+                                   uint32_t* __restrict__ dag, uint32_t start, uint32_t count) {
+    const uint32_t i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= count) return;
+    const uint32_t idx = start + i;
+    uint32_t mix[16];
+    const uint32_t* src = cache + (uint64_t)(idx % cache_items) * 16;
+    for (int k = 0; k < 16; ++k) mix[k] = src[k];
+    mix[0] ^= idx;
+    keccak512_64(mix);
+    for (uint32_t j = 0; j < DATASET_PARENTS; ++j) {
+        const uint32_t t = fnv1(idx ^ j, mix[j & 15]);
+        const uint32_t parent = t % cache_items;
+        const uint32_t* p = cache + (uint64_t)parent * 16;
+        for (int k = 0; k < 16; ++k) mix[k] = fnv1(mix[k], p[k]);
+    }
+    keccak512_64(mix);
+    uint32_t* out = dag + (uint64_t)idx * 16;
+    for (int k = 0; k < 16; ++k) out[k] = mix[k];
+}
+
+// The search: 16 lanes (threads) per nonce, two nonces per warp. params holds
+// the 8 header words and the 8 target words (target as big-endian uint32 per
+// 4 bytes). count is in nonces; the tail is exact. results[0] is the number
+// of hits; entries of 18 words follow: nonce lo, nonce hi, mix[8], hash[8].
+#define RESULT_WORDS 18
+extern "C" __global__ void __launch_bounds__(256, 2)
+progpow_search(uint64_t start_nonce, uint32_t count, const uint4* __restrict__ dag, uint32_t dag_items_2048,
+               const uint32_t* __restrict__ params, uint32_t* __restrict__ results, uint32_t max_results) {
+    __shared__ uint32_t c_dag[L1_WORDS];
+    __shared__ uint32_t s_params[16];
+    const uint32_t* dag32 = (const uint32_t*)dag;
+    for (uint32_t i = threadIdx.x; i < L1_WORDS; i += blockDim.x) c_dag[i] = dag32[i];
+    if (threadIdx.x < 16) s_params[threadIdx.x] = params[threadIdx.x];
+    __syncthreads();
+
+    const uint32_t lane_id = threadIdx.x & 15;
+    const uint32_t gid = (blockIdx.x * blockDim.x + threadIdx.x) >> 4;
+    const uint32_t mask = (threadIdx.x & 16) ? 0xFFFF0000u : 0x0000FFFFu;
+    if (gid >= count) return;  // uniform per 16-lane group
+    const uint64_t nonce = start_nonce + (uint64_t)gid;
+
+    uint32_t st[25];
+    for (int i = 0; i < 8; ++i) st[i] = s_params[i];
+    st[8] = (uint32_t)nonce;
+    st[9] = (uint32_t)(nonce >> 32);
+#if PROGPOW_EPIC
+    for (int i = 10; i < 25; ++i) st[i] = 0u;  // pp_light keccak_f800: header, the 64-bit nonce, eight zero result words, zero padding
+#else
+    for (int i = 10; i < 25; ++i) st[i] = c_kawpow[i - 10];
+#endif
+    k800::ethash_keccakf800(st);
+    uint32_t state2[8];
+    for (int i = 0; i < 8; ++i) state2[i] = st[i];
+#if PROGPOW_EPIC
+    // seed = bswap32(st[0]) << 32 | bswap32(st[1]); the rng from lo32(seed) then hi32(seed)
+    const uint32_t seed_lo = bswap32(state2[1]), seed_hi = bswap32(state2[0]);
+#endif
+
+    uint32_t mix[PROGPOW_REGS];
+    {
+        kiss99_t r;
+#if PROGPOW_EPIC
+        r.z = fnv1a(FNV_OFFSET, seed_lo);
+        r.w = fnv1a(r.z, seed_hi);
+#else
+        r.z = fnv1a(FNV_OFFSET, state2[0]);
+        r.w = fnv1a(r.z, state2[1]);
+#endif
+        r.jsr = fnv1a(r.w, lane_id);
+        r.jcong = fnv1a(r.jsr, lane_id);
+        for (int i = 0; i < PROGPOW_REGS; ++i) mix[i] = kiss99(r);
+    }
+
+    uint32_t data32, off;
+#pragma unroll 1
+    for (uint32_t r = 0; r < 64; ++r) {
+        const uint32_t idx = __shfl_sync(mask, mix[0], r & 15, 16) % dag_items_2048;
+        const uint4 data = dag[(uint64_t)idx * 16 + ((lane_id ^ r) & 15)];
+        PROGPOW_PROGRAM
+    }
+
+    uint32_t lane_hash = FNV_OFFSET;
+    for (int i = 0; i < PROGPOW_REGS; ++i) lane_hash = fnv1a(lane_hash, mix[i]);
+    uint32_t mix_hash[8];
+    for (int w = 0; w < 8; ++w)
+        mix_hash[w] = fnv1a(fnv1a(FNV_OFFSET, __shfl_sync(mask, lane_hash, w, 16)), __shfl_sync(mask, lane_hash, w + 8, 16));
+
+#if PROGPOW_EPIC
+    // final: keccak_f800(header, seed, mix): the header words, the 64-bit seed, the eight mix words, zero padding
+    for (int i = 0; i < 8; ++i) st[i] = s_params[i];
+    st[8] = seed_lo; st[9] = seed_hi;
+    for (int i = 10; i < 18; ++i) st[i] = mix_hash[i - 10];
+    for (int i = 18; i < 25; ++i) st[i] = 0u;
+#else
+    for (int i = 0; i < 8; ++i) st[i] = state2[i];
+    for (int i = 8; i < 16; ++i) st[i] = mix_hash[i - 8];
+    for (int i = 16; i < 25; ++i) st[i] = c_kawpow[i - 16];
+#endif
+    k800::ethash_keccakf800(st);
+
+    // final <= target as 256-bit big-endian integers
+    bool le = true;
+    for (int i = 0; i < 8; ++i) {
+        const uint32_t a = bswap32(st[i]);
+        const uint32_t b = s_params[8 + i];
+        if (a < b) { le = true; break; }
+        if (a > b) { le = false; break; }
+    }
+    if (le && lane_id == 0) {
+        const uint32_t slot = atomicAdd(&results[0], 1u);
+        if (slot < max_results) {
+            uint32_t* e = results + 1 + slot * RESULT_WORDS;
+            e[0] = (uint32_t)nonce;
+            e[1] = (uint32_t)(nonce >> 32);
+            for (int i = 0; i < 8; ++i) e[2 + i] = mix_hash[i];
+            for (int i = 0; i < 8; ++i) e[10 + i] = st[i];
+        }
+    }
+}

@@ -1,0 +1,163 @@
+// Copyright 2020 The go-ethereum Authors
+// This file is part of the go-ethereum library.
+//
+// The go-ethereum library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The go-ethereum library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+
+package eth
+
+import (
+	"fmt"
+	"math/big"
+	"time"
+
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/eth/protocols/eth"
+	"github.com/ethereum/go-ethereum/p2p/enode"
+)
+
+// ethHandler implements the eth.Backend interface to handle the various network
+// packets that are sent as replies or broadcasts.
+type ethHandler handler
+
+func (h *ethHandler) Chain() *core.BlockChain { return h.chain }
+func (h *ethHandler) TxPool() eth.TxPool      { return h.txpool }
+
+// ShareFormAt is the chain's carried-list form at a height for the NewBlock
+// screen (F-191's residual, 16 October 2026): the engine's own reading, so
+// the wire and the import name one form.
+func (h *ethHandler) ShareFormAt(height uint64) (types.ShareListForm, bool) {
+	return core.ShareFormAt(h.chain.Engine(), height)
+}
+
+// RunPeer is invoked when a peer joins on the `eth` protocol.
+func (h *ethHandler) RunPeer(peer *eth.Peer, hand eth.Handler) error {
+	return (*handler)(h).runEthPeer(peer, hand)
+}
+
+// PeerInfo retrieves all known `eth` information about a peer.
+func (h *ethHandler) PeerInfo(id enode.ID) interface{} {
+	if p := h.peers.peer(id.String()); p != nil {
+		return p.info()
+	}
+	return nil
+}
+
+// AcceptTxs retrieves whether transaction processing is enabled on the node
+// or if inbound transactions should simply be dropped.
+func (h *ethHandler) AcceptTxs() bool {
+	return h.synced.Load()
+}
+
+// Handle is invoked from a peer's message handler when it receives a new remote
+// message that the handler couldn't consume and serve itself.
+func (h *ethHandler) Handle(peer *eth.Peer, packet eth.Packet) error {
+	// Consume any broadcasts and announces, forwarding the rest to the downloader
+	switch packet := packet.(type) {
+	case *eth.NewBlockHashesPacket:
+		hashes, numbers := packet.Unpack()
+		return h.handleBlockAnnounces(peer, hashes, numbers)
+
+	case *eth.NewBlockPacket:
+		return h.handleBlockBroadcast(peer, packet.Block, packet.TD)
+
+	case *eth.NewPooledTransactionHashesPacket:
+		return h.txFetcher.Notify(peer.ID(), packet.Types, packet.Sizes, packet.Hashes)
+
+	case *eth.TransactionsPacket:
+		txs, err := packet.Items()
+		if err != nil {
+			return fmt.Errorf("Transactions: %v", err)
+		}
+		if err := handleTransactions(peer, txs, true); err != nil {
+			return fmt.Errorf("Transactions: %v", err)
+		}
+		return h.txFetcher.Enqueue(peer.ID(), txs, false)
+
+	case *eth.PooledTransactionsPacket:
+		txs, err := packet.List.Items()
+		if err != nil {
+			return fmt.Errorf("PooledTransactions: %v", err)
+		}
+		if err := handleTransactions(peer, txs, false); err != nil {
+			return fmt.Errorf("PooledTransactions: %v", err)
+		}
+		return h.txFetcher.Enqueue(peer.ID(), txs, true)
+
+	default:
+		return fmt.Errorf("unexpected eth packet type: %T", packet)
+	}
+}
+
+// handleTransactions marks all given transactions as known to the peer
+// and performs basic validations.
+func handleTransactions(peer *eth.Peer, list []*types.Transaction, directBroadcast bool) error {
+	seen := make(map[common.Hash]struct{})
+	for _, tx := range list {
+
+		// Check for duplicates.
+		hash := tx.Hash()
+		if _, exists := seen[hash]; exists {
+			return fmt.Errorf("multiple copies of the same hash %v", hash)
+		}
+		seen[hash] = struct{}{}
+
+		// Mark as known.
+		peer.MarkTransaction(hash)
+	}
+	return nil
+}
+
+// handleBlockAnnounces is invoked from a peer's message handler when it transmits a
+// batch of block announcements for the local node to process.
+func (h *ethHandler) handleBlockAnnounces(peer *eth.Peer, hashes []common.Hash, numbers []uint64) error {
+	// Schedule all the unknown hashes for retrieval
+	var (
+		unknownHashes  = make([]common.Hash, 0, len(hashes))
+		unknownNumbers = make([]uint64, 0, len(numbers))
+	)
+	for i := 0; i < len(hashes); i++ {
+		if !h.chain.HasBlock(hashes[i], numbers[i]) {
+			unknownHashes = append(unknownHashes, hashes[i])
+			unknownNumbers = append(unknownNumbers, numbers[i])
+		}
+	}
+	for i := 0; i < len(unknownHashes); i++ {
+		h.blockFetcher.Notify(peer.ID(), unknownHashes[i], unknownNumbers[i], time.Now(), peer.RequestOneHeader, peer.RequestBodies)
+	}
+	return nil
+}
+
+// handleBlockBroadcast is invoked from a peer's message handler when it transmits a
+// block broadcast for the local node to process.
+func (h *ethHandler) handleBlockBroadcast(peer *eth.Peer, block *types.Block, td *big.Int) error {
+	// Schedule the block for import
+	// F-205: the pushing peer's request functions go with the block, so it
+	// is its own requester for a parent its push provokes.
+	h.blockFetcher.EnqueueWith(peer.ID(), block, peer.RequestOneHeader, peer.RequestBodies)
+
+	// Assuming the block is importable by the peer, but possibly not yet done so,
+	// calculate the head hash and TD that the peer truly must have.
+	var (
+		trueHead = block.ParentHash()
+		trueTD   = new(big.Int).Sub(td, block.Difficulty())
+	)
+	// Update the peer's total difficulty if better than the previous
+	if _, td, _ := peer.Head(); trueTD.Cmp(td) > 0 {
+		peer.SetHead(trueHead, trueTD, block.Difficulty())
+		h.chainSync.handlePeerEvent()
+	}
+	return nil
+}

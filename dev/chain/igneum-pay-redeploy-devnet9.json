@@ -1,0 +1,29 @@
+{
+ "chain_id": 7319,
+ "genesis": "0xeae5e6083195fe58658b1f13771362b19a38a0bffb5c8808d458993ee9f54ea1",
+ "commit": "22d2e815",
+ "deployer": "0x72d1f19224f092F6B2ea1c5dc09Fa1B7492A3B56",
+ "reason": "evm-pay's F-12 (the native push forwarded all but a 64th of the gas, a burning payee reverting the whole pay below about 5.2 M gas); the project's word of 12 October 2026: redeploy at the fixed commit as a new set beside the old",
+ "IgneumPay": {
+  "address": "0xbdb2f735a78c9aaf190f3010a70d654245050140",
+  "deploy_tx": "0x6ab6d74d5f9af23fb0e5ef6486d9edb6f6602ba3b8fd07653fcc99f30648e818",
+  "block": 1334
+ },
+ "IgneumRecurring": {
+  "address": "0x1407edb45e98caa3ce5a7918c6d112b6569d02ba",
+  "deploy_tx": "0x4a5e32071cd1ecd21714049fa3f0d25a12c486c7c9ce0b705d3487e16263afca",
+  "block": 1335
+ },
+ "IgneumEscrow": {
+  "address": "0xfa4d6cf9d47d5c0735a984df8648c08bb1398bc9",
+  "deploy_tx": "0xf4dbd05c6c55191a9b87e2c39665eee31cb8d4b96cc7eddeb59deec2f2905c10",
+  "block": 1336
+ },
+ "superseded": {
+  "IgneumPay": "0x750EaaBdf51eeEe522713c12aDe95fE4bAe6d59A",
+  "IgneumRecurring": "0x142D218CCF2D20E57cC2FdF56F2616D25C20ad60",
+  "IgneumEscrow": "0xA02f16323063c792D128F24853E81eB47201e658"
+ },
+ "compiler": "solc 0.8.28, evm cancun, optimizer 10,000 runs, via_ir false, bytecode_hash none (contracts/foundry.toml)",
+ "verification": "each verified on the explorer by the team's submission (the explorer reads all three verified; its API answered 502 for a quarter hour while reliability moved its backend to a paced reader); the deployed bytecode against the build's over the public RPC: IgneumRecurring and IgneumEscrow equal byte for byte, IgneumPay equal but for its EIP-712 immutables"
+}

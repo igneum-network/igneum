@@ -1,0 +1,8 @@
+# upstream: https://github.com/tari-project/tari
+# commit: 463e53d372ce296b2eb1853b9b53d1ab77e1bc87
+# licence: BSD-3-Clause (LICENSE)
+# vendored unchanged (the in-house rule's named-source form); verify: fetch.sh cuckaroo29-tari-463e53d re-fetches and checks every blob sha
+LICENSE 66d64a264e9049bf8c2cc7f52bc7378f07fffa41 1536
+base_layer/core/src/proof_of_work/cuckaroo_pow.rs cb4f481ad0ab9bc8152433e93712437720238632 70134
+base_layer/core/src/proof_of_work/siphash.rs 6e9bb6e994099a5cd5fd0cc77068787a8b62db72 4865
+base_layer/core/src/proof_of_work/mod.rs 859883c619b84ea4ae6ff2cb26c614b264991473 2502

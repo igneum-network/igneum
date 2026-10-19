@@ -1,0 +1,41 @@
+# money-vault-policy-complete-v1 (kind 8): after the recovery delay, the announced policy replaces the old
+# one, whose hash is revealed into the revoked set. Public: DOMAIN [chain_id, 8, 0, 0], ANCHOR, NF_HEAD,
+# CM_HEAD_OUT, OLD_POLICY_HASH, HT = [h_now, t_now, 0, 0].
+# Advice, in the order read: the six public words; the old policy's eight words; NK_V; head_in (V, VID, IDX,
+# SPENT, RECH, R, pos); the new policy's eight words; head_out's R.
+# The circuit: the old policy hashes to the revealed word and is the head's; a recovery is pending and the
+# new policy hashes to it; h_now >= rec_h + R_b and t_now >= rec_t + R_s; head_out under the new policy with
+# period h_now / P_new, spent 0, no recovery pending. No secret authorises: anyone holding the viewing key.
+begin
+    padw adv_loadw mem_storew_le.0
+    padw adv_loadw mem_storew_le.4 swapw hmerge
+    padw adv_loadw mem_storew_le.8 swapw hmerge
+    padw adv_loadw mem_storew_le.12 swapw hmerge
+    padw adv_loadw mem_storew_le.16 swapw hmerge
+    padw adv_loadw mem_storew_le.20 swapw hmerge
+    dupw.1 assert_eqw
+    mem_load.1 push.8 assert_eq
+    padw mem_loadw_le.20 u32assertw dropw
+    exec.read_policy
+    push.100 exec.hash_policy
+    padw mem_loadw_le.132 padw mem_loadw_le.16 assert_eqw
+    padw adv_loadw mem_storew_le.176 dropw
+    exec.check_nk_field
+    exec.open_head
+    padw mem_loadw_le.160 exec.word_is_zero not assert
+    exec.read_new_policy
+    push.300 exec.hash_policy
+    padw mem_loadw_le.332 padw mem_loadw_le.160 assert_eqw
+    mem_load.20 mem_load.153 mem_load.124 add gte assert
+    mem_load.21 mem_load.154 mem_load.125 add gte assert
+    push.180 push.140 exec.copy_word
+    push.184 push.144 exec.copy_word
+    push.188 push.332 exec.copy_word
+    push.192 exec.zero_word
+    mem_load.20 mem_load.318 u32div mem_store.192
+    push.196 exec.zero_word
+    push.200 exec.zero_word
+    padw adv_loadw mem_storew_le.204 dropw
+    push.180 exec.hash_head
+    padw mem_loadw_le.208 padw mem_loadw_le.12 assert_eqw
+end

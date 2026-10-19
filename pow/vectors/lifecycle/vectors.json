@@ -1,0 +1,714 @@
+{
+  "rule": "the lifecycle menu (ENVELOPE-R0A-v0.md sections 9.1 and 9.2): Validate, At, Next, ValidateUpgrade; a vector gives the held schedule, optionally a given one with the head it is given at; valid_schedule is the HELD schedule's validity; upgrade_admitted is Validate(given) and ValidateUpgrade(held, given, head) both passing; At and Next are the held schedule's by height",
+  "vectors": [
+    {
+      "name": "launch shape: two disabled successors never in force",
+      "held": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 128,
+              "cache_mib": 1
+            },
+            "enabled": false,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 200000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "hold": true
+        },
+        "activationWindow": 4096
+      },
+      "head": 0,
+      "valid_schedule": true,
+      "at": {
+        "0": "base",
+        "100000": "base",
+        "1099511627776": "base",
+        "150000": "base",
+        "200000": "base",
+        "99999": "base"
+      },
+      "next": {
+        "0": "",
+        "100000": "",
+        "1099511627776": "",
+        "150000": "",
+        "200000": "",
+        "99999": ""
+      }
+    },
+    {
+      "name": "successor-a enabled: in force from its height, held through the disabled one",
+      "held": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 128,
+              "cache_mib": 1
+            },
+            "enabled": true,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 200000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "hold": true
+        },
+        "activationWindow": 4096
+      },
+      "head": 0,
+      "valid_schedule": true,
+      "at": {
+        "0": "base",
+        "100000": "successor-a",
+        "1099511627776": "successor-a",
+        "150000": "successor-a",
+        "200000": "successor-a",
+        "99999": "base"
+      },
+      "next": {
+        "0": "successor-a",
+        "100000": "",
+        "1099511627776": "",
+        "150000": "",
+        "200000": "",
+        "99999": "successor-a"
+      }
+    },
+    {
+      "name": "enable two windows ahead: admitted",
+      "held": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 128,
+              "cache_mib": 1
+            },
+            "enabled": false,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 200000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "hold": true
+        },
+        "activationWindow": 4096
+      },
+      "given": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 128,
+              "cache_mib": 1
+            },
+            "enabled": true,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 200000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "hold": true
+        },
+        "activationWindow": 4096
+      },
+      "head": 91808,
+      "valid_schedule": true,
+      "upgrade_admitted": true
+    },
+    {
+      "name": "enable inside two windows: refused",
+      "held": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 128,
+              "cache_mib": 1
+            },
+            "enabled": false,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 200000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "hold": true
+        },
+        "activationWindow": 4096
+      },
+      "given": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 128,
+              "cache_mib": 1
+            },
+            "enabled": true,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 200000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "hold": true
+        },
+        "activationWindow": 4096
+      },
+      "head": 91809,
+      "valid_schedule": true,
+      "upgrade_admitted": false
+    },
+    {
+      "name": "a row in force rewritten: refused",
+      "held": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 128,
+              "cache_mib": 1
+            },
+            "enabled": true,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 200000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "hold": true
+        },
+        "activationWindow": 4096
+      },
+      "given": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 16,
+              "cache_mib": 1
+            },
+            "enabled": true,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 200000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "hold": true
+        },
+        "activationWindow": 4096
+      },
+      "head": 150000,
+      "valid_schedule": true,
+      "upgrade_admitted": false
+    },
+    {
+      "name": "a row inside the previous row's minimum lifetime: not a valid schedule",
+      "held": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 128,
+              "cache_mib": 1
+            },
+            "enabled": false,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 120000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "hold": true
+        },
+        "activationWindow": 4096
+      },
+      "head": 0,
+      "valid_schedule": false
+    },
+    {
+      "name": "an end introduced two windows ahead: admitted",
+      "held": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 128,
+              "cache_mib": 1
+            },
+            "enabled": true,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 200000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "hold": true
+        },
+        "activationWindow": 4096
+      },
+      "given": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 128,
+              "cache_mib": 1
+            },
+            "enabled": true,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 200000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "endHeight": 260000
+        },
+        "activationWindow": 4096
+      },
+      "head": 100000,
+      "valid_schedule": true,
+      "upgrade_admitted": true
+    },
+    {
+      "name": "an end introduced inside two windows: refused",
+      "held": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 128,
+              "cache_mib": 1
+            },
+            "enabled": true,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 200000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "hold": true
+        },
+        "activationWindow": 4096
+      },
+      "given": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 128,
+              "cache_mib": 1
+            },
+            "enabled": true,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 200000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "endHeight": 260000
+        },
+        "activationWindow": 4096
+      },
+      "head": 259000,
+      "valid_schedule": true,
+      "upgrade_admitted": false
+    },
+    {
+      "name": "an end moved from beyond the margin to inside it: refused (the given schedule also ends before its final row)",
+      "held": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 128,
+              "cache_mib": 1
+            },
+            "enabled": true,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 200000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "endHeight": 260000
+        },
+        "activationWindow": 4096
+      },
+      "given": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 128,
+              "cache_mib": 1
+            },
+            "enabled": true,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 200000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "endHeight": 141000
+        },
+        "activationWindow": 4096
+      },
+      "head": 140000,
+      "valid_schedule": true,
+      "upgrade_admitted": false
+    },
+    {
+      "name": "an end removed from beyond the margin: admitted",
+      "held": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 128,
+              "cache_mib": 1
+            },
+            "enabled": true,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 200000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "endHeight": 260000
+        },
+        "activationWindow": 4096
+      },
+      "given": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 128,
+              "cache_mib": 1
+            },
+            "enabled": true,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 200000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "hold": true
+        },
+        "activationWindow": 4096
+      },
+      "head": 100000,
+      "valid_schedule": true,
+      "upgrade_admitted": true
+    },
+    {
+      "name": "an end inside the margin moved out: refused (the held schedule ends before its final row)",
+      "held": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 128,
+              "cache_mib": 1
+            },
+            "enabled": true,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 200000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "endHeight": 141000
+        },
+        "activationWindow": 4096
+      },
+      "given": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 128,
+              "cache_mib": 1
+            },
+            "enabled": true,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 200000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "endHeight": 260000
+        },
+        "activationWindow": 4096
+      },
+      "head": 140000,
+      "valid_schedule": false,
+      "upgrade_admitted": false
+    },
+    {
+      "name": "a development schedule (no window): any change admitted",
+      "held": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 128,
+              "cache_mib": 1
+            },
+            "enabled": false,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 200000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "hold": true
+        },
+        "activationWindow": 4096
+      },
+      "given": {
+        "entries": [
+          {
+            "name": "successor-a",
+            "height": 100000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 128,
+              "cache_mib": 1
+            },
+            "enabled": false,
+            "minLifetime": 50000
+          },
+          {
+            "name": "successor-b",
+            "height": 200000,
+            "algorithmParams": {
+              "version": 1,
+              "rounds": 32,
+              "cache_mib": 1
+            },
+            "enabled": false
+          }
+        ],
+        "terminal": {
+          "hold": true
+        }
+      },
+      "head": 199999,
+      "valid_schedule": true,
+      "upgrade_admitted": true
+    }
+  ]
+}

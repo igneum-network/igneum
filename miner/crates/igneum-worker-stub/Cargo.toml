@@ -1,0 +1,15 @@
+[package]
+name = "igneum-worker-stub"
+description = "A protocol-complete worker with a placeholder hash and a simulated device; no card is mined"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "igneum-worker-stub"
+path = "src/main.rs"
+
+[dependencies]
+igneum-worker-proto = { workspace = true }
+serde_json = { workspace = true }
+sha2 = { workspace = true }

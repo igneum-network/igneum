@@ -1,0 +1,13 @@
+{
+  "candidate": "rxe1",
+  "class": "tails",
+  "generator": "ignpow abi 0 build 55724128; kawpow-0.9.4 = ravencoin-ethash@22549129 (v4.8.0, progpow 0.9.4, epoch 7500); autolykos-2 = ergo v6.0.7 AutolykosPowScheme (k 32, n 26, in-house BLAKE2b); igneumhash = IgneumHash-R0A versions 0 and 1 (SPEC-R0A-v0.md revision 0.4) and the R0B schedule version 2 (SPEC-R0B-schedule-v0.md), BLAKE3 1.8.2 portable; rxe1 = RXE1 experimental family (SPEC-TEXT-v0.1.md sections 6 to 8; dataset: the R0A v1 builder; BLAKE3 1.8.2 portable); compactproof = compact-proof research reference (MTP framework over DRSample; Blocki and Smearsoll 2025 modifications UNREAD; BLAKE3 1.8.2 portable); forgeb1 = Forge F1 under B1 (F1-B1.md text revision 2: DRSample and DRS+BRG topologies, keyed labels, the commitment, the MTP-shaped proof; BLAKE3 1.8.2 portable)",
+  "seed": "20261009",
+  "params": {"schema": 5, "mode": 3, "blocks": 1, "rounds": 64, "registers": 8, "group": 16, "route": 1, "chunks": 1, "payload_bytes": 128, "dataset_bytes": 0, "chain_id": 7310, "epoch_blocks": 4096},
+  "count": 3,
+  "vectors": [
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "nonce_count": "4099", "share_target": "0010000000000000000000000000000000000000000000000000000000000000", "min_nonce": "4312426439069538497", "min_hash": "0008a2327ccfddf3eb8554cf12c636289867c638be5c15455a1ab14d10e874c8", "shares": "2"},
+    {"height": 1, "header": "d3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe9f", "nonce": "16694384672230919977", "nonce_count": "65537", "share_target": "0010000000000000000000000000000000000000000000000000000000000000", "min_nonce": "16694384672230977944", "min_hash": "00005e1b317023fca3fbb3a37254c7796eb59e6b7dc35fc8bf2243c83de02446", "shares": "18"},
+    {"height": 1, "header": "16e8c8d581c0442b834c470fbd46b9a9c065da7ce0365d40e07bd7f4a1aca153", "nonce": "381917788026542773", "nonce_count": "1000003", "share_target": "0010000000000000000000000000000000000000000000000000000000000000", "min_nonce": "381917788027235366", "min_hash": "000009150638454b035e0e574de39f7caed5afc5502f4019354be34b7a158cae", "shares": "231"}
+  ]
+}

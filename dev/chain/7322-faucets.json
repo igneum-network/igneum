@@ -1,0 +1,36 @@
+{
+ "DevFaucet": {
+  "address": "0x93482fa8a07bba7d3cc33058dd4f51a8a30a66b4",
+  "deploy_tx": "0x3d7cf041388ed05945d22c058c155031c2d52e3d6d15ed5df09e7fca50a4fa90",
+  "block": 207,
+  "args": "25000000000000000000 86400 5000000000000000000000",
+  "rule": "25 test IGN an address a day (a day's cooldown per address), a 5,000 IGN daily cap; the same rule as chain 7320's (the project's word, 15 October 2026 18:4x UK)"
+ },
+ "BondFaucet": {
+  "address": "0xf7649aaa2999402d69444470c5b56d136b1365cb",
+  "deploy_tx": "0xd8c55ef851b0a6b95d08ca2091c6070de00a0c872049e18f4d8bd690a2967e86",
+  "block": 208,
+  "args": "87000000000000000000 1740000000000000000000",
+  "rule": "87 IGN (a bond's worth and the fee) once per key and per address, twenty keys a day; the same as chain 7320's"
+ },
+ "commit": "dad9028f5",
+ "deployer": "0x72d1f19224f092F6B2ea1c5dc09Fa1B7492A3B56",
+ "deployer_note": "the kit deployer at nonces 0 and 1 on 7322, so the two addresses equal chain 7320's (the same deployer, the same nonces, the same bytecode); chain 7320's contracts at these addresses are a different chain's",
+ "chain_id": 7322,
+ "relayer": "0x13c4b67a57bf69ce7dfac20c7b3fb5022d9d183c",
+ "relayer_balance_ign": "1000.000000000000000000",
+ "chain": "the public test network (chain 7322)",
+ "genesis": "0x45828a34b05153fd2a9d0b7c49e84ec2289c38dd2f8c755729321e4f9c2236ea",
+ "network_id": 7394,
+ "rpc": "https://rpc12.igneum.network (7322's own public host from step one of the swap; the deploys and the funding sent through it)",
+ "funding": {
+  "from": "0x8EfB30577370A071D77c63f3BaB7Da0A7af96bE0",
+  "deployer_50_ign": "0x05f187a1b3ef73ac691b81e9047b378c209a74b76c492236d2c5aed529c08a8e",
+  "dev_faucet_175000_ign": "0xfa7e36c1c8ced913a6a8ae997b3822732a51943878a495b60b131b42acff4dd8",
+  "bond_faucet_2000_ign": "0x62f72532b4cbf2d7cba36cbe33f1203838149588f0e79948496ac06d48abc8bf",
+  "relayer_1000_ign": "0x392e59f4836946ec8d206cec35b964674ad522af84ff587c39f47db308f5c989",
+  "balances_read_after": "the DevFaucet 175,000 IGN, the BondFaucet 2,000 IGN, the relayer 1,000 IGN at head 212",
+  "at_utc": "2026-10-15T17:51Z to 17:53Z"
+ },
+ "relay": "https://faucet.igneum.network and https://build.igneum.network/faucet (POST / {address}, GET /state, POST /bond; the old /devnet9/faucet an alias for the shipped wallets): re-pointed to 7322 on 16 October 2026 at 08:39:01Z (reliability's drop-in: FAUCET_RPC the archive reader A12 on the build mesh, the public name rpc12 on /state; the key file and vault untouched); the first public drip on 7322 proven from outside at 09:39:42 UK: tx 0x49a03bc05390e998281c05050446402314f1b3577426b5907d31f18f19df1e9b in block 1765, status 0x1, 25 IGN to 0x1111111111111111111111111111111111111111"
+}

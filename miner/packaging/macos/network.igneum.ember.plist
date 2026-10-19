@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>network.igneum.ember</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>@OPT@/ember</string>
+    <string>mine</string>
+    <string>--config</string>
+    <string>@CONF@</string>
+    <string>--every</string>
+    <string>30</string>
+  </array>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>IGNEUM_WORKER_CACHE</key>
+    <string>@STATE@/worker-cache</string>
+    <key>IGNEUM_DEV_UNCHECKED_WORKERS</key>
+    <string>0</string>
+  </dict>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ThrottleInterval</key>
+  <integer>30</integer>
+  <key>ProcessType</key>
+  <string>Background</string>
+  <key>Nice</key>
+  <integer>5</integer>
+  <key>StandardOutPath</key>
+  <string>@STATE@/ember.log</string>
+  <key>StandardErrorPath</key>
+  <string>@STATE@/ember.log</string>
+</dict>
+</plist>

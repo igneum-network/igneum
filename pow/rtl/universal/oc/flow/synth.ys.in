@@ -1,0 +1,15 @@
+# Synthesis of the operand collector with yosys and abc on one library (the distribution's yosys suffices here):
+# generic synthesis; the enable and synchronous-reset flops legalised to plain D flops (ASAP7 has no enable flop);
+# the logic mapped by abc before the flops so the register names survive; the flops mapped to the library (the
+# flop-output inverters this leaves as assignments are instanced by flow/fixnet.py); the area and cell counts by stat.
+# usage: flow/synth.sh writes the concrete script from this template.
+read_verilog rtl/oc.v
+hierarchy -check -top oc
+synth -top oc -flatten
+dfflegalize -cell $_DFF_P_ 01
+@READ_LIBERTY@
+abc @LIBERTY_ARGS@
+dfflibmap @LIBERTY_ARGS@
+opt_clean -purge
+tee -o @OUT@.stat.txt stat @LIBERTY_ARGS@
+write_verilog -noattr @OUT@.netlist.v

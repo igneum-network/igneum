@@ -1,0 +1,43 @@
+{
+ "contract": "IgneumFund",
+ "address": "0xE54CE7E3b2c93a4D87aBcE7D3853C02BB3BAAf14",
+ "chain_id": 7319,
+ "genesis": "0xeae5e6083195fe58658b1f13771362b19a38a0bffb5c8808d458993ee9f54ea1",
+ "commit": "02883c2e04e1689d5c25db7b5253cbe19ad708bf",
+ "deploy_tx": "0x948cc3a0621ba2eea4a12d60c686cc31c8fd0b17f2dc7fbd8ad510000a5d03b6",
+ "balance_wei_after_credit": 1000000000000000000,
+ "signers": [
+  {
+   "address": "0xF9BCcAcE16656dd38Ae3Cbc7d3cdB376ba002667",
+   "company_connected": true
+  },
+  {
+   "address": "0xe388E024711CF2876f632147B74Fa27E64912883",
+   "company_connected": true
+  },
+  {
+   "address": "0xd610837136B5Ed30B6661A91110EBDC3b2210FE9",
+   "company_connected": true
+  },
+  {
+   "address": "0xdbD8C77004A8a2248b277Ca9ef7e0BaCfaF247BB",
+   "company_connected": false
+  },
+  {
+   "address": "0x50eB51d78a6e0A3805Fc7303cE74b2f229ABF5Dd",
+   "company_connected": false
+  },
+  {
+   "address": "0xA31F4bEB65585a495A40faC2aaE875EdbB356230",
+   "company_connected": false
+  },
+  {
+   "address": "0x7F65E622070e1a8f61aa9D4D9eFDAFd39B865D72",
+   "company_connected": false
+  }
+ ],
+ "placeholder_set": true,
+ "mandate": "docs/igneumhash/FUND-MANDATE-2026-10-11.md section 5",
+ "note": "the placeholder set the founder replaces by his named seven; the fund spends nothing until the set is published; the genesis config's fund address is the launch chain's deployment, not this one",
+ "commit_note": "the source at main cd1bc4c8 (fb6764bb carries the company-payee rule and the migrate path); the placeholder set (three flagged) stands until the founder's seven names; deployed by a raw create with a gas limit"
+}

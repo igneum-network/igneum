@@ -1,0 +1,13 @@
+{
+  "candidate": "igneumhash",
+  "class": "tails",
+  "generator": "ignpow abi 0 build ddc50926; kawpow-0.9.4 = ravencoin-ethash@22549129 (v4.8.0, progpow 0.9.4, epoch 7500); autolykos-2 = ergo v6.0.7 AutolykosPowScheme (k 32, n 26, in-house BLAKE2b); igneumhash = IgneumHash-R0A v0 (SPEC-R0A-v0.md revision 0.2, BLAKE3 1.8.2 portable)",
+  "seed": "20261009",
+  "params": {"version": 0, "dataset_mib": 512, "scratch_kib": 64, "rounds": 64, "lanes": 8, "epoch_blocks": 4096, "item_chain": 1, "chain_id": 7310},
+  "count": 3,
+  "vectors": [
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "nonce_count": "4099", "share_target": "0010000000000000000000000000000000000000000000000000000000000000", "min_nonce": "4312426439069539618", "min_hash": "00032c4e84dcc427823e4040b7da441053b1dc1e7660319342cf4fd5138422b9", "shares": "1"},
+    {"height": 1, "header": "d3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe9f", "nonce": "16694384672230919977", "nonce_count": "65537", "share_target": "0010000000000000000000000000000000000000000000000000000000000000", "min_nonce": "16694384672230929828", "min_hash": "000032df4db474b479bb5c295f7cb6f41935701937040534769d94de816e51ca", "shares": "21"},
+    {"height": 1, "header": "16e8c8d581c0442b834c470fbd46b9a9c065da7ce0365d40e07bd7f4a1aca153", "nonce": "381917788026542773", "nonce_count": "1000003", "share_target": "0010000000000000000000000000000000000000000000000000000000000000", "min_nonce": "381917788027463443", "min_hash": "00001a4998d385fddcc4caa14afbbf9ab396ee57037ead29841818e119627be5", "shares": "238"}
+  ]
+}

@@ -1,0 +1,47 @@
+{
+ "contract": "IgneumFund",
+ "address": "0xDC251E18eD87248B255B46F503e60A770b3DF9D3",
+ "chain_id": 7317,
+ "genesis": "0xb47f1cc6f3bd46ac0c414a0b02a712c9d2ec421d8c2b14b045a7df969c9dc51b",
+ "commit": "the migrate-path landing on product-b/design (the builder tree held the files unlanded at deployment; the bytecode is the same source)",
+ "deploy_tx": "0x6c94bbc4f00e0e4f7fdf639b3a678cfbf73cfd5f5c592af32b0e820fd5cdaed9",
+ "balance_wei_after_credit": 1000000000000000000,
+ "signers": [
+  {
+   "address": "0x2E9F99255a97fa583f8A6F3dE3C31D117E68BabD",
+   "company_connected": true
+  },
+  {
+   "address": "0x540A02324A03F8711DA8a188a8A24b86f47ed8eb",
+   "company_connected": true
+  },
+  {
+   "address": "0x57ef4BA7eF39F99Ad9d8e1841E29f1C2860489F5",
+   "company_connected": true
+  },
+  {
+   "address": "0x074911863edd193B3a56E51bBc37f59c6abCa586",
+   "company_connected": false
+  },
+  {
+   "address": "0xDb96B1380db8D4d24f0b2c037100e872Ae2296E7",
+   "company_connected": false
+  },
+  {
+   "address": "0x21a5dD4e9473DaCc60cF4f134E29CF737D708ac5",
+   "company_connected": false
+  },
+  {
+   "address": "0x9ffAE95E00d195145d0a0973b97555682D6292eD",
+   "company_connected": false
+  }
+ ],
+ "placeholder_set": true,
+ "mandate": "docs/igneumhash/FUND-MANDATE-2026-10-11.md section 5",
+ "note": "the placeholder set the founder replaces by his named seven; the fund spends nothing until the set is published; the genesis config's fund address is the launch chain's deployment, not this one",
+ "supersedes": {
+  "address": "0x5aA23FcBf6859663a674c30A83D13b121667F60B",
+  "deploy_tx": "0x409d771a307f3f5811c9083e345e6516ec3824887ca3c4a9e667ba0c9fccd722",
+  "note": "the form before the migrate path (economics's read); its 1 IGN stays there, a devnet stand-in with no spend path by anyone but its placeholder set"
+ }
+}

@@ -1,0 +1,6 @@
+generated on builder-a at 2026-10-10T07:48:58Z UTC
+reference: ignpow abi 0 build 9a83756b; kawpow-0.9.4 = ravencoin-ethash@22549129 (v4.8.0, progpow 0.9.4, epoch 7500); autolykos-2 = ergo v6.0.7 AutolykosPowScheme (k 32, n 26, in-house BLAKE2b); igneumhash = IgneumHash-R0A versions 0 and 1 (SPEC-R0A-v0.md revision 0.4) and the R0B schedule version 2 (SPEC-R0B-schedule-v0.md), BLAKE3 1.8.2 portable
+seed: 20261009
+classes: all seven
+params: {"version":1,"dataset_mib":2048,"scratch_kib":8,"rounds":64,"cache_mib":32,"parents":256,"lanes":8,"epoch_blocks":4096,"chain_id":7310}
+reason: amendment A7 (the pad lever s8)

@@ -1,0 +1,6 @@
+{
+  "filter_paths": "lib|test",
+  "exclude_dependencies": true,
+  "detectors_to_exclude": "timestamp,low-level-calls,reentrancy-benign,reentrancy-events,solc-version,naming-convention,pragma",
+  "_why": "timestamp: expiries, deadlines and periods are timestamp comparisons by definition; low-level-calls: the native payouts are plain calls on purpose (a failed one is credited for a later claim); reentrancy-benign and reentrancy-events: every state-changing function is nonReentrant and state is written before the call, the credit after a failed call is the design. Everything else runs; a new finding is triaged in docs/product-b/RUNS.md before it is excluded."
+}

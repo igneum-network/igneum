@@ -1,0 +1,32 @@
+[package]
+name = "igneum-wallet-money"
+description = "Igneum Wallet, the Money shielded side as a library and a command-line tool: keys from one seed, notes sealed to an ML-KEM-768 address, scanning with a viewing key, backup words, the spend witness; independent of the node"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+# nothing in this workspace is published to a registry; the crates reference each other by path
+publish = false
+
+[lib]
+name = "igneum_wallet_money"
+path = "src/lib.rs"
+
+[[bin]]
+name = "igneum-money"
+path = "src/main.rs"
+
+[dependencies]
+# B, the chain's hash outside the circuit (BLAKE3); also the stand-in for H until the prover's in-circuit hash lands
+blake3 = { workspace = true }
+# the note encryption's KEM (FIPS 203 ML-KEM-768; libcrux, formally verified)
+libcrux-ml-kem = { workspace = true }
+# the AEAD under the KEM's shared secret (ChaCha20-Poly1305, RFC 8439; the signer's own line)
+chacha20poly1305 = { workspace = true }
+# the backup words (BIP-39, 24 words over the 32-byte seed, 8-bit checksum)
+bip39 = { workspace = true }
+zeroize = { workspace = true }
+rand_core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+clap = { workspace = true }

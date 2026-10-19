@@ -1,0 +1,161 @@
+{
+  "config": {
+    "networkId": 7310,
+    "chainId": 7310,
+    "supportedProtocolVersions": [
+      68
+    ],
+    "eip2FBlock": 0,
+    "eip7FBlock": 0,
+    "eip150Block": 0,
+    "eip155Block": 0,
+    "eip160Block": 0,
+    "eip161FBlock": 0,
+    "eip170FBlock": 0,
+    "eip140FBlock": 0,
+    "eip198FBlock": 0,
+    "eip211FBlock": 0,
+    "eip212FBlock": 0,
+    "eip213FBlock": 0,
+    "eip214FBlock": 0,
+    "eip658FBlock": 0,
+    "eip145FBlock": 0,
+    "eip1014FBlock": 0,
+    "eip1052FBlock": 0,
+    "eip152FBlock": 0,
+    "eip1108FBlock": 0,
+    "eip1344FBlock": 0,
+    "eip1884FBlock": 0,
+    "eip2028FBlock": 0,
+    "eip2200FBlock": 0,
+    "eip2565FBlock": 0,
+    "eip2718FBlock": 0,
+    "eip2929FBlock": 0,
+    "eip3198FBlock": 0,
+    "eip2930FBlock": 0,
+    "eip1559FBlock": 0,
+    "eip3541FBlock": 0,
+    "eip3529FBlock": 0,
+    "eip3651FBlock": 0,
+    "eip3855FBlock": 0,
+    "eip3860FBlock": 0,
+    "eip1153FBlock": 0,
+    "eip5656FBlock": 0,
+    "eip6780FBlock": 0,
+    "disposalBlock": 0,
+    "igneum": {
+      "algorithm": "null",
+      "difficulty": {
+        "target": 15,
+        "halfLife": 3600,
+        "dtMax": 3600,
+        "min": 65536
+      },
+      "issuance": {
+        "epoch": 8192,
+        "m": 100000000000000000000000000,
+        "k": 24,
+        "tail": 250000000000000000,
+        "fundBps": 100,
+        "fundAddress": "0x0000000000000000000000000000000000007310"
+      },
+      "fees": {
+        "elasticityMultiplier": 2,
+        "baseFeeChangeDenominator": 8,
+        "initialBaseFee": 1000000000,
+        "minBaseFee": 1000000000
+      }
+    },
+    "requireBlockHashes": {}
+  },
+  "nonce": "0x0",
+  "timestamp": "0x0",
+  "extraData": "0x69676e65756d2d6465767032702d66697874757265",
+  "gasLimit": "0xf42400",
+  "difficulty": "0x10000",
+  "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "coinbase": "0x0000000000000000000000000000000000000000",
+  "alloc": {
+    "1e905eab2678b7e22282c9705fc452709e4f893c": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "1f16aff54bfb222bfe498a23c17605fc03684054": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "284da1048e8d85586aa28e58b500814b6ed325fe": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "29d4dbf159794cacf8e85d94f471b9ed7c7ea4a0": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "2c16a8eef1c016358ff38649245f583070f68f6e": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "2cc802163365ebd3cc3453386039ecae9abb7dfb": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "2e9327c31a85647c3e8abd7078cf44a92b8a1945": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "377573822ef215d5ae44707794a046dc4b54cd4e": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "47df7641c411d2770a9882f1543eeadd51034af6": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "47e6dd207f6c7fcd944c7b59922cdc7801290838": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "5baab00601ba465da3cdd7e8caf19dee8612d17d": {
+      "code": "0x60ff5000",
+      "storage": {
+        "0x0000000000000000000000000000000000000000000000000000000000000001": "0x0000000000000000000000000000000000000000000000000000000000001001",
+        "0x0000000000000000000000000000000000000000000000000000000000000002": "0x0000000000000000000000000000000000000000000000000000000000001002",
+        "0x0000000000000000000000000000000000000000000000000000000000000003": "0x0000000000000000000000000000000000000000000000000000000000001003",
+        "0x0000000000000000000000000000000000000000000000000000000000000004": "0x0000000000000000000000000000000000000000000000000000000000001004",
+        "0x0000000000000000000000000000000000000000000000000000000000000005": "0x0000000000000000000000000000000000000000000000000000000000001005",
+        "0x0000000000000000000000000000000000000000000000000000000000000006": "0x0000000000000000000000000000000000000000000000000000000000001006",
+        "0x0000000000000000000000000000000000000000000000000000000000000007": "0x0000000000000000000000000000000000000000000000000000000000001007",
+        "0x0000000000000000000000000000000000000000000000000000000000000008": "0x0000000000000000000000000000000000000000000000000000000000001008"
+      },
+      "balance": "0x1"
+    },
+    "5ceccc7e0267f9b94750192eb682fa5c5745418a": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "64d1ef1b48d05bcfc89e6c4376050fbedf0c147e": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "6aa28b63928918a5dd97a934272162ba908d2a1a": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "71bf1fa7f1eed842c5706290282c54f77c322fa8": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "85ad0af5017953f9c6cc3e683da3ffc1a68d07f5": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "8efb30577370a071d77c63f3bab7da0a7af96be0": {
+      "balance": "0x33b2e3c9fd0803ce8000000"
+    },
+    "a9936c5c7870d3c803095f129c543bc457c03ec5": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "d15cdfa0b0f0ec8368081564e2d9ad1c14137931": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "d89cac2eec9c2353814b98d646e8a8dd7d698427": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "f6e6754eb23fb2e721f07839ceb3ac12f5007991": {
+      "balance": "0xd3c21bcecceda1000000"
+    },
+    "f71fe41cbdcac21f84ae3d5d6a3cf1645b75b540": {
+      "balance": "0xd3c21bcecceda1000000"
+    }
+  },
+  "number": "0x0",
+  "gasUsed": "0x0",
+  "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "baseFeePerGas": "0x3b9aca00"
+}

@@ -1,0 +1,7 @@
+# upstream: https://github.com/Quantus-Network/chain
+# commit: f1176cea6a6d08ea437710dcd45cae6717b773df
+# licence: MIT (LICENSE)
+# vendored unchanged (the in-house rule's named-source form); verify: fetch.sh qpow-quantus-f1176ce re-fetches and checks every blob sha
+LICENSE 41df3469f6cfc185851384834739ae4ce89726f5 1055
+qpow-math/Cargo.toml 8beddb37a3170a5859f20cbaebf9dbd3b74c575f 351
+qpow-math/src/lib.rs 303997565844730e2afd8f341258d42a24270346 7159

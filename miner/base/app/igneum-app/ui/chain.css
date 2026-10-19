@@ -1,0 +1,71 @@
+/* The chain scene's own sheet (site/scenes/chain.css): the stage and its caption, on the site's tokens (site/design/tokens.css
+   names; the app and the wallet load their kept look's tokens first and this sheet reads the same names). Nothing else. */
+.ig-scene{position:relative;border:1px solid var(--line);border-radius:var(--r-card,16px);background:var(--graphite);overflow:hidden;min-width:0}
+.ig-scene canvas{display:block;width:100%;max-width:100%;height:auto}
+.ig-scene .ig-scene-cap{display:flex;align-items:center;gap:8px;padding:12px var(--card-pad,20px);border-top:1px solid var(--line);font:400 var(--t-small,12px)/1.5 var(--mono,ui-monospace,monospace);color:var(--ash);min-height:44px;min-width:0}
+.ig-scene .ig-scene-cap span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.ig-scene .ig-scene-cap i{width:8px;height:8px;border-radius:50%;background:var(--molten);flex:none}
+.ig-scene .ig-scene-cap.is-live i{background:var(--met)}
+.ig-scene .ig-scene-cap.is-quiet i{background:var(--ash)}
+.ig-scene .ig-scene-cap b{font-weight:500;color:var(--ink-2)}
+
+/* the next-block bar under the caption: a 3 px track filling over the mean block time, the countdown beside it */
+.ig-scene .ig-scene-next{display:flex;align-items:center;gap:10px;padding:0 var(--card-pad,20px) 12px;font:400 var(--t-small,12px)/1.5 var(--mono,ui-monospace,monospace);color:var(--ash);min-width:0}
+.ig-scene .ig-scene-next i{flex:1 1 auto;display:block;height:3px;border-radius:2px;background:var(--row);min-width:40px;margin-right:6px}
+.ig-scene .ig-scene-next i{position:relative;overflow:visible}
+.ig-scene .ig-scene-next i b{display:block;height:100%;width:0;background:var(--ember);transition:width .95s linear;border-radius:2px}
+.ig-scene .ig-scene-next i s{position:absolute;top:-2px;height:7px;left:0;width:0;border-radius:4px;background:color-mix(in srgb,var(--ember) 22%,transparent);text-decoration:none}
+.ig-scene .ig-scene-next i s[hidden]{display:none}
+.ig-scene .ig-scene-next i:after{content:"";position:absolute;top:-4px;left:var(--ig-end,100%);width:2px;height:11px;margin-left:-1px;border-radius:1px;background:var(--bone,#eee);opacity:.7}
+.ig-scene .ig-scene-next.is-late i s{background:color-mix(in srgb,var(--molten) 26%,transparent)}
+.ig-scene .ig-scene-next i u{position:absolute;top:50%;left:0;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;border:2px solid var(--ember);background:var(--graphite);box-shadow:0 0 8px var(--ember);transition:left .95s linear}
+.ig-scene .ig-scene-next.is-floor i b{background:var(--ember)}
+.ig-scene .ig-scene-next.is-soon i b{background:var(--molten);animation:ig-pulse 1.2s ease-in-out infinite}
+.ig-scene .ig-scene-next.is-soon span{color:var(--molten)}
+.ig-scene .ig-scene-next.is-soon i u{border-color:var(--molten);box-shadow:0 0 10px var(--molten);animation:ig-pulse 1.2s ease-in-out infinite}
+.ig-scene .ig-scene-next.is-long i b{background:var(--ash);opacity:.6}
+.ig-scene .ig-scene-next.is-long span{color:var(--ash)}
+.ig-scene .ig-scene-next.is-long i u{border-color:var(--ash);box-shadow:none}
+@keyframes ig-pulse{0%,100%{opacity:1}50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.ig-scene .ig-scene-next.is-soon i b,.ig-scene .ig-scene-next.is-soon i u{animation:none}}
+/* the three states of the smarter wait (the founder's word, 14 October 2026): the floor solid in ember, any moment pulsing in molten, running long muted in ash */
+.ig-scene .ig-scene-next.is-late i u{border-color:var(--molten);box-shadow:0 0 8px var(--molten)}
+.ig-scene .ig-scene-next.is-late span{color:var(--molten)}
+.ig-scene .ig-scene-next span{font-variant-numeric:tabular-nums;text-align:right}
+.ig-scene .ig-scene-next.is-late i b{background:var(--molten)}
+/* the line wraps under the track where the two do not fit on one row, and never widens the card (main's read of 20:05 UK, 14 October 2026: at a 284 px viewport the text measured 331 px and clipped both sides) */
+.ig-scene .ig-scene-next{flex-wrap:wrap}
+.ig-scene .ig-scene-next i{flex:1 1 160px}
+.ig-scene .ig-scene-next span{flex:0 1 auto;white-space:normal;min-width:0;max-width:100%;overflow-wrap:anywhere}
+@media (max-width:480px){.ig-scene .ig-scene-next i{flex:1 1 100%;margin-right:0}.ig-scene .ig-scene-next span{flex:1 1 100%;text-align:left}}
+.ig-scene .ig-scene-next[hidden]{display:none}
+
+/* the key under the stage: four glyphs in the mono face, wrapping at phone width */
+.ig-scene .ig-scene-key{display:flex;flex-wrap:wrap;gap:6px 16px;padding:0 var(--card-pad,20px) 12px;font:400 var(--t-label,11px)/1.5 var(--mono,ui-monospace,monospace);color:var(--ash);letter-spacing:.02em}
+:root{--ig-key-4:#B48CFF;--ig-key-5:#5FD4E8;--ig-key-6:#F28CB0} /* three more hues for the keys beside molten, met and running, the same on every surface */
+.ig-scene .ig-scene-key span{display:inline-flex;align-items:center;gap:6px;white-space:normal;min-width:0;max-width:100%;overflow-wrap:anywhere}
+.ig-scene .ig-scene-key{min-width:0;max-width:100%;box-sizing:border-box}
+/* a key entry wraps inside the card at every width from 320 (main's read of 23:4x UK, 13 October 2026: the interval's entry ran 22 px past the edge at 390); the mark stays on the first line */
+.ig-scene .ig-scene-key i{display:inline-block;flex:none}
+.ig-scene .ig-scene-key .k-ring{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--molten)}
+.ig-scene .ig-scene-key .k-plain{width:9px;height:9px;border-radius:50%;border:1.5px dashed var(--ash)}
+.ig-scene .ig-scene-key .k-row{width:14px;height:5px;border-radius:2px;background:var(--molten);opacity:.35}
+.ig-scene .ig-scene-key .k-track{width:14px;height:3px;border-radius:2px;background:var(--ember)}
+
+/* the work between blocks: the tally under the countdown and the shares a second, in the mono face */
+.ig-scene .ig-scene-shares{display:flex;justify-content:space-between;gap:12px;padding:0 var(--card-pad,20px) 10px;font:400 var(--t-small,12px)/1.5 var(--mono,ui-monospace,monospace);color:var(--ash);min-width:0}
+.ig-scene .ig-scene-shares .tally{color:var(--ink-2,var(--ash));font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ig-scene .ig-scene-shares .rate{flex:none;font-variant-numeric:tabular-nums}
+.ig-scene .ig-scene-shares[hidden]{display:none}
+
+/* the legend under the bar (the founder's read, 15 October 2026): exactly the marks drawn, one entry per sealer key in the window */
+.ig-scene .ig-scene-legend{display:flex;flex-wrap:wrap;gap:6px 16px;padding:0 var(--card-pad,20px) 12px;font:400 var(--t-label,11px)/1.5 var(--mono,ui-monospace,monospace);color:var(--ash);letter-spacing:.02em;min-width:0;max-width:100%;box-sizing:border-box}
+.ig-scene .ig-scene-legend span{display:inline-flex;align-items:center;gap:6px;white-space:normal;min-width:0;max-width:100%;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.ig-scene .ig-scene-legend i{display:inline-block;flex:none}
+.ig-scene .ig-scene-legend .k-ring{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--molten)}
+.ig-scene .ig-scene-legend .k-open{width:9px;height:9px;border-radius:50%;border:1.5px dashed var(--ash)}
+.ig-scene .ig-scene-legend .k-block{width:9px;height:9px;border-radius:2px;border:1.5px solid var(--ember);background:var(--row)}
+.ig-scene .ig-scene-legend .k-mine{width:11px;height:11px;border-radius:50%;border:2px solid var(--molten)}
+.ig-scene .ig-scene-legend .k-stored{width:11px;height:11px;border-radius:50%;border:2px solid var(--met)}
+.ig-scene .ig-scene-legend .k-bar{width:14px;height:3px;border-radius:2px;background:var(--ember)}
+.ig-scene .ig-scene-legend:empty{display:none}

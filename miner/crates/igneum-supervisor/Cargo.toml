@@ -1,0 +1,30 @@
+[package]
+name = "igneum-supervisor"
+description = "The miner's Rust supervisor: devices, workers, modes, the tuner, economics, settings, schedule, pools, journal"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[features]
+# The shared proof-of-work reference (pow/ref, on main) for the candidates' verification: on by default.
+# IGNPOW_SRC points the build at another checkout of pow/ref when needed.
+default = ["ignpow"]
+ignpow = ["dep:igneum-pow-sys"]
+
+[dependencies]
+igneum-worker-proto = { workspace = true }
+igneum-pow-sys = { workspace = true, optional = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+log = { workspace = true }
+sha2 = { workspace = true }
+sha3 = { workspace = true }
+ed25519-dalek = { workspace = true }
+# the miner's work-authority key (Ed25519) and the share digest (BLAKE3) for non-custodial pools
+blake3 = "1"
+getrandom = "0.2"
+chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
+# TLS for pools and https nodes: pure Rust, verified against the public roots (PA-14)
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12", "logging"] }
+webpki-roots = "0.26"

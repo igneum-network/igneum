@@ -1,0 +1,21 @@
+{
+ "version": 12,
+ "dataset_mib": 2048,
+ "scratch_kib": 0,
+ "rounds": 64,
+ "lanes": 8,
+ "epoch_blocks": 4096,
+ "item_chain": 1,
+ "chain_id": 7310,
+ "cache_mib": 32,
+ "parents": 256,
+ "item_bytes": 256,
+ "blocks": 1,
+ "registers": 8,
+ "features": 8448,
+ "program_ops": 2048,
+ "period_blocks": 1,
+ "table_kib": 16,
+ "access_bytes": 16,
+ "program_anchor": "0000000000000000000000000000000000000000000000000000000000000000"
+}

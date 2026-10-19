@@ -1,0 +1,19 @@
+# request index: the corner case (the random block is requests 0 to 4095)
+4096: broadcast: every lane the same address, one pass
+4097: one bank per octet, eight distinct rows: eight passes
+4098: distinct banks: one pass
+4099: address 0 everywhere, imm 0
+4100: address all ones, imm 0
+4101: address 0, imm all ones (the xor reaches N - 1)
+4102: imm all ones against address all ones (the xor reaches 0)
+4103: lane mask zero: nothing served, one pass, all words zero
+4104: one octet only (octet 2)
+4105: seven passes: two lanes share a row, six other rows, one bank
+4106: the same low bits across octets: no conflict across octets
+4107: two rows per bank in every bank: two passes
+4108: the last word of every table
+4109: masked lanes inside a conflicting set: the conflict counts only live lanes
+4110: every octet on table 0, random addresses
+4111: every octet on table 1, random addresses
+4112: every octet on table 2, random addresses
+4113: every octet on table 3, random addresses

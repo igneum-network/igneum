@@ -1,0 +1,134 @@
+// Device code of the Igneum CUDA worker, FishHash control (compiled by NVRTC,
+// appended to the KAWPOW device source so dag_gen, fnv1 and the keccak
+// permutations are in scope). Mirrors cpp/FishHash.cpp of iron-fish/fish-hash
+// at 823531c: seed = BLAKE3-64(header ++ nonce LE), 32 rounds of three
+// 1024-bit item fetches with the FNV and XOR merges and the 64-bit
+// multiply-add, the FNV collapse to 8 words, final = BLAKE3-32(seed ++ mix).
+// The dataset items are Ethash's with 512 parents from the FishHash cache,
+// which dag_gen already produces; FishHash indexes 1024-bit items.
+//
+// BLAKE3 here is written from the specification for the two input shapes the
+// control needs (40 bytes: one block; 96 bytes: two blocks of one chunk), with
+// the 64-byte extended output for the seed. Unkeyed, no derive-key.
+
+__constant__ uint32_t c_b3_iv[8] = {0x6A09E667u, 0xBB67AE85u, 0x3C6EF372u, 0xA54FF53Au, 0x510E527Fu, 0x9B05688Cu, 0x1F83D9ABu, 0x5BE0CD19u};
+__constant__ uint8_t c_b3_perm[16] = {2, 6, 3, 10, 7, 0, 4, 13, 1, 11, 12, 5, 9, 14, 15, 8};
+#define B3_CHUNK_START 1u
+#define B3_CHUNK_END 2u
+#define B3_ROOT 8u
+
+__device__ __forceinline__ uint32_t b3_rotr(uint32_t x, uint32_t c) { return (x >> c) | (x << (32 - c)); }
+
+__device__ __forceinline__ void b3_g(uint32_t* v, int a, int b, int c, int d, uint32_t x, uint32_t y) {
+    v[a] = v[a] + v[b] + x; v[d] = b3_rotr(v[d] ^ v[a], 16);
+    v[c] = v[c] + v[d];     v[b] = b3_rotr(v[b] ^ v[c], 12);
+    v[a] = v[a] + v[b] + y; v[d] = b3_rotr(v[d] ^ v[a], 8);
+    v[c] = v[c] + v[d];     v[b] = b3_rotr(v[b] ^ v[c], 7);
+}
+
+// One compression; out16 receives the full 16-word output state (words 0..7 are the chaining value).
+__device__ void b3_compress(const uint32_t cv[8], const uint32_t m_in[16], uint32_t block_len, uint32_t flags, uint32_t out16[16]) {
+    uint32_t v[16], m[16];
+    for (int i = 0; i < 16; ++i) m[i] = m_in[i];
+    for (int i = 0; i < 8; ++i) { v[i] = cv[i]; }
+    v[8] = c_b3_iv[0]; v[9] = c_b3_iv[1]; v[10] = c_b3_iv[2]; v[11] = c_b3_iv[3];
+    v[12] = 0; v[13] = 0; v[14] = block_len; v[15] = flags;
+#pragma unroll 1
+    for (int r = 0; r < 7; ++r) {
+        b3_g(v, 0, 4, 8, 12, m[0], m[1]);   b3_g(v, 1, 5, 9, 13, m[2], m[3]);
+        b3_g(v, 2, 6, 10, 14, m[4], m[5]);  b3_g(v, 3, 7, 11, 15, m[6], m[7]);
+        b3_g(v, 0, 5, 10, 15, m[8], m[9]);  b3_g(v, 1, 6, 11, 12, m[10], m[11]);
+        b3_g(v, 2, 7, 8, 13, m[12], m[13]); b3_g(v, 3, 4, 9, 14, m[14], m[15]);
+        if (r < 6) {
+            uint32_t p[16];
+            for (int i = 0; i < 16; ++i) p[i] = m[c_b3_perm[i]];
+            for (int i = 0; i < 16; ++i) m[i] = p[i];
+        }
+    }
+    for (int i = 0; i < 8; ++i) { out16[i] = v[i] ^ v[i + 8]; out16[i + 8] = v[i + 8] ^ cv[i]; }
+}
+
+// BLAKE3 of a 40-byte input, 64-byte output (the FishHash seed): one block, START|END|ROOT.
+__device__ void b3_hash40_out64(const uint8_t in[40], uint32_t out16[16]) {
+    uint32_t m[16];
+    for (int i = 0; i < 16; ++i) m[i] = 0;
+    for (int i = 0; i < 10; ++i) m[i] = (uint32_t)in[4 * i] | ((uint32_t)in[4 * i + 1] << 8) | ((uint32_t)in[4 * i + 2] << 16) | ((uint32_t)in[4 * i + 3] << 24);
+    b3_compress(c_b3_iv, m, 40, B3_CHUNK_START | B3_CHUNK_END | B3_ROOT, out16);
+}
+
+// BLAKE3 of a 96-byte input (seed 64 ++ mix 32), 32-byte output: block 1 (64 bytes, START), block 2 (32 bytes, END|ROOT).
+__device__ void b3_hash96_out32(const uint32_t seed16[16], const uint32_t mix8[8], uint32_t out8[8]) {
+    uint32_t cv[8], o[16];
+    b3_compress(c_b3_iv, seed16, 64, B3_CHUNK_START, o);
+    for (int i = 0; i < 8; ++i) cv[i] = o[i];
+    uint32_t m[16];
+    for (int i = 0; i < 8; ++i) { m[i] = mix8[i]; m[8 + i] = 0; }
+    b3_compress(cv, m, 32, B3_CHUNK_END | B3_ROOT, o);
+    for (int i = 0; i < 8; ++i) out8[i] = o[i];
+}
+
+// Eight lanes per nonce (a quarter warp): the 1024-bit items are read as one 16-byte word per lane,
+// coalesced, and the 32-word mix lives four words per lane, so the FNV and XOR merges and the
+// 64-bit multiply-adds are lane-local; the three fetch indexes are broadcast from lanes 0, 1 and 2.
+// BLAKE3 for the seed and the final hash runs in every lane redundantly (cheap against the memory
+// traffic) so the result is available where the hit is written. Same results layout as above.
+#define FH_LANES 8
+extern "C" __global__ void __launch_bounds__(128)
+fishhash_search(uint64_t start_nonce, uint32_t count, const uint4* __restrict__ dag, uint32_t items_1024,
+                const uint32_t* __restrict__ params, uint32_t* __restrict__ results, uint32_t max_results) {
+    const uint32_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const uint32_t gid = tid / FH_LANES;
+    const uint32_t lane = threadIdx.x & (FH_LANES - 1);
+    const uint32_t mask = 0xFFu << (threadIdx.x & 24);  // the quarter warp this lane group occupies
+    if (gid >= count) return;  // uniform per lane group
+    const uint64_t nonce = start_nonce + (uint64_t)gid;
+    uint8_t in[40];
+    for (int i = 0; i < 8; ++i) { const uint32_t w = params[i]; in[4 * i] = w; in[4 * i + 1] = w >> 8; in[4 * i + 2] = w >> 16; in[4 * i + 3] = w >> 24; }
+    for (int i = 0; i < 8; ++i) in[32 + i] = (uint8_t)(nonce >> (8 * i));
+    uint32_t seed[16];
+    b3_hash40_out64(in, seed);
+
+    // the mix: words 4*lane .. 4*lane+3 of the 32-word (two seed copies) mix
+    uint32_t m0, m1, m2, m3;
+    {
+        const int b = (4 * lane) & 15;  // the second 16 words repeat the seed
+        m0 = seed[b]; m1 = seed[b + 1]; m2 = seed[b + 2]; m3 = seed[b + 3];
+    }
+#pragma unroll 1
+    for (int r = 0; r < 32; ++r) {
+        const uint32_t p0 = __shfl_sync(mask, m0, 0, FH_LANES) % items_1024;   // mix.word32s[0]
+        const uint32_t p1 = __shfl_sync(mask, m0, 1, FH_LANES) % items_1024;   // mix.word32s[4]
+        const uint32_t p2 = __shfl_sync(mask, m0, 2, FH_LANES) % items_1024;   // mix.word32s[8]
+        const uint4 a = dag[(uint64_t)p0 * 8 + lane];
+        const uint4 b = dag[(uint64_t)p1 * 8 + lane];
+        const uint4 c = dag[(uint64_t)p2 * 8 + lane];
+        const uint32_t f1x = fnv1(m0, b.x), f1y = fnv1(m1, b.y), f1z = fnv1(m2, b.z), f1w = fnv1(m3, b.w);
+        const uint32_t f2x = m0 ^ c.x, f2y = m1 ^ c.y, f2z = m2 ^ c.z, f2w = m3 ^ c.w;
+        const uint64_t lo = ((uint64_t)a.y << 32 | a.x) * ((uint64_t)f1y << 32 | f1x) + ((uint64_t)f2y << 32 | f2x);
+        const uint64_t hi = ((uint64_t)a.w << 32 | a.z) * ((uint64_t)f1w << 32 | f1z) + ((uint64_t)f2w << 32 | f2z);
+        m0 = (uint32_t)lo; m1 = (uint32_t)(lo >> 32); m2 = (uint32_t)hi; m3 = (uint32_t)(hi >> 32);
+    }
+    // collapse: four words per lane give one mix_hash word per lane
+    const uint32_t h = fnv1(fnv1(fnv1(m0, m1), m2), m3);
+    uint32_t mix_hash[8];
+    for (int i = 0; i < 8; ++i) mix_hash[i] = __shfl_sync(mask, h, i, FH_LANES);
+    uint32_t out[8];
+    b3_hash96_out32(seed, mix_hash, out);
+
+    bool le = true;
+    for (int i = 0; i < 8; ++i) {
+        const uint32_t av = bswap32(out[i]);
+        const uint32_t bv = params[8 + i];
+        if (av < bv) { le = true; break; }
+        if (av > bv) { le = false; break; }
+    }
+    if (le && lane == 0) {
+        const uint32_t slot = atomicAdd(&results[0], 1u);
+        if (slot < max_results) {
+            uint32_t* e = results + 1 + slot * RESULT_WORDS;
+            e[0] = (uint32_t)nonce; e[1] = (uint32_t)(nonce >> 32);
+            for (int i = 0; i < 8; ++i) e[2 + i] = mix_hash[i];
+            for (int i = 0; i < 8; ++i) e[10 + i] = out[i];
+        }
+    }
+}

@@ -1,0 +1,10 @@
+[package]
+name = "igneum-pow-sys"
+description = "Rust binding to the shared proof-of-work reference (pow/ref, GPU engineer A): the C ABI of ignpow.h"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+links = "ignpow"
+
+[build-dependencies]
+cmake = "0.1"

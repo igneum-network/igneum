@@ -1,0 +1,39 @@
+// Resources for Ember.exe (the window host): the coin icon and the version block.
+// Compiled by BUILD-APP.bat with rc.exe; the icon path is relative to brand\icons (passed with /i). The version comes
+// from version.h, shared with host.cpp.
+#include <winver.h>
+#include "version.h"
+
+1 ICON "igneum.ico"
+
+// dpi-23: the application manifest (per-monitor DPI awareness v2); the linker runs with /MANIFEST:NO
+1 24 "host.manifest"
+
+1 VERSIONINFO
+FILEVERSION     IGNEUM_HOST_VERSION_RC
+PRODUCTVERSION  IGNEUM_HOST_VERSION_RC
+FILEFLAGSMASK   0x3fL
+FILEFLAGS       0x0L
+FILEOS          VOS_NT_WINDOWS32
+FILETYPE        VFT_APP
+FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName",      "Igneum"
+            VALUE "FileDescription",  "Ember"
+            VALUE "FileVersion",      IGNEUM_HOST_VERSION_STR
+            VALUE "InternalName",     "Ember"
+            VALUE "LegalCopyright",   "Igneum. Nothing is bought or sold."
+            VALUE "OriginalFilename", "Ember.exe"
+            VALUE "ProductName",      "Ember"
+            VALUE "ProductVersion",   IGNEUM_HOST_VERSION_STR
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END

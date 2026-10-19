@@ -1,0 +1,17 @@
+# The registry feed on the lab host (a user unit). The node's RPC address and the two paths come from an environment file
+# the host writes at install, so the tree names no host and no path (16 October 2026: names scrubbed, no behaviour change):
+#   mkdir -p $HOME/.config/igneum
+#   printf 'REGISTRY_FEED_RPC=http://<the node host>:<its rpc port>\nREGISTRY_FEED_DIR=<the directory holding registry-feed.py>\nREGISTRY_FEED_OUT=<the served directory>/registry.json\n' > $HOME/.config/igneum/registry-feed.env
+#   systemctl --user enable --now registry-feed
+[Unit]
+Description=registry feed: the research chain's registry read into registry.json for the registry page
+After=network-online.target
+
+[Service]
+EnvironmentFile=%h/.config/igneum/registry-feed.env
+ExecStart=/usr/bin/python3 ${REGISTRY_FEED_DIR}/registry-feed.py --rpc ${REGISTRY_FEED_RPC} --out ${REGISTRY_FEED_OUT} --every 30
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

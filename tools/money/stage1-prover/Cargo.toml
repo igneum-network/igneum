@@ -1,0 +1,20 @@
+# Money stage 1: the prover, the verifier and the node's verifier library for the two statements
+# (prover/masm) on Miden VM 0.36.1 (crates.io release; tag v0.36.1,
+# commit 70bf609ade95a21d811045ee8d66fffe5d5a48dc). No binaries, no vendored code: the five patched
+# crates (the cubic challenge field and the 128-bit setting, see prepare-patched.sh and patches/) are
+# copied from the registry into ./patched at build time and are not committed.
+[workspace]
+resolver = "2"
+members = ["prover", "verifier", "verifier-ffi"]
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+
+[patch.crates-io]
+miden-field = { path = "patched/miden-field" }
+miden-crypto = { path = "patched/miden-crypto" }
+miden-air = { path = "patched/miden-air" }
+miden-prover = { path = "patched/miden-prover" }
+miden-verifier = { path = "patched/miden-verifier" }

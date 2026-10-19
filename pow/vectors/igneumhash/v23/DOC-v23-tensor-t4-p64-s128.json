@@ -1,0 +1,1 @@
+{"version": 23, "rounds": 128, "tiles": 4, "period_blocks": 64, "program_anchor": "0000000000000000000000000000000000000000000000000000000000000000", "lanes": 16, "dataset_mib": 1024, "cache_mib": 64, "parents": 256, "item_bytes": 256, "epoch_blocks": 4096, "chain_id": 7358, "lean": 1}

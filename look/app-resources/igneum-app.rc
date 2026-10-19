@@ -1,0 +1,35 @@
+// Windows resources for igneum-app.exe: the coin icon Explorer shows and the version block under Properties > Details.
+// Compiled with x86_64-w64-mingw32-windres (the icon path is relative to brand/icons, passed with -I).
+// the founder's rule (4 October 2026): every shipped exe carries the coin icon and a version block, like the Mac app and DMG.
+#include <winver.h>
+
+1 ICON "igneum.ico"
+
+1 VERSIONINFO
+FILEVERSION     0,3,14,0
+PRODUCTVERSION  0,3,14,0
+FILEFLAGSMASK   0x3fL
+FILEFLAGS       0x0L
+FILEOS          VOS_NT_WINDOWS32
+FILETYPE        VFT_APP
+FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName",      "Igneum"
+            VALUE "FileDescription",  "Igneum Miner engine"
+            VALUE "FileVersion",      "0.3.14"
+            VALUE "InternalName",     "igneum-app"
+            VALUE "LegalCopyright",   "Igneum contributors"
+            VALUE "OriginalFilename", "igneum-app.exe"
+            VALUE "ProductName",      "Igneum Miner"
+            VALUE "ProductVersion",   "0.3.14"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END

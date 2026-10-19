@@ -1,0 +1,5 @@
+generated on builder-a at 2026-10-10T00:41:24Z UTC
+reference: ignpow abi 0 build 2b73311f; kawpow-0.9.4 = ravencoin-ethash@22549129 (v4.8.0, progpow 0.9.4, epoch 7500); autolykos-2 = ergo v6.0.7 AutolykosPowScheme (k 32, n 26, in-house BLAKE2b); igneumhash = IgneumHash-R0A versions 0 and 1 (SPEC-R0A-v0.md revision 0.4, BLAKE3 1.8.2 portable)
+seed: 20261009
+classes: unseen nonce-boundary transitions malformed trace
+params: {"version":1,"dataset_mib":4096,"scratch_kib":0,"rounds":64,"cache_mib":64,"parents":512,"lanes":8,"epoch_blocks":4096,"chain_id":7310}

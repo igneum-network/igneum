@@ -1,0 +1,8 @@
+upstream: https://github.com/RavenProject/Ravencoin
+commit: 22549129888d02e0e08fcdb9f96f3c699167e774 (tag v4.8.0, 19 Aug 2026)
+subtree: src/crypto/ethash (vendored here as crypto/ethash so the upstream include paths resolve with -I <this dir>)
+licence: the ethash library files carry "Copyright 2018-2019 Pawel Bylica. Licensed under the Apache License, Version 2.0." (headers of every file); the Ravencoin tree is MIT (LICENSE.ravencoin, the upstream COPYING)
+fetched: 9 Oct 2026 by GPU engineer A over raw.githubusercontent.com at the commit above, byte for byte
+not compiled: crypto/ethash/lib/ethash/managed.cpp (depends on Ravencoin's sync.h; the reference owns its contexts instead)
+named by: blueprint 1.0 sources R01 and R09 (Ravencoin), R07 (EIP-1057)
+content: ProgPoW revision 0.9.4 with the KAWPOW constants (period 3, the 15-word keccak padding), ethash epoch length 7500, the KAWPOW test vectors (crypto/ethash/progpow_test_vectors.hpp)

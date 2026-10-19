@@ -1,0 +1,283 @@
+# Money stage 2, cut 1: the vault statements' shared procedures (docs/money/VAULT-SPEC-2026-10-18.md,
+# docs/money/STAGE2-CUT1-VAULT-2026-10-18.md). Every program of the vault is this prelude followed by its
+# own `begin` block (prover/src/vault.rs joins the two texts; verifier-ffi joins them the same way, so the
+# program hashes agree). H is Poseidon2 over Goldilocks, every use the two-to-one `hmerge`; a word is four
+# field elements, element 0 on top of the stack and at the lowest memory address (mem_loadw_le).
+#
+# The objects and their hashes (a fold is H(...H(H(TAG, w0), w1)..., wn); a TAG word is [tag, 0, 0, 0]):
+#   policy_hash = fold(TAG 11; PK_E, PK_C, PK_A, NKF, DLY, LIM, REC, NONCE)
+#                 DLY = [D_b, D_s, P, 0], LIM the limit as four 32-bit limbs, REC = [R_b, R_s, 0, 0]
+#   cm_head     = fold(TAG 12; V, VID, PH, IDX, SPENT, RECH, R)   IDX = [period_idx, rec_h, rec_t, 0]
+#   cm_pending  = fold(TAG 13; W, VID, PH, PKD, HT, R)            HT = [h_req, t_req, D_b, D_s]
+#   cm_inbound  = fold(TAG 14; W, VID, PH, R)
+#   ptag        = fold(TAG 15; cm_pending, [pos, 0, 0, 0], R)
+#   pk_c = H(sk_c, TAG 16), pk_a = H(sk_a, TAG 17), nk_field = H(nk_v, TAG 18), nk_c = H(sk_c, TAG 19)
+#   nf          = H(H(nk, cm), [pos, 0, 0, 0]) as stage one; an ordinary note's cm = H(H(V, PK), R) as stage one.
+#
+# Memory (element addresses; words at multiples of four):
+#   0..36    the public words in the order the statement hash folds them (DOMAIN at 0, ANCHOR at 4)
+#   100      the policy: PK_E 100, PK_C 104, PK_A 108, NKF 112, DLY 116, LIM 120, REC 124, NONCE 128, PH 132
+#   140      head_in: V 140, VID 144, PH 148, IDX 152, SPENT 156, RECH 160, R 164, CM 168, pos 172, NK_V 176
+#   180      head_out: V 180, VID 184, PH 188, IDX 192, SPENT 196, RECH 200, R 204, CM 208
+#   220      pending: W 220, VID 224, PH 228, PKD 232, HT 236, R 240, CM 244, pos 248
+#   260      keys: SK_E 260, NK_E 264, SK_C 268, SK_A 272, SK_DEST 276, NK_DEST 280
+#   300      the new policy (announce, policy-complete): the policy's layout at 300, PH at 332
+#   400      inbound: W 400, VID 404, PH 408, R 412, CM 416;  scratch 420..; the revoked low leaf 440, its index 444
+#   500      ordinary input i at 500 + 40 i (create);  600 ordinary output j at 600 + 40 j (create's change, complete's two)
+
+const DEPTH = 32
+const REVOKED_DEPTH = 16
+const FLOOR_DELAY_BLOCKS = 300
+const FLOOR_DELAY_SECONDS = 3600
+
+# [addr, ACC] -> [ACC']: ACC' = H(ACC, mem[addr])
+proc fold_word
+    padw movup.4 mem_loadw_le swapw hmerge
+end
+
+# [W] -> [flag]: 1 when every element is zero
+proc word_is_zero
+    eq.0 swap eq.0 and swap eq.0 and swap eq.0 and
+end
+
+# [base] -> []: PH = fold(TAG 11; the eight words at base..base+28), written at base+32
+proc hash_policy
+    push.0.0.0.11
+    dup.4 exec.fold_word
+    dup.4 add.4 exec.fold_word
+    dup.4 add.8 exec.fold_word
+    dup.4 add.12 exec.fold_word
+    dup.4 add.16 exec.fold_word
+    dup.4 add.20 exec.fold_word
+    dup.4 add.24 exec.fold_word
+    dup.4 add.28 exec.fold_word
+    dup.4 add.32 mem_storew_le dropw drop
+end
+
+# [base] -> []: CM = fold(TAG 12; the seven words at base..base+24), written at base+28
+proc hash_head
+    push.0.0.0.12
+    dup.4 exec.fold_word
+    dup.4 add.4 exec.fold_word
+    dup.4 add.8 exec.fold_word
+    dup.4 add.12 exec.fold_word
+    dup.4 add.16 exec.fold_word
+    dup.4 add.20 exec.fold_word
+    dup.4 add.24 exec.fold_word
+    dup.4 add.28 mem_storew_le dropw drop
+end
+
+# [base] -> []: CM = fold(TAG 13; the six words at base..base+20), written at base+24
+proc hash_pending
+    push.0.0.0.13
+    dup.4 exec.fold_word
+    dup.4 add.4 exec.fold_word
+    dup.4 add.8 exec.fold_word
+    dup.4 add.12 exec.fold_word
+    dup.4 add.16 exec.fold_word
+    dup.4 add.20 exec.fold_word
+    dup.4 add.24 mem_storew_le dropw drop
+end
+
+# [base] -> []: CM = fold(TAG 14; the four words at base..base+12), written at base+16
+proc hash_inbound
+    push.0.0.0.14
+    dup.4 exec.fold_word
+    dup.4 add.4 exec.fold_word
+    dup.4 add.8 exec.fold_word
+    dup.4 add.12 exec.fold_word
+    dup.4 add.16 mem_storew_le dropw drop
+end
+
+# [CM, pos, ROOT] -> []: CM is the leaf at pos under ROOT at depth 32 (the advice Merkle store holds the path)
+proc member
+    push.DEPTH movdn.4
+    mtree_verify
+    dropw drop drop dropw
+end
+
+# [LEAF, idx, ROOT] -> []: the same at the revoked set's depth
+proc member_revoked
+    push.REVOKED_DEPTH movdn.4
+    mtree_verify
+    dropw drop drop dropw
+end
+
+# [NK, CM, pos] -> [NF]: NF = H(H(NK, CM), [pos, 0, 0, 0])
+proc nullify
+    hmerge
+    movup.4 push.0.0.0 movup.3
+    swapw hmerge
+end
+
+# [b, a, out] -> [borrow]: mem[out] = mem[a] - mem[b] over four 32-bit limbs; the final borrow returned
+proc v_sub_raw
+    push.0
+    dup.1 add.0 mem_load dup.3 add.0 mem_load swap u32overflowing_sub movup.2 movup.2 swap u32overflowing_sub movup.2 add swap dup.4 add.0 mem_store
+    dup.1 add.1 mem_load dup.3 add.1 mem_load swap u32overflowing_sub movup.2 movup.2 swap u32overflowing_sub movup.2 add swap dup.4 add.1 mem_store
+    dup.1 add.2 mem_load dup.3 add.2 mem_load swap u32overflowing_sub movup.2 movup.2 swap u32overflowing_sub movup.2 add swap dup.4 add.2 mem_store
+    dup.1 add.3 mem_load dup.3 add.3 mem_load swap u32overflowing_sub movup.2 movup.2 swap u32overflowing_sub movup.2 add swap dup.4 add.3 mem_store
+    movdn.3 drop drop drop
+end
+
+# [b, a, out] -> []: mem[out] = mem[a] - mem[b]; fails unless mem[a] >= mem[b]
+proc v_sub
+    exec.v_sub_raw eq.0 assert
+end
+
+# [b, a] -> [flag]: 1 when mem[a] <= mem[b] (the scratch at 420 written)
+proc v_lte
+    swap push.420 movdn.2 exec.v_sub_raw eq.0
+end
+
+# [b, a, out] -> []: mem[out] = mem[a] + mem[b]; fails on overflow past 128 bits
+proc v_add
+    push.0
+    dup.1 add.0 mem_load dup.3 add.0 mem_load movup.2 u32overflowing_add3 swap dup.4 add.0 mem_store
+    dup.1 add.1 mem_load dup.3 add.1 mem_load movup.2 u32overflowing_add3 swap dup.4 add.1 mem_store
+    dup.1 add.2 mem_load dup.3 add.2 mem_load movup.2 u32overflowing_add3 swap dup.4 add.2 mem_store
+    dup.1 add.3 mem_load dup.3 add.3 mem_load movup.2 u32overflowing_add3 swap dup.4 add.3 mem_store
+    eq.0 assert drop drop drop
+end
+
+# [from, to] -> []: copies the word at from to to (push the destination first, then the source)
+proc copy_word
+    padw movup.4 mem_loadw_le movup.4 mem_storew_le dropw
+end
+
+# [to] -> []: the zero word written at to
+proc zero_word
+    padw movup.4 mem_storew_le dropw
+end
+
+# [] -> []: the eight policy words read from the advice into 100..128 (DLY, LIM and REC as 32-bit limbs)
+proc read_policy
+    padw adv_loadw mem_storew_le.100 dropw
+    padw adv_loadw mem_storew_le.104 dropw
+    padw adv_loadw mem_storew_le.108 dropw
+    padw adv_loadw mem_storew_le.112 dropw
+    padw adv_loadw u32assertw mem_storew_le.116 dropw
+    padw adv_loadw u32assertw mem_storew_le.120 dropw
+    padw adv_loadw u32assertw mem_storew_le.124 dropw
+    padw adv_loadw mem_storew_le.128 dropw
+end
+
+# [] -> []: the same into 300..328
+proc read_new_policy
+    padw adv_loadw mem_storew_le.300 dropw
+    padw adv_loadw mem_storew_le.304 dropw
+    padw adv_loadw mem_storew_le.308 dropw
+    padw adv_loadw mem_storew_le.312 dropw
+    padw adv_loadw u32assertw mem_storew_le.316 dropw
+    padw adv_loadw u32assertw mem_storew_le.320 dropw
+    padw adv_loadw u32assertw mem_storew_le.324 dropw
+    padw adv_loadw mem_storew_le.328 dropw
+end
+
+# [base] -> []: the floors of the spec's section 3.1 on the policy at base: D_b >= 300, D_s >= 3600,
+# P >= D_b, R_b >= 2 D_b, R_s >= 2 D_s
+proc check_floors
+    dup.0 add.16 mem_load push.FLOOR_DELAY_BLOCKS u32gte assert
+    dup.0 add.17 mem_load push.FLOOR_DELAY_SECONDS u32gte assert
+    dup.0 add.18 mem_load dup.1 add.16 mem_load u32gte assert
+    dup.0 add.24 mem_load dup.1 add.16 mem_load mul.2 gte assert
+    dup.0 add.25 mem_load dup.1 add.17 mem_load mul.2 gte assert
+    drop
+end
+
+# [] -> []: the head's nullifier key: H(NK_V at 176, TAG 18) equals the policy's NKF at 112
+proc check_nk_field
+    push.0.0.0.18 padw mem_loadw_le.176 hmerge
+    padw mem_loadw_le.112 assert_eqw
+end
+
+# [] -> []: head_in read from the advice (V, VID, IDX, SPENT, RECH, R, pos) with PH copied from 132; its
+# commitment at 168 proven under ANCHOR (at 4) at pos; its nullifier under NK_V (at 176) equals NF at 8
+proc open_head
+    padw adv_loadw u32assertw mem_storew_le.140 dropw
+    padw adv_loadw mem_storew_le.144 dropw
+    push.148 push.132 exec.copy_word
+    padw adv_loadw u32assertw mem_storew_le.152 dropw
+    padw adv_loadw u32assertw mem_storew_le.156 dropw
+    padw adv_loadw mem_storew_le.160 dropw
+    padw adv_loadw mem_storew_le.164 dropw
+    adv_push mem_store.172
+    push.140 exec.hash_head
+    padw mem_loadw_le.4 mem_load.172 padw mem_loadw_le.168 exec.member
+    mem_load.172 padw mem_loadw_le.168 padw mem_loadw_le.176 exec.nullify
+    padw mem_loadw_le.8 assert_eqw
+end
+
+# [] -> []: the pending note read from the advice (W, VID, PKD, HT, R, pos) with PH already at 228; its
+# commitment at 244 proven under ANCHOR at pos
+proc open_pending
+    padw adv_loadw u32assertw mem_storew_le.220 dropw
+    padw adv_loadw mem_storew_le.224 dropw
+    padw adv_loadw mem_storew_le.232 dropw
+    padw adv_loadw u32assertw mem_storew_le.236 dropw
+    padw adv_loadw mem_storew_le.240 dropw
+    adv_push mem_store.248
+    push.220 exec.hash_pending
+    padw mem_loadw_le.4 mem_load.248 padw mem_loadw_le.244 exec.member
+end
+
+# [] -> [PTAG]: fold(TAG 15; CM at 244, [pos at 248, 0, 0, 0], R at 240)
+proc ptag
+    push.0.0.0.15 padw mem_loadw_le.244 swapw hmerge
+    push.0.0.0 mem_load.248 swapw hmerge
+    padw mem_loadw_le.240 swapw hmerge
+end
+
+# [base, ...] -> [...]: one ordinary input from the advice stack (V, SK, NK, R, index), stage one's form;
+# NF written at base+28 (a dummy input, value zero, proves no membership)
+proc input
+    padw adv_loadw u32assertw
+    dup.4 mem_storew_le
+    padw adv_loadw
+    dup.8 add.4 mem_storew_le
+    padw adv_loadw
+    dup.12 add.8 mem_storew_le
+    swapw hmerge
+    swapw hmerge
+    padw adv_loadw
+    dup.8 add.12 mem_storew_le
+    swapw hmerge
+    dup.4 add.24 mem_storew_le
+    adv_push
+    dup.0 dup.6 add.16 mem_store
+    padw dup.9 mem_loadw_le
+    dup.0 eq.0 dup.2 eq.0 and dup.3 eq.0 and dup.4 eq.0 and
+    movdn.4 dropw
+    not
+    if.true
+        movdn.4 dropw
+        padw mem_loadw_le.4
+        movup.4 push.DEPTH
+        padw dup.10 add.24 mem_loadw_le
+        mtree_verify
+        dropw drop drop dropw
+    else
+        drop dropw
+    end
+    padw dup.4 add.8 mem_loadw_le
+    padw dup.8 add.24 mem_loadw_le
+    swapw hmerge
+    push.0.0.0 dup.7 add.16 mem_load
+    swapw hmerge
+    dup.4 add.28 mem_storew_le
+    dropw drop
+end
+
+# [base, ...] -> [...]: one ordinary output from the advice stack (V, PK, R), stage one's form; CM at base+12
+proc output
+    padw adv_loadw u32assertw
+    dup.4 mem_storew_le
+    padw adv_loadw
+    dup.8 add.4 mem_storew_le
+    swapw hmerge
+    padw adv_loadw
+    dup.8 add.8 mem_storew_le
+    swapw hmerge
+    dup.4 add.12 mem_storew_le
+    dropw drop
+end

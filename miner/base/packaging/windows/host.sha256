@@ -1,0 +1,10 @@
+# The cut's MSVC window host (app\windows\BUILD-APP.bat), one sha256 per line; packaging/windows/host-gate.py refuses a payload
+# whose "Ember.exe" is not one of these. The shipper replaces the line at every cut from the CI artifact igneum-windows-host
+# (or the first Windows machine's BUILD-APP.bat run). 7 October 2026: the first Windows machine's MSVC an earlier release host, the one running on the second Windows machine since 19:14 UK.
+e223db18bcfa74a1f60335de62390729a19975e6a6bddd7547bf9d6f0676df17
+# 7 October 2026: the first Windows machine's MSVC an earlier release host from the installer kit at an earlier release 7c7489ac (dpi-23 and install-close-23 host.cpp; run-20261007-204937, 8 s)
+365d32104ede41db22837ece4eb4fa8860505360955c974d3055f1114339d4c5
+# 8 October 2026: the first Windows machine's MSVC an earlier release host from the installer kit at an earlier release 0c47b59a (run-20261008-084900, 7 s)
+0e241c94eecfa9323a5fb40a02e428dfaf4a115c30f444e517667c6753c6d7c6
+# 8 October 2026: the first Windows machine's MSVC an earlier release host from the installer kit at an earlier release 92f004f1 (run-20261008-093513, 8 s)
+bc8d4f795a039636dd438fd13836f695193414ea4a50ba020d31265b1084365b

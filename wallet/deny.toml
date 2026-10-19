@@ -1,0 +1,32 @@
+# cargo deny for the wallet workspace (DESIGN.md 1.12): licences, advisories, duplicate versions and sources.
+# Run on the box: cargo deny check
+[graph]
+all-features = false
+
+[advisories]
+version = 2
+yanked = "deny"
+# the two warnings cargo audit named on 9 October 2026, both in the Tauri host's GTK tree, not in the signer:
+# proc-macro-error unmaintained (RUSTSEC-2024-0370), glib 0.18 unsound iterator (RUSTSEC-2024-0429); reviewed and
+# carried until the host's Tauri line moves off them; the signer links neither
+ignore = ["RUSTSEC-2024-0370", "RUSTSEC-2024-0429"]
+
+[licenses]
+version = 2
+allow = [
+  "MIT", "Apache-2.0", "Apache-2.0 WITH LLVM-exception", "BSD-2-Clause", "BSD-3-Clause", "ISC", "Zlib",
+  "Unicode-3.0", "MPL-2.0", "CC0-1.0", "BSL-1.0", "LGPL-2.1-or-later", "0BSD", "Unlicense", "CDLA-Permissive-2.0",
+]
+confidence-threshold = 0.8
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+# the workspace's own crates reference each other by path without a version: that is the one wildcard allowed
+allow-wildcard-paths = true
+highlight = "all"
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]

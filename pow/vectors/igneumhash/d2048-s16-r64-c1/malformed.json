@@ -1,0 +1,18 @@
+{
+  "candidate": "igneumhash",
+  "class": "malformed",
+  "generator": "ignpow abi 0 build 2b73311f; kawpow-0.9.4 = ravencoin-ethash@22549129 (v4.8.0, progpow 0.9.4, epoch 7500); autolykos-2 = ergo v6.0.7 AutolykosPowScheme (k 32, n 26, in-house BLAKE2b); igneumhash = IgneumHash-R0A versions 0 and 1 (SPEC-R0A-v0.md revision 0.4, BLAKE3 1.8.2 portable)",
+  "seed": "20261009",
+  "params": {"dataset_mib":2048,"scratch_kib":16,"rounds":64,"lanes":8,"epoch_blocks":4096,"item_chain":1,"chain_id":7310,"version":0},
+  "count": 8,
+  "vectors": [
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "ctx_height": 1, "mix": "9fbdc167a7f55e147ae97f83ad7ede6718ace0180b0206d77fe653641b7ddd98", "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "expect": "ok"},
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "ctx_height": 1, "mix": "9fbdc167a7f55e147ae97f83ad7ede6718ace0180b0206d77fe653641b7ddd98", "boundary": "0000000000000000000000000000000000000000000000000000000000000000", "expect": "boundary"},
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "ctx_height": 1, "mix": "0000000000000000000000000000000000000000000000000000000000000000", "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "expect": "mix"},
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "ctx_height": 1, "mix": "0000000000000000000000000000000000000000000000000000000000000000", "boundary": "0000000000000000000000000000000000000000000000000000000000000000", "expect": "mix"},
+    {"height": 4096, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "ctx_height": 1, "mix": "9fbdc167a7f55e147ae97f83ad7ede6718ace0180b0206d77fe653641b7ddd98", "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "expect": "epoch"},
+    {"height": 2147483648, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "ctx_height": 1, "mix": "9fbdc167a7f55e147ae97f83ad7ede6718ace0180b0206d77fe653641b7ddd98", "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "expect": "height"},
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "ctx_height": 1, "mix": "9fbdc167a7f55e147ae97f83ad7ede6718ace0180b0206d77fe653641b7ddd98", "boundary": "7d645fb2ef60014e716729110f0577b30f4955ea4c1109be7afa5ee6a7e3f886", "expect": "ok"},
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "ctx_height": 1, "mix": "9fbdc167a7f55e147ae97f83ad7ede6718ace0180b0206d77fe653641b7ddd98", "boundary": "7d645fb2ef60014e716729110f0577b30f4955ea4c1109be7afa5ee6a7e3f885", "expect": "boundary"}
+  ]
+}

@@ -1,0 +1,5 @@
+# F-770: the toolchain the Money builds used (rustc 1.99.0 (b940084d7 2026-09-28)); the library's bytes
+# (libmoney_verifier.a) depend on it, so a build on another compiler is not the one of record.
+[toolchain]
+channel = "1.99.0"
+profile = "minimal"

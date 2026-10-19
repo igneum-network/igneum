@@ -1,0 +1,27 @@
+# upstream: https://github.com/GPUOpen-LibrariesAndSDKs/ADLX
+# commit: 1ca2dd42f1df8cbd045489b7a20013a07692a446
+# tag: v2.0 (ADLX 2.0.0.125)
+# licence: "ADLX SDK License Agreement.pdf" at the repository root (AMD's SDK licence agreement; the README names it as the licence; not MIT)
+# what: the C binding headers of AMD's Device Library eXtra, read at build time by the Windows OpenCL worker
+#   (pow/workers/opencl/src/adlx_probe.c) to bind amdadlx64.dll at run time for board power, clocks, temperature and
+#   fan on the telemetry line, and the manual power limit (a percent offset from stock within the driver's supported
+#   range) for the power-limit sweep, set at a run's start and restored on every exit path (main's decision, 10 Oct 2026
+#   09:55 Mac clock: 50 to 100 percent of the documented stock limit, never below, no voltage or firmware change);
+#   no ADLX binary is vendored or shipped, the driver's own DLL is loaded when present.
+#   Fetched by pow/third_party/fetch.sh adlx-1ca2dd42 (never on the Mac); verified by git blob sha1.
+# path blob-sha1 bytes
+ADLX%20SDK%20License%20Agreement.pdf 9973f257a4fa92de8bf020a9b1191d5385654a58 126195
+README.md 9eb8e1ef2736f1052cb44151925d0e31cb26d5d2 5241
+SDK/Include/ADLX.h 873773245ae4855f4754cff8809a816e3a17e685 17156
+SDK/Include/ADLXDefines.h 7307392cf35930a6e1cc00af5e02997bb2688433 61167
+SDK/Include/ADLXStructures.h 8f285131773a158edb69db1b63c7af8e14e3b6c0 8877
+SDK/Include/ADLXVersion.h d0a91c69b6d7a1b2f5f7170dee3d0a40eb6d6ae9 438
+SDK/Include/ICollections.h c831842f778030be91d2eed32784b17e4493f571 10922
+SDK/Include/ISystem.h 0cc3ccce96b8cc0ad7a7513025e8f78da51706d1 80987
+SDK/Include/IPerformanceMonitoring.h b6d4302db379712c508d93cb7431f4df56d1ca70 132976
+SDK/Include/IGPUTuning.h a716d928506e4a0526367d16d2a9c3e007766cce 64305
+SDK/Include/IGPUManualPowerTuning.h 82cad311dc2ec723bc6e5947a243f993f5ca4989 15688
+SDK/Include/IChangedEvent.h 5ae9c1806ed5ecf4e41119d26dfb940bc6b5e6de 2276
+SDK/Include/ISystem1.h cb1ea90aa68e7091a8392cbdc555cd82665a3772 10748
+SDK/Include/IGPUManualGFXTuning.h 9d7525b321c5b186d547f94219dc65eab201b8d7 30808
+SDK/Include/IGPUManualVRAMTuning.h 5bbd7408293f28f586afb474b22923eccde11282 31082

@@ -1,0 +1,39 @@
+# money-vault-create-v1 (kind 3): two ordinary notes of the everyday key become a vault head and a change
+# note. Public (the statement hash's fold): DOMAIN [chain_id, 3, 0, 0], ANCHOR, NF1, NF2, CM_HEAD, CM_CHANGE.
+# Advice, in the order read: the six public words; input 0 and input 1 (V, SK, NK, R, index; the path in the
+# Merkle store); the policy's eight words; NK_V; the change output (V, PK, R); the head's VID; the head's R.
+# The circuit: the inputs as stage one's spend; the policy's pk_e is input 0's H(SK, NK); nk_field opens to
+# NK_V; the floors; v_head = v1 + v2 - change; the head with period 0, spent 0, no recovery pending.
+begin
+    padw adv_loadw mem_storew_le.0
+    padw adv_loadw mem_storew_le.4 swapw hmerge
+    padw adv_loadw mem_storew_le.8 swapw hmerge
+    padw adv_loadw mem_storew_le.12 swapw hmerge
+    padw adv_loadw mem_storew_le.16 swapw hmerge
+    padw adv_loadw mem_storew_le.20 swapw hmerge
+    dupw.1 assert_eqw
+    mem_load.1 push.3 assert_eq
+    push.500 exec.input
+    push.540 exec.input
+    padw mem_loadw_le.528 padw mem_loadw_le.8 assert_eqw
+    padw mem_loadw_le.568 padw mem_loadw_le.12 assert_eqw
+    exec.read_policy
+    padw mem_loadw_le.508 padw mem_loadw_le.504 hmerge
+    padw mem_loadw_le.100 assert_eqw
+    padw adv_loadw mem_storew_le.176 dropw
+    exec.check_nk_field
+    push.100 exec.check_floors
+    push.100 exec.hash_policy
+    push.600 exec.output
+    padw mem_loadw_le.612 padw mem_loadw_le.20 assert_eqw
+    push.400 push.540 push.500 exec.v_add
+    push.180 push.400 push.600 exec.v_sub
+    padw adv_loadw mem_storew_le.184 dropw
+    push.188 push.132 exec.copy_word
+    push.192 exec.zero_word
+    push.196 exec.zero_word
+    push.200 exec.zero_word
+    padw adv_loadw mem_storew_le.204 dropw
+    push.180 exec.hash_head
+    padw mem_loadw_le.208 padw mem_loadw_le.16 assert_eqw
+end

@@ -1,0 +1,36 @@
+// Resources for Igneum Wallet.exe (the window host): the coin icon and the version block.
+// Compiled by BUILD-WALLET-APP.bat with rc.exe; the icon path is relative to brand\icons (passed with /i). The version comes
+// from wallet-version.h, shared with wallet-host.cpp.
+#include <winver.h>
+#include "wallet-version.h"
+
+1 ICON "icon.ico"
+
+1 VERSIONINFO
+FILEVERSION     IGNEUM_HOST_VERSION_RC
+PRODUCTVERSION  IGNEUM_HOST_VERSION_RC
+FILEFLAGSMASK   0x3fL
+FILEFLAGS       0x0L
+FILEOS          VOS_NT_WINDOWS32
+FILETYPE        VFT_APP
+FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName",      "Igneum"
+            VALUE "FileDescription",  "Igneum Wallet"
+            VALUE "FileVersion",      IGNEUM_HOST_VERSION_STR
+            VALUE "InternalName",     "Igneum Wallet"
+            VALUE "LegalCopyright",   "Igneum. A dev chain."
+            VALUE "OriginalFilename", "Igneum Wallet.exe"
+            VALUE "ProductName",      "Igneum Wallet"
+            VALUE "ProductVersion",   IGNEUM_HOST_VERSION_STR
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END

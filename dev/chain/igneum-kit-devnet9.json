@@ -1,0 +1,35 @@
+{
+ "chain_id": 7319,
+ "deployer": "0x72d1f19224f092F6B2ea1c5dc09Fa1B7492A3B56",
+ "order": "the ERC-4337 pair at nonces 0 and 1, the Pay set at 2 to 7, the DevFaucet at 8, the BondFaucet at 9 (superseded) and 10",
+ "addresses": {
+  "DevFaucet": "0x671D4f197b5F37430751bD9acA38789806dAcD23",
+  "BondFaucet": "0xD235241bC06afDDa79f1834f4a702c67d0118Eda"
+ },
+ "dev_faucet": {
+  "drip_ign": 25,
+  "cooldown_s": 86400,
+  "daily_cap_ign": 5000,
+  "label": "development-network tokens; no monetary value",
+  "address": "0x671D4f197b5F37430751bD9acA38789806dAcD23",
+  "funded_ign": 175000
+ },
+ "commit": "02883c2e04e1689d5c25db7b5253cbe19ad708bf",
+ "genesis": "0xeae5e6083195fe58658b1f13771362b19a38a0bffb5c8808d458993ee9f54ea1",
+ "note": "deployed 12 October 2026 01:5x to 02:1x UK from a fresh deployer funded by the dev account; the kit by forge script through rpc.igneum.network, the DevFaucet by a raw create with a gas limit (forge's creation estimate met \"method handler crashed\" on the node); the commit is the tree the sources were built from",
+ "bond_faucet": {
+  "address": "0xD235241bC06afDDa79f1834f4a702c67d0118Eda",
+  "drip_ign": 87,
+  "once_per": "bond key hash and address",
+  "daily_cap_ign": 1740,
+  "funded_ign": 5000,
+  "deploy": "the kit's deployer at nonce 10, a raw create with a gas limit",
+  "funding_tx": "0xde075d945a63092b47",
+  "label": "development-network tokens; no monetary value",
+  "relay": "https://build.igneum.network/devnet9/faucet/bond (POST {\"address\", \"key_hash\"})",
+  "superseded": {
+   "address": "0x2eD73010827F049F304f784E53c671e2B764e812",
+   "why": "its drip of 86.3 IGN left nothing for the bond's fee (the first stranger's row read 'not enough'); it keeps its 5,000 IGN"
+  }
+ }
+}

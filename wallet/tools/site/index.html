@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>A shop on Igneum (test site)</title></head>
+<body>
+<h1>A shop on Igneum (test site)</h1>
+<p id="status">loading the provider</p>
+<script>
+  // the provider from the wallet's bridge (a site may also ship this file itself); EIP-6963 announces it
+  window.addEventListener('eip6963:announceProvider', function (e) { window.__announced = e.detail.info.name; });
+  var s = document.createElement('script');
+  s.src = 'http://127.0.0.1:' + (new URLSearchParams(location.search).get('bridge') || '26811') + '/provider.js';
+  s.onload = function () { document.getElementById('status').textContent = 'provider loaded'; };
+  s.onerror = function () { document.getElementById('status').textContent = 'provider failed to load'; };
+  document.head.appendChild(s);
+</script>
+</body>
+</html>

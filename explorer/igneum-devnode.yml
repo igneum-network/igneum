@@ -1,0 +1,13 @@
+services:
+  devnode:
+    image: ubuntu:24.04
+    container_name: devnode
+    restart: unless-stopped
+    volumes:
+      - ./igneum-work/out/igneum-node:/usr/local/bin/igneum-node:ro
+      - ./igneum-work/work/devnode-docker:/data
+    command: ["/usr/local/bin/igneum-node", "--dev.pow", "--miner.threads", "1", "--gcmode", "archive", "--datadir", "/data", "--http", "--http.addr", "0.0.0.0", "--http.port", "8545", "--http.api", "eth,net,web3,debug,txpool,igneum", "--http.vhosts", "*", "--ws", "--ws.addr", "0.0.0.0", "--ws.port", "8546", "--ws.api", "eth,net,web3", "--ws.origins", "*", "--verbosity", "3"]
+    ports:
+      - target: 8545
+        published: 8545
+        host_ip: 127.0.0.1

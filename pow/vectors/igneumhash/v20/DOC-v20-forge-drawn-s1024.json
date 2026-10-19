@@ -1,0 +1,1 @@
+{"version": 20, "rounds": 1024, "program_ops": 32, "lanes": 16, "registers": 32, "scratch_kib": 16, "dataset_mib": 1024, "cache_mib": 64, "parents": 256, "item_bytes": 256, "fold_every": 64, "epoch_blocks": 4096, "chain_id": 7310, "drawn_order": 1}

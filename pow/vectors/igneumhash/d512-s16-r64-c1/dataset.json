@@ -1,0 +1,15 @@
+{
+  "candidate": "igneumhash",
+  "class": "dataset",
+  "generator": "ignpow abi 0 build ddc50926; kawpow-0.9.4 = ravencoin-ethash@22549129 (v4.8.0, progpow 0.9.4, epoch 7500); autolykos-2 = ergo v6.0.7 AutolykosPowScheme (k 32, n 26, in-house BLAKE2b); igneumhash = IgneumHash-R0A v0 (SPEC-R0A-v0.md revision 0.2, BLAKE3 1.8.2 portable)",
+  "seed": "20261009",
+  "params": {"version": 0, "dataset_mib": 512, "scratch_kib": 16, "rounds": 64, "lanes": 8, "epoch_blocks": 4096, "item_chain": 1, "chain_id": 7310},
+  "count": 5,
+  "vectors": [
+    {"height": 0, "header": "", "nonce": "0", "epoch": 0, "E": "3a8754b2fad5810cd11d7e0cc5e996f107ba9424384980a6e74370c2fee80b47", "D": "0cef1d864c5fd18ba40b99f9d9222d4c4734fdcce02ea6ff1259433255e008bd", "dataset_digest": "f91323aa2d7c49f6d1920de135438d1ce71f94d1059ba2c0cff4d5871a362900", "dataset_bytes": "536870912", "build_ms": "434"},
+    {"height": 4096, "header": "", "nonce": "0", "epoch": 1, "E": "9e849c672fcd4acca17b4d1fbd6dc3ac86cfa9088381eaaffa3b456cf980ef10", "D": "e67886d740d4ad9f90e9711b6b7c6756f5bf0613e9f7e5d0561b82ce351e8db2", "dataset_digest": "4df7408dc55fde2d3075fa2c9554609ba01909e1a9af014c7b93b2c9186d2265", "dataset_bytes": "536870912", "build_ms": "456"},
+    {"height": 8192, "header": "", "nonce": "0", "epoch": 2, "E": "9fca11e0080b174d9d8224fd6bd74ab80f93d06a131a487aa8fc49e499a3054a", "D": "38e827a261c11b873ce57443db3005b184951700f5a56a4830c4f58dc71ae0e6", "dataset_digest": "a90597a08ce35596fce90e7f8d01896a8eda27b44437b37312f3386f7fd356a1", "dataset_bytes": "536870912", "build_ms": "541"},
+    {"height": 1835008, "header": "", "nonce": "0", "epoch": 448, "E": "cd467cd48b4942b1572954b53ebf5fc5b14467f0cedbc884735cd23407c964e6", "D": "ab8a012bf6d4dd54e39a3868acc9eaa6363e359844190dcd13d1af17bcb13686", "dataset_digest": "62a0c34595aedd9e5bd1bc82cc637f776a9e9e90f1ae3d7c574dd897ac89d24a", "dataset_bytes": "536870912", "build_ms": "481"},
+    {"height": 2452184, "header": "", "nonce": "0", "epoch": 598, "E": "a09f1d6479e98b3bbcf2d17b070887802c8862c1d72ab70730615e98c80e4d55", "D": "91d8c8d35d164fb7e8a8a3621d6b8ab011aa9141f49f34ef081787e4048c3067", "dataset_digest": "79583054605370605531296447a4d8c169e79c5b15dc75d3885d9598715dbb48", "dataset_bytes": "536870912", "build_ms": "393"}
+  ]
+}

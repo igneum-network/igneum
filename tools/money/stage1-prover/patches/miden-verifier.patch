@@ -1,0 +1,61 @@
+diff -ruN -x target a/src/lib.rs b/src/lib.rs
+--- a/src/lib.rs	2026-10-18 21:46:48.942598903 +0000
++++ b/src/lib.rs	2026-10-18 21:46:48.944598892 +0000
+@@ -330,24 +330,25 @@
+         let pcs_params = config::pcs_params();
+         let num_kernel_procedures = claim.kernel().proc_hashes().len() as u32;
+         match stark.hash_fn() {
++            // IGNEUM MONEY stage one, the 128-bit cut (tools/money/stage1-prover/patches): the proof is over the cubic challenge field.
+             HashFunction::Blake3_256 => {
+-                let config = config::blake3_256_config(pcs_params, config::RELATION_DIGEST);
++                let config = config::blake3_256_cubic_config(pcs_params, config::RELATION_DIGEST);
+                 self.verify_stark_proof(&config, &public_values, &aux_inputs, proof_bytes)
+             },
+             HashFunction::Rpo256 => {
+-                let config = config::rpo_config(pcs_params, config::RELATION_DIGEST);
++                let config = config::rpo_cubic_config(pcs_params, config::RELATION_DIGEST);
+                 self.verify_stark_proof(&config, &public_values, &aux_inputs, proof_bytes)
+             },
+             HashFunction::Rpx256 => {
+-                let config = config::rpx_config(pcs_params, config::RELATION_DIGEST);
++                let config = config::rpx_cubic_config(pcs_params, config::RELATION_DIGEST);
+                 self.verify_stark_proof(&config, &public_values, &aux_inputs, proof_bytes)
+             },
+             HashFunction::Poseidon2 => {
+-                let config = config::poseidon2_config(pcs_params, config::RELATION_DIGEST);
++                let config = config::poseidon2_cubic_config(pcs_params, config::RELATION_DIGEST);
+                 self.verify_stark_proof(&config, &public_values, &aux_inputs, proof_bytes)
+             },
+             HashFunction::Keccak => {
+-                let config = config::keccak_config(pcs_params, config::RELATION_DIGEST);
++                let config = config::keccak_cubic_config(pcs_params, config::RELATION_DIGEST);
+                 self.verify_stark_proof(&config, &public_values, &aux_inputs, proof_bytes)
+             },
+         }
+@@ -377,7 +378,7 @@
+         proof_bytes: &[u8],
+     ) -> Result<(u32, usize), StarkVerificationError>
+     where
+-        SC: StarkConfig<Felt, QuadFelt>,
++        SC: StarkConfig<Felt, config::CubeFelt>,
+         <SC::Lmcs as Lmcs>::Commitment: DeserializeOwned,
+     {
+         if proof_bytes.len() > MAX_STARK_PROOF_BYTES {
+@@ -389,7 +390,7 @@
+ 
+         let proof_encoding_config = wincode::config::Configuration::default()
+             .with_preallocation_size_limit::<MAX_STARK_PROOF_BYTES>();
+-        let proof = deserialize_schema_exact::<SerdeCompat<StarkProofData<Felt, QuadFelt, SC>>, _>(
++        let proof = deserialize_schema_exact::<SerdeCompat<StarkProofData<Felt, config::CubeFelt, SC>>, _>(
+             proof_bytes,
+             proof_encoding_config,
+         )?;
+@@ -401,7 +402,7 @@
+         // statement inputs read during observation/boundary correction. The lifted verifier absorbs
+         // both into Fiat-Shamir internally, and derives the multi-AIR ordering deterministically
+         // from the proof's per-AIR trace heights.
+-        let statement = Statement::<Felt, QuadFelt, _>::new(
++        let statement = Statement::<Felt, config::CubeFelt, _>::new(
+             MidenMultiAir::new(),
+             public_values.to_vec(),
+             aux_inputs.to_vec(),

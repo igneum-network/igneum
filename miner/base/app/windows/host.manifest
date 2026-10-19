@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- Ember.exe (the window host): per-monitor DPI awareness v2 (dpi-23, 7 October 2026). Without it Windows
+     stretched the whole window on a scaled panel (the second Windows machine's 5120 by 2160 at 200 percent rendered blurry); with it WebView2
+     renders at the panel's native scale and the host reads physical pixels. Embedded by host.rc as RT_MANIFEST 1;
+     BUILD-APP.bat links with /MANIFEST:NO so the linker's default manifest does not collide. -->
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+  <assemblyIdentity type="win32" name="Igneum.Miner" version="1.0.0.0"/>
+  <application xmlns="urn:schemas-microsoft-com:asm.v3">
+    <windowsSettings>
+      <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+      <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+    </windowsSettings>
+  </application>
+  <!-- V6-06 (8 October 2026): the window host never holds rights; the one prompt it raises for the engine's step is a
+       child process (runElevated in host.cpp), and the Power Helper task runs a protected copy of the engine. -->
+  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+    <security>
+      <requestedPrivileges>
+        <requestedExecutionLevel level="asInvoker" uiAccess="false"/>
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <dependency>
+    <dependentAssembly>
+      <assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls" version="6.0.0.0" processorArchitecture="*" publicKeyToken="6595b64144ccf1df" language="*"/>
+    </dependentAssembly>
+  </dependency>
+</assembly>

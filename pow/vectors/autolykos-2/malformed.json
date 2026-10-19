@@ -1,0 +1,17 @@
+{
+  "candidate": "autolykos-2",
+  "class": "malformed",
+  "generator": "ignpow abi 0 build 06721bfd; kawpow-0.9.4 = ravencoin-ethash@22549129 (v4.8.0, progpow 0.9.4, epoch 7500); autolykos-2 = ergo v6.0.7 AutolykosPowScheme (k 32, n 26, in-house BLAKE2b); fishhash-1 = iron-fish/fish-hash@823531c (measure-only, D-GA-04; 4.50 GiB fixed dataset, blake3 seed and final); igneumhash = IgneumHash-R0A v0 (SPEC-R0A-v0.md revision 0.2, BLAKE3 1.8.2 portable)",
+  "seed": "20261009",
+  "count": 8,
+  "vectors": [
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "ctx_height": 1, "mix": "0f9b40db61b346250d6deabddc3718b510e977317c82d15bd2cd3759ff672a19", "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "expect": "ok"},
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "ctx_height": 1, "mix": "0f9b40db61b346250d6deabddc3718b510e977317c82d15bd2cd3759ff672a19", "boundary": "0000000000000000000000000000000000000000000000000000000000000000", "expect": "boundary"},
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "ctx_height": 1, "mix": "0000000000000000000000000000000000000000000000000000000000000000", "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "expect": "mix"},
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "ctx_height": 1, "mix": "0000000000000000000000000000000000000000000000000000000000000000", "boundary": "0000000000000000000000000000000000000000000000000000000000000000", "expect": "mix"},
+    {"height": 7500, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "ctx_height": 1, "mix": "0f9b40db61b346250d6deabddc3718b510e977317c82d15bd2cd3759ff672a19", "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "expect": "epoch"},
+    {"height": 2147483648, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "ctx_height": 1, "mix": "0f9b40db61b346250d6deabddc3718b510e977317c82d15bd2cd3759ff672a19", "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "expect": "height"},
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "ctx_height": 1, "mix": "0f9b40db61b346250d6deabddc3718b510e977317c82d15bd2cd3759ff672a19", "boundary": "5ad30a4d2b16a96058fcde4499ed79b2b22afd2f7518df26c7c4f591806b999e", "expect": "ok"},
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4312426439069536300", "ctx_height": 1, "mix": "0f9b40db61b346250d6deabddc3718b510e977317c82d15bd2cd3759ff672a19", "boundary": "5ad30a4d2b16a96058fcde4499ed79b2b22afd2f7518df26c7c4f591806b999d", "expect": "boundary"}
+  ]
+}

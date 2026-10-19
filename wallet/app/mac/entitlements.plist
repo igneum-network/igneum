@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- the wallet under the hardened runtime (docs/release/ORG-SIGNING.md section 3): the engine, the signer and the
+       window need no exception entitlement (no JIT, no unsigned memory, no dynamic library outside the bundle; the
+       web view's content runs in WebKit's own process; the Secure Enclave key for Touch ID needs no access group) -->
+</dict>
+</plist>

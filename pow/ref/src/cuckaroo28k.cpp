@@ -1,0 +1,477 @@
+// THE GRAPH LANE'S 28b FORM, igneum-graph28k (the panel's cure on F-130, 14 October 2026 21:xx UK): the 4 GB form with the EDGE
+// FUNCTION KEYED OVER THE EPOCH DATASET (28c: the dataset word at the ADDRESS the edge's sip output names, a random read an edge) (version 17b's 1 GiB dataset, the chain's id, the
+// harness epoch) XORed into every edge's siphash output as w | fmix32(w) << 32 before the endpoints are taken, so the trimmer must hold
+// or fetch the gigabyte each pass (2^28 words a graph) and a lean trimmer chip pays the memory lane's term; the ticket, the key and
+// the ticket hash unchanged; the coordinate id "igneum-graph28k". This file is cuckaroo28.cpp transformed by tools/graph28k.py over
+// the modified headers under src/cuckaroo28k/ (README.md there). Below, the 4 GB form's own text:
+// (the project's order of 14 October 2026 16:4x UK, the founder's priority for the old cards): the same
+// construction at EDGEBITS 28 (2^28 edges, half of Cuckaroo29's: the mean trimmer's buckets about 2.7 GB resident on a card against
+// 5.4 at 29, under the 3.5 GB line, so a 4 GB card holds it and a 6 GB 2060 or any 8 GB card holds it beside the engine); PROOFSIZE
+// 42, the sipblock-64 edge function, tromp's verify and mean solver at 28 bits, Igneum's graph key and ticket hash unchanged (the
+// key tag and the ticket tag the same; the coordinate id "igneum-graph28" keeps a 28-bit ticket out of the 29-bit lane and the
+// reverse, and a ticket's edges are checked under 2^28). This file is cuckaroo29.cpp transformed by tools/graph28.py: EDGEBITS 28,
+// tromp's vendored headers wrapped in namespace eb28 (their std includes pulled first), the namespaces c28 and graph28, the exports
+// igneum_graph28_*. A chip's edge on the lane at 28 bits: the trimming memory halves with the edges, so an on-package memory of
+// 2.7 GB serves a chip where 29 bits asked 5.4 (Grin moved from 29 to 31 bits for that reason); the lean's RATIO (memory bandwidth
+// and the cycle search against a GPU's) is the same, the absolute memory a chip must carry is halved. The verifier's cost is tromp's
+// verify at 42 sipblocks, unchanged in kind.
+#define EDGEBITS 28
+#include <assert.h>
+#include <bitset>
+#include <chrono>
+#include <ctime>
+#include <errno.h>
+#include <new>
+#include <pthread.h>
+#include <stdarg.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <vector>
+#include <algorithm>
+#include <thread>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <memory>
+#include <mutex>
+#include <string>
+#include <string>
+#include <atomic>
+#if defined(__x86_64__)
+#include <x86intrin.h>
+#include <immintrin.h>
+#endif
+#define SQUASH_OUTPUT 1
+#include "candidate.hpp"
+#include "controls.h"
+#include "blake2b.hpp"
+#include "blake3.h"
+
+namespace eb28k {
+#if defined(__x86_64__) && !defined(_WIN32)
+#define IGNPOW_C29_MEAN 1
+#include "cuckaroo28k/cuckaroo/mean.hpp"
+#else
+#define IGNPOW_C29_MEAN 0
+#include "cuckaroo28k/cuckaroo/cuckaroo.hpp"
+#include "cuckaroo28k/cuckaroo/graph.hpp"
+#endif
+uint32_t (*igm_edge_word)(uint64_t word_index) = nullptr;
+}  // namespace eb28k
+using namespace eb28k;
+// the inner context (igneumhash.cpp): the epoch dataset of version 17b's form at 1 GiB, the chain's id, the harness epoch (65536 heights)
+extern "C" void* ignh_inner_create(const char* json, uint64_t height, int full, int* status);
+extern "C" const uint8_t* ignh_inner_dataset(const void* ctx, uint64_t* bytes);
+extern "C" uint32_t ignh_inner_word(const void* ctx, uint64_t word_index);
+extern "C" void ignh_inner_destroy(void* ctx);
+namespace {
+struct inner_slot { uint64_t chain = ~0ull, ep = ~0ull; bool full = false; void* ctx = nullptr; const uint8_t* data = nullptr; uint64_t bytes = 0; };
+std::mutex g_inner_mu; inner_slot g_inner[4];  // (chain, epoch, full) slots: the resident one for the solver, the light one for the verifier
+const inner_slot* t_inner = nullptr;  // process-wide, set under the solve (one solve at a time: the solver holds its mutex)
+std::string inner_doc(uint64_t chain) { return "{\"version\": 17, \"rounds\": 512, \"dataset_mib\": 1024, \"cache_mib\": 64, \"parents\": 256, \"item_bytes\": 256, \"epoch_blocks\": 4096, \"period_blocks\": 300, \"chain_id\": " + std::to_string(chain) + ", \"program_anchor\": \"0000000000000000000000000000000000000000000000000000000000000000\"}"; }
+const inner_slot* inner_for(uint64_t chain, uint64_t height, bool full) {
+    const uint64_t ep = height / 4096ull;  // 17b's epoch: one gigabyte serves both lanes
+    std::lock_guard<std::mutex> g(g_inner_mu);
+    for (auto& s : g_inner) if (s.ctx && s.chain == chain && s.ep == ep && s.full == full) return &s;
+    inner_slot* v = nullptr; for (auto& s : g_inner) if (!s.ctx) { v = &s; break; }
+    if (!v) { v = &g_inner[0]; ignh_inner_destroy(v->ctx); *v = inner_slot(); }
+    int st = 0; v->ctx = ignh_inner_create(inner_doc(chain).c_str(), height, full ? 1 : 0, &st);
+    if (!v->ctx) return nullptr;
+    v->chain = chain; v->ep = ep; v->full = full; v->data = ignh_inner_dataset(v->ctx, &v->bytes);
+    return v;
+}
+uint32_t edge_word_hook(uint64_t sip) {
+    const inner_slot* s = t_inner;
+    const uint64_t idx = sip & ((s->bytes / 4) - 1);  // the low bits of the sip output over the dataset's words (2^28 at 1 GiB)
+    if (s->data) { const uint8_t* q = s->data + 4 * idx; return uint32_t(q[0]) | (uint32_t(q[1]) << 8) | (uint32_t(q[2]) << 16) | (uint32_t(q[3]) << 24); }
+    return ignh_inner_word(s->ctx, idx);
+}
+std::mutex g_hook_mu;  // one keyed solve or check at a time (the hook is process-wide)
+struct hook_guard { std::lock_guard<std::mutex> lk; hook_guard(const inner_slot* s) : lk(g_hook_mu) { t_inner = s; eb28k::igm_edge_word = edge_word_hook; } ~hook_guard() { eb28k::igm_edge_word = nullptr; t_inner = nullptr; } };
+}  // namespace
+#include <algorithm>
+#include <thread>
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <memory>
+#include <mutex>
+#include <string>
+#include <vector>
+
+namespace ignpow {
+namespace c28k {
+
+constexpr uint32_t kEdgeBits = EDGEBITS, kProofSize = PROOFSIZE;
+// The harness epoch (never consensus): 2^24 heights per epoch, so the ABI's epoch rules (a context bound to one epoch,
+// IGNPOW_E_EPOCH at another height) are exercised by the shared classes; the hash itself reads no height.
+constexpr uint64_t kEpochLen = 1ull << 16;  // 65536 heights: the shared classes' epoch multiples (448 and 598 epochs) stay inside the height range
+constexpr uint64_t kMaxHeight = 0x7fffffffull;  // the ABI's height range (IGNPOW_E_HEIGHT beyond it), as the other candidates
+constexpr size_t kPackedBytes = (kProofSize * kEdgeBits + 7) / 8;  // 153
+static_assert(kEdgeBits == 28 && kProofSize == 42, "Cuckaroo28k");
+
+bool params_default(const char* p) {
+    if (p == nullptr) return true;
+    std::string s; for (const char* c = p; *c; ++c) if (*c != ' ' && *c != '\t' && *c != '\r' && *c != '\n') s += *c;
+    return s == "{}";
+}
+
+// Tari determine_sip_hash: BLAKE2b-256 over BE64(nonce) || mining_hash; the keys are the four LE64 words.
+void keys_of(const uint8_t header[32], uint64_t nonce, siphash_keys& k) {
+    uint8_t be[8]; for (int i = 0; i < 8; ++i) be[i] = static_cast<uint8_t>(nonce >> (56 - 8 * i));
+    uint8_t h[32];
+    blake2b b(32); b.update(be, 8); b.update(header, 32); b.finish(h);
+    k.setkeys(reinterpret_cast<const char*>(h));
+}
+
+// Tari pack_nonces at bit_width 29 (its loop ported line for line).
+void pack(const uint32_t* edges, size_t count, uint32_t bw, uint8_t* out, size_t out_len) {
+    std::memset(out, 0, out_len);
+    size_t pos = 0; uint64_t mini = 0; uint32_t remaining = 64;
+    for (size_t i = 0; i < count; ++i) {
+        const uint64_t el = edges[i];
+        mini |= el << (64 - remaining);
+        if (bw < remaining) remaining -= bw;
+        else {
+            for (int b = 0; b < 8; ++b) out[pos + b] = static_cast<uint8_t>(mini >> (8 * b));
+            pos += 8;
+            mini = el >> remaining;
+            remaining = 64 + remaining - bw;
+        }
+    }
+    size_t rem = (out_len - pos) % 8; if (rem == 0) rem = 8;
+    if (mini > 0) for (size_t b = 0; b < rem && pos + b < out_len; ++b) out[pos + b] = static_cast<uint8_t>(mini >> (8 * b));
+}
+
+// Tari unpack_nonces: returns false on a non-zero extra (PowDataContainsNonZeroPadding).
+bool unpack(const uint8_t* in, size_t in_len, uint32_t bw, size_t expected, std::vector<uint64_t>& out) {
+    out.clear();
+    const uint64_t mask = (1ull << bw) - 1;
+    uint64_t mini = 0; uint32_t remaining = 64;
+    for (size_t i = 0; i < in_len; ++i) {
+        mini |= static_cast<uint64_t>(in[i]) << (64 - remaining);
+        remaining = remaining >= 8 ? remaining - 8 : 0;
+        while (remaining <= 64 - bw) { out.push_back(mini & mask); mini >>= bw; remaining += bw; }
+    }
+    for (size_t i = expected; i < out.size(); ++i) if (out[i] != 0) return false;
+    if (out.size() > expected) out.resize(expected);
+    return true;
+}
+
+void proof_hash(const uint8_t* packed, size_t n, uint8_t out[32]) { blake2b b(32); b.update(packed, n); b.finish(out); }
+
+// Every 42-cycle of the graph of keys, each verified by tromp's verify(), the cycles sorted (each cycle's edges
+// ascending, the list lexicographic) so that any complete solver reports the same list. On x86 the solver is tromp's
+// mean solver (the edge trimmer with the matching phase recovering the edge indices; complete, since trimming removes
+// only edges that lie on no cycle); elsewhere the simple finder over the whole graph (12 GiB, minutes per graph).
+std::mutex g_mu;
+#if IGNPOW_C29_MEAN
+std::unique_ptr<solver_ctx> g_solver;
+#else
+std::unique_ptr<graph<word_t>> g_graph;
+#endif
+
+int solve(const siphash_keys& keys, std::vector<std::vector<uint32_t>>& sols) {
+    sols.clear();
+    std::lock_guard<std::mutex> lk(g_mu);
+    siphash_keys k = keys;
+#if IGNPOW_C29_MEAN
+    if (!g_solver) {
+        unsigned nt = std::thread::hardware_concurrency(); if (nt == 0) nt = 4; if (nt > 16) nt = 16;
+        try { g_solver.reset(new solver_ctx(nt, 68, false, true, false)); } catch (...) { return IGNPOW_E_MEMORY; }
+        if (!g_solver) return IGNPOW_E_MEMORY;
+    }
+    g_solver->trimmer.sip_keys = k;
+    g_solver->sols.clear();
+    const u32 n = g_solver->solve();
+    for (u32 s = 0; s < n; ++s) {
+        std::vector<uint32_t> c(g_solver->sols.begin() + s * kProofSize, g_solver->sols.begin() + (s + 1) * kProofSize);
+        std::sort(c.begin(), c.end());
+        word_t e[PROOFSIZE]; for (uint32_t i = 0; i < kProofSize; ++i) e[i] = c[i];
+        if (verify(e, k) != POW_OK) continue;
+        sols.push_back(c);
+    }
+#else
+    if (!g_graph) { try { g_graph.reset(new graph<word_t>(NEDGES, NEDGES, MAX_SOLS)); } catch (...) { return IGNPOW_E_MEMORY; } }
+    graph<word_t>& cg = *g_graph;
+    cg.reset();
+    u64 sips[EDGE_BLOCK_SIZE];
+    for (word_t block = 0; block < NEDGES; block += EDGE_BLOCK_SIZE) {
+        sipblock(k, block, sips);
+        for (u32 i = 0; i < EDGE_BLOCK_SIZE; ++i) {
+            const u64 edge = sips[i];
+            cg.add_edge(static_cast<word_t>(edge & EDGEMASK), static_cast<word_t>((edge >> 32) & EDGEMASK));
+        }
+    }
+    for (u32 s = 0; s < cg.nsols; ++s) {
+        if (verify(cg.sols[s], k) != POW_OK) continue;
+        sols.emplace_back(cg.sols[s], cg.sols[s] + kProofSize);
+    }
+#endif
+    std::sort(sols.begin(), sols.end());
+    sols.erase(std::unique(sols.begin(), sols.end()), sols.end());
+    return IGNPOW_OK;
+}
+
+struct c29_ctx final : ctx_base {
+    uint64_t ep = 0;
+    uint64_t epoch() const override { return ep; }
+    const char* algo() const override { return IGNPOW_ALGO_CUCKAROO29_TARI; }
+};
+
+int ab_check_params(const char* p) { return params_default(p) ? IGNPOW_OK : IGNPOW_E_PARAMS; }
+uint64_t ab_epoch_of(const char* p, uint64_t h, int* status) { int st = params_default(p) ? IGNPOW_OK : IGNPOW_E_PARAMS; if (st == IGNPOW_OK && h > kMaxHeight) st = IGNPOW_E_HEIGHT; if (status) *status = st; return st == IGNPOW_OK ? h / kEpochLen : 0; }
+uint64_t ab_cache_bytes(const char* p, uint64_t, int* status) { int st = params_default(p) ? IGNPOW_OK : IGNPOW_E_PARAMS; if (status) *status = st; return 0; }
+uint64_t ab_dataset_bytes(const char* p, uint64_t, int* status) { int st = params_default(p) ? IGNPOW_OK : IGNPOW_E_PARAMS; if (status) *status = st; return 0; }
+ctx_base* ab_create(const char* p, uint64_t h, int, int* status) {
+    if (!params_default(p)) { if (status) *status = IGNPOW_E_PARAMS; return nullptr; }
+    if (h > kMaxHeight) { if (status) *status = IGNPOW_E_HEIGHT; return nullptr; }
+    if (status) *status = IGNPOW_OK;
+    auto* c = new c29_ctx(); c->ep = h / kEpochLen; return c;
+}
+int compute(const uint8_t header[32], uint64_t nonce, uint8_t mix_out[32], uint8_t hash_out[32]) {
+    siphash_keys k; keys_of(header, nonce, k);
+    std::vector<std::vector<uint32_t>> sols;
+    int st = solve(k, sols); if (st != IGNPOW_OK) return st;
+    blake3_hasher h; blake3_hasher_init(&h);
+    for (size_t s = 0; s < sols.size(); ++s) {
+        uint8_t packed[kPackedBytes]; pack(sols[s].data(), kProofSize, kEdgeBits, packed, kPackedBytes);
+        blake3_hasher_update(&h, packed, kPackedBytes);
+        if (s == 0) proof_hash(packed, kPackedBytes, hash_out);
+    }
+    blake3_hasher_finalize(&h, mix_out, 32);
+    if (sols.empty()) std::memset(hash_out, 0xff, 32);
+    return IGNPOW_OK;
+}
+int ab_hash(const ctx_base* c, uint64_t h, const uint8_t header[32], uint64_t nonce, uint8_t mix_out[32], uint8_t hash_out[32]) { if (h > kMaxHeight) return IGNPOW_E_HEIGHT; if (h / kEpochLen != static_cast<const c29_ctx*>(c)->ep) return IGNPOW_E_EPOCH; return compute(header, nonce, mix_out, hash_out); }
+int ab_verify(const ctx_base* c, uint64_t h, const uint8_t header[32], uint64_t nonce, const uint8_t mix[32], const uint8_t boundary[32]) {
+    if (h > kMaxHeight) return IGNPOW_E_HEIGHT;
+    if (h / kEpochLen != static_cast<const c29_ctx*>(c)->ep) return IGNPOW_E_EPOCH;
+    uint8_t m[32], hh[32]; int st = compute(header, nonce, m, hh); if (st != IGNPOW_OK) return st;
+    if (std::memcmp(m, mix, 32) != 0) return IGNPOW_E_MIX;
+    if (!le256(hh, boundary)) return IGNPOW_E_BOUNDARY;
+    return IGNPOW_OK;
+}
+int ab_light_cache(const ctx_base*, const void** data, uint64_t* bytes, uint32_t* item_bytes) { if (data) *data = nullptr; if (bytes) *bytes = 0; if (item_bytes) *item_bytes = 0; return IGNPOW_OK; }
+
+#define FAILV() do { if (std::getenv("RXE1_DEBUG")) std::fprintf(stderr, "cuckaroo29 self-test failed at line %d\n", __LINE__); return IGNPOW_E_VECTORS; } while (0)
+bool unhex(const char* s, uint8_t* out, size_t n) {
+    if (std::strlen(s) != 2 * n) return false;
+    for (size_t i = 0; i < n; ++i) { int a = s[2 * i], b = s[2 * i + 1]; auto v = [](int c) { return c >= '0' && c <= '9' ? c - '0' : c >= 'a' && c <= 'f' ? c - 'a' + 10 : -1; }; if (v(a) < 0 || v(b) < 0) return false; out[i] = static_cast<uint8_t>(v(a) * 16 + v(b)); }
+    return true;
+}
+
+// Tari's unit vectors (cuckaroo_pow.rs and siphash.rs tests) and tromp's sipblock agreement with Tari's siphash_block.
+int ab_vectors_check(size_t* count_out) {
+    size_t n = 0;
+    {   // siphash24 and siphash_block (siphash.rs tests)
+        siphash_keys k; k.k0 = 1; k.k1 = 2; k.k2 = 3; k.k3 = 4;
+        if (k.siphash24(10) != 928382149599306901ull || k.siphash24(111) != 10524991083049122233ull) FAILV();
+        siphash_keys k2; k2.k0 = 9; k2.k1 = 7; k2.k2 = 6; k2.k3 = 7;
+        if (k2.siphash24(12) != 1305683875471634734ull || k2.siphash24(10) != 11589833042187638814ull) FAILV();
+        u64 buf[EDGE_BLOCK_SIZE];
+        if (sipblock(k, 10, buf) != 1182162244994096396ull || sipblock(k, 123, buf) != 11303676240481718781ull || sipblock(k2, 12, buf) != 4886136884237259030ull) FAILV();
+        ++n;
+    }
+    {   // determine_sip_hash (test_header_hash)
+        uint8_t hdr[32], want[32]; if (!unhex("4dbfee3eb7b9a6a27d2a4a8d754eb77cc5493006945c1246e50e9beb4de5ffa5", hdr, 32) || !unhex("49b48f77df94943cf3a422c5a0b528c737cc38a7b6c36076e81abcede5b2be3a", want, 32)) FAILV();
+        siphash_keys k; keys_of(hdr, 0x9d589ed597ed42d1ull, k);
+        siphash_keys w; w.setkeys(reinterpret_cast<const char*>(want));
+        if (k.k0 != w.k0 || k.k1 != w.k1 || k.k2 != w.k2 || k.k3 != w.k3) FAILV();
+        ++n;
+    }
+    {   // pack_nonces and unpack_nonces (the 3-bit and 29-bit tests)
+        const uint32_t e3[4] = {0, 1, 2, 3}; uint8_t p3[2]; pack(e3, 4, 3, p3, 2);
+        if (p3[0] != 0x88 || p3[1] != 0x06) FAILV();
+        std::vector<uint64_t> u; if (!unpack(p3, 2, 3, 4, u) || u != std::vector<uint64_t>({0, 1, 2, 3})) FAILV();
+        const uint8_t bad[3] = {0x88, 0x06, 0xc0}; if (unpack(bad, 3, 3, 4, u)) FAILV();
+        const uint32_t e29[1] = {(1u << 29) - 1}; uint8_t p29[4]; pack(e29, 1, 29, p29, 4);
+        if (p29[0] != 0xff || p29[1] != 0xff || p29[2] != 0xff || p29[3] != 0x1f) FAILV();
+        if (!unpack(p29, 4, 29, 1, u) || u.size() != 1 || u[0] != (1u << 29) - 1) FAILV();
+        const uint32_t e29b[4] = {(1u << 29) - 1, 0, (1u << 29) - 1, 0}; uint8_t p29b[15]; pack(e29b, 4, 29, p29b, 15);
+        const uint8_t want[15] = {0xff, 0xff, 0xff, 0x1f, 0, 0, 0, 0xfc, 0xff, 0xff, 0x7f, 0, 0, 0, 0};
+        if (std::memcmp(p29b, want, 15) != 0) FAILV();
+        if (!unpack(p29b, 15, 29, 4, u) || u != std::vector<uint64_t>({(1u << 29) - 1, 0, (1u << 29) - 1, 0})) FAILV();
+        ++n;
+    }
+    {   // test_unpack_example and test_edge_generation_example1/2
+        const char* packed_hex = "ab3c742104de5808220f0ebd1d24e2a279489c9fa8c9264f754181433226655286c69a08f166e523283813e5eceabbec042598193013a34cd966601e064d5f3dbb911efe39536e7847f3180071865023e18c6c1c627696aece2ff401938abacc8ed2f446b8ba71785b074a086d36d1d61d638dc0eab156b8883214cbff9962f199b96c92349df3d1d7b647ed0cdf6dfde1e49077bcfb74b503";
+        uint8_t packed[kPackedBytes]; if (!unhex(packed_hex, packed, kPackedBytes)) FAILV();
+        std::vector<uint64_t> u; if (!unpack(packed, kPackedBytes, 29, 42, u) || u.size() != 42) FAILV();
+        const uint64_t want[42] = {24394923, 46592033, 58968194, 71842682, 75995694, 81022926, 97860763, 105410600, 106063142, 138729012, 150559164, 170291280, 197045966, 202539638, 206356582, 215689620, 218504800, 232385274, 243238820, 250666150, 268537652, 296239928, 296891268, 315542595, 338677422, 341088271, 346272558, 359697897, 364349211, 377758979, 391857369, 403811427, 408334826, 413242437, 413564914, 426980322, 433277222, 460056825, 473150750, 473935291, 477597924, 497788893};
+        for (int i = 0; i < 42; ++i) if (u[i] != want[i]) FAILV();
+        uint32_t e[42]; for (int i = 0; i < 42; ++i) e[i] = static_cast<uint32_t>(want[i]);
+        uint8_t repacked[kPackedBytes]; pack(e, 42, 29, repacked, kPackedBytes);
+        if (std::memcmp(repacked, packed, kPackedBytes) != 0) FAILV();
+        uint8_t kb[32]; if (!unhex("a216826b5d2752ccf129eef73e1e02a6b56d13195d7998e6b04d02a136b88f4f", kb, 32)) FAILV();
+        siphash_keys k; k.setkeys(reinterpret_cast<const char*>(kb));
+        u64 buf[EDGE_BLOCK_SIZE]; const u64 edge = sipblock(k, 24394923, buf);
+        if ((edge & EDGEMASK) != 259523165 || ((edge >> 32) & EDGEMASK) != 501211281) FAILV();
+        ++n;
+    }
+    if (count_out) *count_out = n;
+    return IGNPOW_OK;
+}
+
+}  // namespace c28k
+
+[[maybe_unused]] const candidate cuckaroo28k_tari = {
+    "cuckaroo28k-tari",
+    c28k::ab_check_params, c28k::ab_epoch_of, c28k::ab_cache_bytes, c28k::ab_dataset_bytes, c28k::ab_create,
+    c28k::ab_hash, c28k::ab_verify, c28k::ab_light_cache, c28k::ab_vectors_check,
+    "cuckaroo29-tari = tromp/cuckoo@55852825 (cuckaroo, EDGEBITS 29, PROOFSIZE 42) under tari-project/tari@463e53d3's keys, packing and proof value",
+};
+
+// ---- VectorWork's Graph coordinate (docs/igneumhash/vectorwork/GRAPH-COORDINATE.md, designer A, 13 Oct 2026; the project's order of 01:1x) ----
+// The same construction (Cuckaroo29: EDGEBITS 29, PROOFSIZE 42, the sipblock-64 edge function over siphash-2-4, tromp's verify)
+// under Igneum's binding: graph_key = BLAKE3(LP("Igneum/Graph/key") || LE64(chain_id) || LE64(height) || seed || LE64(nonce)), the
+// first 32 bytes the siphash key as four LE64 words, where seed is the 32-byte sealing pre-image the ABI passes as the header; the
+// TICKET is one 42-cycle's edge indices sorted ascending and distinct, each LE32, 168 bytes; ticket_hash = BLAKE3(LP("Igneum/Graph/
+// ticket") || graph_key || ticket); the ticket meets a target when ticket_hash is at or under it. No dataset is read.
+namespace graph28k {
+constexpr const char* kTagKey = "Igneum/Graph/key";
+constexpr const char* kTagTicket = "Igneum/Graph/ticket";
+constexpr size_t kTicketBytes = 42 * 4;
+constexpr uint64_t kEpochLen = 4096, kMaxHeight = c28k::kMaxHeight;  // 28c: the epoch is 17b's dataset epoch (4096 heights), not the harness's 65536
+struct params_t { uint64_t chain_id = 0; bool ok = false; };
+params_t parse(const char* p) {
+    params_t r;
+    // the document: {"chain_id": N}; the empty document ({}, or none) is chain 0, so the harnesses that enumerate every candidate with
+    // the empty document (the miner's supervisor test) read the coordinate, and the sets of record name their chain
+    if (!p || c28k::params_default(p)) { r.chain_id = 0; r.ok = true; return r; }
+    std::string s; for (const char* c = p; *c; ++c) if (*c != ' ' && *c != '\t' && *c != '\r' && *c != '\n') s += *c;
+    const std::string key = "\"chain_id\":";
+    const size_t i = s.find(key); if (s.size() < 2 || s[0] != '{' || s.back() != '}' || i == std::string::npos) return r;
+    size_t j = i + key.size(); uint64_t v = 0; bool any = false;
+    while (j < s.size() && s[j] >= '0' && s[j] <= '9') { v = v * 10 + uint64_t(s[j] - '0'); ++j; any = true; }
+    if (!any || (s[j] != '}' && s[j] != ',')) return r;
+    r.chain_id = v; r.ok = true; return r;
+}
+void lp(blake3_hasher& h, const char* t) { const uint8_t n = uint8_t(std::strlen(t)); blake3_hasher_update(&h, &n, 1); blake3_hasher_update(&h, t, n); }
+void le64(blake3_hasher& h, uint64_t x) { uint8_t b[8]; for (int i = 0; i < 8; ++i) b[i] = uint8_t(x >> (8 * i)); blake3_hasher_update(&h, b, 8); }
+void key_of(uint64_t chain_id, uint64_t height, const uint8_t seed[32], uint64_t nonce, uint8_t key[32], siphash_keys& k) {
+    blake3_hasher h; blake3_hasher_init(&h); lp(h, kTagKey); le64(h, chain_id); le64(h, height); blake3_hasher_update(&h, seed, 32); le64(h, nonce); blake3_hasher_finalize(&h, key, 32);
+    k.setkeys(reinterpret_cast<const char*>(key));  // the four LE64 words, as tromp's setkeys reads them
+}
+void ticket_bytes(const uint32_t edges[42], uint8_t out[kTicketBytes]) { for (int i = 0; i < 42; ++i) for (int b = 0; b < 4; ++b) out[4 * i + b] = uint8_t(edges[i] >> (8 * b)); }
+void ticket_hash(const uint8_t key[32], const uint8_t ticket[kTicketBytes], uint8_t out[32]) {
+    blake3_hasher h; blake3_hasher_init(&h); lp(h, kTagTicket); blake3_hasher_update(&h, key, 32); blake3_hasher_update(&h, ticket, kTicketBytes); blake3_hasher_finalize(&h, out, 32);
+}
+// the ticket's check: sorted ascending and distinct, every edge under 2^29, and one 42-cycle of the graph under the key (tromp's verify)
+int check_ticket(const siphash_keys& k, const uint32_t edges[42]) {
+    for (int i = 0; i < 42; ++i) { if (edges[i] >= (1u << 29)) return IGNPOW_E_ARG; if (i && edges[i] <= edges[i - 1]) return IGNPOW_E_ARG; }
+    word_t e[PROOFSIZE]; for (int i = 0; i < PROOFSIZE; ++i) e[i] = edges[i];
+    siphash_keys kk = k;
+    return verify(e, kk) == POW_OK ? IGNPOW_OK : IGNPOW_E_MIX;
+}
+struct graph_ctx final : ctx_base {
+    uint64_t ep = 0, chain_id = 0;
+    uint64_t epoch() const override { return ep; }
+    const char* algo() const override { return IGNPOW_ALGO_IGNEUM_GRAPH; }
+};
+int gcheck_params(const char* p) { return parse(p).ok ? IGNPOW_OK : IGNPOW_E_PARAMS; }
+uint64_t gepoch_of(const char* p, uint64_t h, int* status) { int st = parse(p).ok ? IGNPOW_OK : IGNPOW_E_PARAMS; if (st == IGNPOW_OK && h > kMaxHeight) st = IGNPOW_E_HEIGHT; if (status) *status = st; return st == IGNPOW_OK ? h / kEpochLen : 0; }
+uint64_t gcache_bytes(const char* p, uint64_t, int* status) { int st = parse(p).ok ? IGNPOW_OK : IGNPOW_E_PARAMS; if (status) *status = st; return 0; }
+uint64_t gdataset_bytes(const char* p, uint64_t, int* status) { int st = parse(p).ok ? IGNPOW_OK : IGNPOW_E_PARAMS; if (status) *status = st; return 0; }
+ctx_base* gcreate(const char* p, uint64_t h, int, int* status) {
+    const params_t r = parse(p);
+    if (!r.ok) { if (status) *status = IGNPOW_E_PARAMS; return nullptr; }
+    if (h > kMaxHeight) { if (status) *status = IGNPOW_E_HEIGHT; return nullptr; }
+    if (status) *status = IGNPOW_OK;
+    auto* c = new graph_ctx(); c->ep = h / kEpochLen; c->chain_id = r.chain_id; return c;
+}
+// the ABI's hash: the solver finds every 42-cycle of the attempt's graph; mix = BLAKE3 over the tickets in order (empty when none),
+// hash = the ticket_hash of the smallest ticket (0xff.. when none), so a search over nonces meets a target exactly as a hash does
+int gcompute(const graph_ctx& c, uint64_t height, const uint8_t seed[32], uint64_t nonce, uint8_t mix_out[32], uint8_t hash_out[32]) {
+    uint8_t key[32]; siphash_keys k; key_of(c.chain_id, height, seed, nonce, key, k);
+    const inner_slot* in = inner_for(c.chain_id, height, true); if (!in) return IGNPOW_E_MEMORY;
+    hook_guard hg(in);
+    std::vector<std::vector<uint32_t>> sols; int st = c28k::solve(k, sols); if (st != IGNPOW_OK) return st;
+    blake3_hasher h; blake3_hasher_init(&h);
+    for (size_t s = 0; s < sols.size(); ++s) { uint8_t t[kTicketBytes]; ticket_bytes(sols[s].data(), t); blake3_hasher_update(&h, t, kTicketBytes); if (s == 0) ticket_hash(key, t, hash_out); }
+    blake3_hasher_finalize(&h, mix_out, 32);
+    if (sols.empty()) {
+        // no cycle: the hash is above every target (the top byte 0xff) and still a function of the attempt, so distinct heights,
+        // headers and nonces never collide on it (the transitions class's period rule): 0xff || BLAKE3(LP("Igneum/Graph/none") || key)[1..]
+        blake3_hasher n; blake3_hasher_init(&n); lp(n, "Igneum/Graph/none"); blake3_hasher_update(&n, key, 32); blake3_hasher_finalize(&n, hash_out, 32);
+        hash_out[0] = 0xff;
+    }
+    return IGNPOW_OK;
+}
+int ghash(const ctx_base* c, uint64_t h, const uint8_t header[32], uint64_t nonce, uint8_t mix_out[32], uint8_t hash_out[32]) {
+    const auto& g = *static_cast<const graph_ctx*>(c);
+    if (h > kMaxHeight) return IGNPOW_E_HEIGHT; if (h / kEpochLen != g.ep) return IGNPOW_E_EPOCH;
+    return gcompute(g, h, header, nonce, mix_out, hash_out);
+}
+int gverify(const ctx_base* c, uint64_t h, const uint8_t header[32], uint64_t nonce, const uint8_t mix[32], const uint8_t boundary[32]) {
+    const auto& g = *static_cast<const graph_ctx*>(c);
+    if (h > kMaxHeight) return IGNPOW_E_HEIGHT; if (h / kEpochLen != g.ep) return IGNPOW_E_EPOCH;
+    uint8_t m[32], hh[32]; int st = gcompute(g, h, header, nonce, m, hh); if (st != IGNPOW_OK) return st;
+    if (std::memcmp(m, mix, 32) != 0) return IGNPOW_E_MIX;
+    if (!le256(hh, boundary)) return IGNPOW_E_BOUNDARY;
+    return IGNPOW_OK;
+}
+int glight_cache(const ctx_base*, const void** data, uint64_t* bytes, uint32_t* item_bytes) { if (data) *data = nullptr; if (bytes) *bytes = 0; if (item_bytes) *item_bytes = 0; return IGNPOW_OK; }
+int gvectors_check(size_t* count_out) { if (count_out) *count_out = 0; return IGNPOW_OK; }  // the sets of record in the tree are the vectors (ignpow-vectors check)
+}  // namespace graph28k
+
+const candidate igneum_graph28k = {
+    IGNPOW_ALGO_IGNEUM_GRAPH28K,
+    graph28k::gcheck_params, graph28k::gepoch_of, graph28k::gcache_bytes, graph28k::gdataset_bytes, graph28k::gcreate,
+    graph28k::ghash, graph28k::gverify, graph28k::glight_cache, graph28k::gvectors_check,
+    "igneum-graph28k = cuckaroo28 with the edge function keyed over the epoch dataset (the dataset word at the edge index XORed into the sip output; the panel's cure on F-130) under Igneum's graph key and ticket hash (GRAPH-COORDINATE.md section 12)",
+};
+
+}  // namespace ignpow
+
+extern "C" {
+// the Graph coordinate's exported calls (the cgo path): the key, the ticket's check with its hash, the canonical ticket's bytes
+void igneum_graph28k_key(uint64_t chain_id, uint64_t height, const uint8_t seed[32], uint64_t nonce, uint8_t key_out[32], uint64_t sip_keys_out[4]) {
+    siphash_keys k; ignpow::graph28k::key_of(chain_id, height, seed, nonce, key_out, k);
+    if (sip_keys_out) { sip_keys_out[0] = k.k0; sip_keys_out[1] = k.k1; sip_keys_out[2] = k.k2; sip_keys_out[3] = k.k3; }
+}
+int igneum_graph28k_verify_ticket(uint64_t chain_id, uint64_t height, const uint8_t seed[32], uint64_t nonce, const uint32_t edges[42], uint8_t ticket_hash_out[32]) {
+    uint8_t key[32]; siphash_keys k; ignpow::graph28k::key_of(chain_id, height, seed, nonce, key, k);
+    const inner_slot* in = inner_for(chain_id, height, false); if (!in) return IGNPOW_E_MEMORY;
+    hook_guard hg(in);
+    const int st = ignpow::graph28k::check_ticket(k, edges); if (st != IGNPOW_OK) return st;
+    if (ticket_hash_out) { uint8_t t[ignpow::graph28k::kTicketBytes]; ignpow::graph28k::ticket_bytes(edges, t); ignpow::graph28k::ticket_hash(key, t, ticket_hash_out); }
+    return IGNPOW_OK;
+}
+int igneum_graph28k_solve(uint64_t chain_id, uint64_t height, const uint8_t seed[32], uint64_t nonce, uint32_t* tickets, size_t max_tickets, size_t* n_out) {
+    uint8_t key[32]; siphash_keys k; ignpow::graph28k::key_of(chain_id, height, seed, nonce, key, k);
+    const inner_slot* in = inner_for(chain_id, height, true); if (!in) return IGNPOW_E_MEMORY;
+    hook_guard hg(in);
+    std::vector<std::vector<uint32_t>> v; int st = ignpow::c28k::solve(k, v); if (st != IGNPOW_OK) return st;
+    size_t n = v.size() < max_tickets ? v.size() : max_tickets;
+    for (size_t s = 0; s < n; ++s) std::memcpy(tickets + 42 * s, v[s].data(), 42 * sizeof(uint32_t));
+    if (n_out) *n_out = v.size();
+    return IGNPOW_OK;
+}
+void igneum_graph28k_ticket_bytes(const uint32_t edges[42], uint8_t out[168]) { ignpow::graph28k::ticket_bytes(edges, out); }
+void cuckaroo28k_keys(const uint8_t header[32], uint64_t nonce, uint64_t keys[4]) { siphash_keys k; ignpow::c28k::keys_of(header, nonce, k); keys[0] = k.k0; keys[1] = k.k1; keys[2] = k.k2; keys[3] = k.k3; }
+int cuckaroo28k_solve(const uint8_t header[32], uint64_t nonce, uint32_t* sols, size_t max_sols, size_t* n_out) {
+    siphash_keys k; ignpow::c28k::keys_of(header, nonce, k);
+    std::vector<std::vector<uint32_t>> v; int st = ignpow::c28k::solve(k, v); if (st != IGNPOW_OK) return st;
+    size_t n = v.size() < max_sols ? v.size() : max_sols;
+    for (size_t s = 0; s < n; ++s) std::memcpy(sols + 42 * s, v[s].data(), 42 * sizeof(uint32_t));
+    if (n_out) *n_out = v.size();
+    return IGNPOW_OK;
+}
+int cuckaroo28k_verify(const uint8_t header[32], uint64_t nonce, const uint32_t edges[42]) {
+    siphash_keys k; ignpow::c28k::keys_of(header, nonce, k);
+    word_t e[PROOFSIZE]; for (int i = 0; i < PROOFSIZE; ++i) e[i] = edges[i];
+    return verify(e, k);
+}
+void cuckaroo28k_pack(const uint32_t edges[42], uint8_t out[153]) { ignpow::c28k::pack(edges, 42, 29, out, 153); }
+int cuckaroo28k_unpack(const uint8_t in[153], uint32_t edges[42]) {
+    std::vector<uint64_t> u; if (!ignpow::c28k::unpack(in, 153, 29, 42, u) || u.size() != 42) return IGNPOW_E_ARG;
+    for (int i = 0; i < 42; ++i) edges[i] = static_cast<uint32_t>(u[i]);
+    return IGNPOW_OK;
+}
+void cuckaroo28k_proof_hash(const uint8_t packed[153], uint8_t out[32]) { ignpow::c28k::proof_hash(packed, 153, out); }
+}

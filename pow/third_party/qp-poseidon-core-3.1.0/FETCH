@@ -1,0 +1,9 @@
+# upstream: https://crates.io/crates/qp-poseidon-core/3.1.0 (repository https://github.com/Quantus-Network/qp-poseidon)
+# crate: qp-poseidon-core-3.1.0.crate sha256 5872607e25ea4ee5fb37e64bf1462168e1a36a4e719cdc8a105533c708253918
+# licence: MIT-0 (LICENSE)
+LICENSE e201b178307e5144b0269a80a227ca2c550d0083 1066
+Cargo.toml fe7a78300c64c375963bbf385091960568eb5ead 1938
+src/goldilocks.rs d689597f874145faa9e9d6d15533d0ac90b56f5b 13742
+src/lib.rs 9412ad10c9c4c1aa30120c36e45b0726b5fd366a 18668
+src/poseidon2.rs 73de0495794e7e6ca5a41f37f4c55f2862df5227 18256
+src/serialization.rs 77d2a74f8ec8c339b4b1e594a10cff8274eaffe7 22075

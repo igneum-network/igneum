@@ -1,0 +1,15 @@
+{
+  "candidate": "igneumhash",
+  "class": "dataset",
+  "generator": "ignpow abi 0 build 669d7ea3; kawpow-0.9.4 = ravencoin-ethash@22549129 (v4.8.0, progpow 0.9.4, epoch 7500); autolykos-2 = ergo v6.0.7 AutolykosPowScheme (k 32, n 26, in-house BLAKE2b); igneumhash = IgneumHash-R0A versions 0 and 1 (SPEC-R0A-v0.md revision 0.4) and the R0B schedule version 2 (SPEC-R0B-schedule-v0.md), BLAKE3 1.8.2 portable",
+  "seed": "20261009",
+  "params": {"version": 2, "dataset_mib": 1024, "scratch_kib": 0, "rounds": 64, "lanes": 8, "epoch_blocks": 4096, "item_chain": 1, "chain_id": 7310, "cache_mib": 32, "parents": 256, "schedule": 8},
+  "count": 5,
+  "vectors": [
+    {"height": 0, "header": "", "nonce": "0", "epoch": 0, "E": "3fb49de3e93e2dba498470ba51c10715ae5ab5cda2def6f85b19e4cdf3b81049", "D": "936dd64fd7cf5d421dca62df45190d02ccf91c835932ac138b6d1af6cf52dbad", "cache_digest": "fa72889f74489cc0c5574c353e3fe95a8545943289b0ca74d40c6a336a42b0be", "dataset_digest": "8007c7b79bfbbc0fbdca56abc61e8c35a99fc10a418e1dad2bb6b469a717cb62", "dataset_bytes": "1073741824", "build_ms": "3498"},
+    {"height": 4096, "header": "", "nonce": "0", "epoch": 1, "E": "7b0c93e21958133d2a5003aac4346ffff9da3a9195d7d22049438e69fe237c5c", "D": "4157fa14d6c987a9d3fde638b9b943a0751c8dbdff5111e103e26d4f8719e57e", "cache_digest": "9f2515eb287b6ca8c1d40114546cb9629578faeccc821b6822719c6bbe891232", "dataset_digest": "a92ff131c8866b22e5afb4b077b923bb6092efcb622a254879dca5947f4245ca", "dataset_bytes": "1073741824", "build_ms": "3488"},
+    {"height": 8192, "header": "", "nonce": "0", "epoch": 2, "E": "c5113963b9852d965d747d11d0fceb83cf896d53ad9fe4788588331b61bb0f3b", "D": "1b352f672c1ae993e22438c82e38662b3ebe27e1fe200f0a99e0ea41e9a975d1", "cache_digest": "4bbbef33091ef830b64d614e592da5265a65164779c86f73bf8ad53e5eac749d", "dataset_digest": "d5a4ee733d821a68f636745fff30aebeb704c80c6b743c4153fa7248ffc8cae1", "dataset_bytes": "1073741824", "build_ms": "3457"},
+    {"height": 1835008, "header": "", "nonce": "0", "epoch": 448, "E": "631b7a3675f7d87295c28008ed12410ccc177bbf0181761d11ae08fe34cdbf9f", "D": "91af75607a381c5107ea65ccbbb64574bbcb3f32b8e7a751b8633ab2431b6b9d", "cache_digest": "414b5c9f6ed1c83c37eff1d91ac2706da0767692cede5f02b7e2862cd86a8fdf", "dataset_digest": "dc8c2d4b14fa2e8f3085595c79992fca2edae6804314a8df399cef33d159b752", "dataset_bytes": "1073741824", "build_ms": "3512"},
+    {"height": 2452184, "header": "", "nonce": "0", "epoch": 598, "E": "6fe0feda581d6ce99940dd7a725727f137f6605b4afb38b61265314c5b39c019", "D": "b5cce52874896a4d1ec10ffe13393a1cdd6aec7831736b25109eb0b2d8719d08", "cache_digest": "2810b88763bcd5ff4e3034bbb24a18e458febed11b5ce97f8d49c7d28aae64f3", "dataset_digest": "39d87a3da5246bef4b55f7877bdaf477feacc2a30e64e2066a425c6f9bc82afc", "dataset_bytes": "1073741824", "build_ms": "3499"}
+  ]
+}

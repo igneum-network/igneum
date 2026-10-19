@@ -1,0 +1,14 @@
+[package]
+name = "igneum-wallet-rpc"
+description = "Igneum Wallet JSON-RPC client, a crate of its own so the signer never links an HTTP client"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+# nothing in this workspace is published to a registry; the crates reference each other by path
+publish = false
+
+[dependencies]
+igneum-wallet-core = { path = "../core" }
+serde_json = { workspace = true }
+ureq = { workspace = true }

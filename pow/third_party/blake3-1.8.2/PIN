@@ -1,0 +1,30 @@
+BLAKE3 official C implementation, portable path only (the SIMD files are not vendored and are disabled by
+BLAKE3_NO_SSE2, BLAKE3_NO_SSE41, BLAKE3_NO_AVX2, BLAKE3_NO_AVX512 and BLAKE3_USE_NEON=0 in pow/ref/CMakeLists.txt).
+upstream: https://github.com/BLAKE3-team/BLAKE3
+tag:      1.8.2
+licence:  CC0 1.0 (LICENSE_CC0) or Apache 2.0 (LICENSE_A2), at the user's choice, as upstream offers them
+named by: docs/igneumhash/PROGRAMME.md (the reviewed primitive of the envelope and the final digest, pinned)
+fetched:  10 October 2026 on a build box by curl from raw.githubusercontent.com/BLAKE3-team/BLAKE3/1.8.2/
+sha256 of each file as fetched:
+00fcc7a934ddbc9ece2a7cc063ac788e284b703b1d705ccbba72d462aa97921e  LICENSE_A2
+a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499  LICENSE_CC0
+0cd1d6aa002ac44cbf0b0cff5d3f23df3fd190fdc25dfc6d7f3de2afeffba5bd  blake3.c          (c/blake3.c)
+ca1e562d173c264c19b2a89d179f5fa94000966b6b8f4182b6682e136a8cbfdf  blake3.h          (c/blake3.h)
+a6cef5c497d95c8f7fcde6e1a8e140637f3260b31e911319e69cf5069459b635  blake3_dispatch.c (c/blake3_dispatch.c)
+65cf3597897090e8ded5968e3c26304a65b0091e8fabfa434c3d1a5eef29cb17  blake3_impl.h     (c/blake3_impl.h)
+2bc25b0dad67b4329d0b49cfa075ab2b0d04e424addbddc4e9c389c52a192524  blake3_portable.c (c/blake3_portable.c)
+dcb91ea8accc77e6d6e632af7cdc1a99a9f3ae78cf648da595c7d064db32f624  test_vectors.json (test_vectors/test_vectors.json)
+
+THE SIMD PATHS (15 October 2026, the version 18 tile verifier's list budget, main's order 10:1x UK): the four x86 intrinsics files
+blake3_sse2.c, blake3_sse41.c, blake3_avx2.c and blake3_avx512.c, taken IN-HOUSE from the blake3 crate 1.8.3's c/ directory as
+cached on the build boxes and the Mac (crates.io index, the same upstream project and licences, CC0 1.0 or Apache 2.0); the
+crate's blake3.c and blake3_portable.c are byte-identical to the 1.8.2 files above and its blake3.h, blake3_dispatch.c and
+blake3_impl.h differ only in the version string, a comment and a Cygwin guard, so the intrinsics files compile against the 1.8.2
+headers unchanged. The assembly files (.S, .asm) and the NEON file are not vendored. The dispatcher selects a path at run time by
+the CPU's features and falls back to the portable path; every path computes the same BLAKE3 (the self-test's embedded BLAKE3
+vectors and every vector set re-read exact on the SIMD build are the proof). Compiled only on x86_64 (pow/ref/CMakeLists.txt).
+sha256 of each file as copied:
+51194fff1b0e9cb79f4db6fc148a3b34f683ca6ec3a260d66166e0f7d5b7012e blake3_sse2.c
+1f38e2ca58aa59af094f492f1326957b423d7a25e32daaae159fcc1966949f58 blake3_sse41.c
+8b3516a8e42d981a9868ef670b1698f6d10207283086bd810b11cdaac1aca8f1 blake3_avx2.c
+46653e718211d883e56d5caa9ded6d9450f2f5b44ebfa81372b3c0be538e9e3c blake3_avx512.c

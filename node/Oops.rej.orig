@@ -1,0 +1,9 @@
+@@ -554,7 +554,7 @@
+ 	if grandparent != nil {
+ 		gpTime = grandparent.Time
+ 	}
+-	return e.chainParamsAt(parent.Number.Uint64() + 1).Next(parent.Number.Uint64(), parent.Time, gpTime, parent.Difficulty)
++	return e.chainParamsAt(parent.Number.Uint64()+1).Next(parent.Number.Uint64(), parent.Time, gpTime, parent.Difficulty)
+ }
+ 
+ // chainParamsAt is the chain difficulty's controller at a height: the

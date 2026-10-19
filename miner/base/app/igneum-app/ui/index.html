@@ -1,0 +1,790 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ember</title>
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="chain.css">
+</head>
+<body class="phase-welcome" data-phase="welcome" data-page="mine">
+
+<!-- the rail: four sections (miner-ui-3: Mine, Earnings, Prove, Settings), Logs and Quit in the foot. Under 720 px it
+     is a bottom tab bar. The setup screens have no rail. -->
+<!-- the brand marks beside figures (the founder's order of 22:0x UK, 13 October 2026; main's design and audit): one sprite in
+     the tokens vocabulary (.ig-glyph), currentColor, used by the site's chain scene later. g-rate: the ember bolt FILLED inside a ring
+     of the same diameter and 1.5 px stroke as the coin's (the founder's word of 10:29 UK, 14 October 2026: the rate tile and
+     the balance tile read as a pair; before it the bolt stood bare with a dot at its foot). g-watt: a plug in the same ring; g-eff: a gauge in the same ring (the founder's word of 10:5x UK, 14 October 2026: the four
+     tiles as one object). g-coin: the Igneum coin, the ring at
+     1.5 px at 1em with the flame FILLED inside (the master mark's polygons at the coin's scale), one colour. -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="g-rate" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7.1" fill="none" stroke="currentColor" stroke-width="1.5"/><path fill="currentColor" d="M8.9 2.8 4.9 8.7h2.4L6.6 13.2l4.5-6.3H8.6z"/></symbol>
+  <symbol id="g-watt" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7.1" fill="none" stroke="currentColor" stroke-width="1.5"/><path fill="currentColor" d="M5.6 3.4h1.5v2.4h1.8V3.4h1.5v2.4h1v1.6c0 1.6-1 2.9-2.5 3.2v1.9H7.1v-1.9C5.6 10.3 4.6 9 4.6 7.4V5.8h1z"/></symbol>
+  <symbol id="g-eff" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7.1" fill="none" stroke="currentColor" stroke-width="1.5"/><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M4.1 10.2a4.3 4.3 0 0 1 7.8 0"/><path fill="currentColor" d="M7.3 10.9 10.6 6.1 8.7 11.2a1 1 0 1 1-1.4-.3z"/></symbol>
+  <symbol id="g-coin" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7.1" fill="none" stroke="currentColor" stroke-width="1.5"/><path fill="currentColor" d="M8 2.9 10.6 6.2 9.8 8.8 11.2 8.4 9.2 13H6.8L4.8 8.4l1.4.4-.8-2.6z"/></symbol>
+</svg>
+<aside class="rail" id="rail" hidden>
+  <div class="rail-brand">
+    <img src="mark.svg" width="36" height="36" alt="">
+    <span class="words"><span class="word">Ember</span><span class="by">by Igneum</span></span>
+  </div>
+  <nav class="rail-nav" id="rail-nav" aria-label="Sections">
+    <button class="nav on" data-page="mine" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg><span>Mine</span></button>
+    <button class="nav" data-page="cards"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="11" rx="2"/><path d="M6 17v3M10 17v3M14 17v3M18 17v3M6 11h4"/></svg><span>Cards</span></button>
+    <button class="nav" data-page="tune"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="11" rx="2"/><path d="M7 20h10M9 16v4M15 16v4M7 10h3M14 10h3"/></svg><span>Tune</span></button>
+    <!-- 0.2.8, the Fleet item (docs/fleet/DESIGN.md 3.6): shown between Tune and Earnings only when a console URL is set -->
+    <button class="nav" data-page="fleet" id="nav-fleet" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="8" height="7" rx="1.5"/><rect x="13" y="4" width="8" height="7" rx="1.5"/><rect x="3" y="13" width="8" height="7" rx="1.5"/><rect x="13" y="13" width="8" height="7" rx="1.5"/></svg><span>Fleet</span></button>
+    <button class="nav" data-page="earnings"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 15h2"/></svg><span>Earnings</span></button>
+    <button class="nav" data-page="pools"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg><span>Pools</span></button>
+    <button class="nav" data-page="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg><span>Settings</span><i class="nav-dot" id="nav-updates-dot" hidden></i></button>
+  </nav>
+  <div class="rail-foot">
+    <div class="rail-status mono" id="rail-status"></div>
+    <button class="nav small" id="btn-logs" aria-expanded="false" aria-controls="drawer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span id="btn-logs-text">Logs</span></button>
+    <button class="nav small danger" id="btn-quit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9"/><path d="M6.5 6.5a8 8 0 1 0 11 0"/></svg><span>Quit</span></button>
+    <div class="rail-version mono" id="foot-version"></div>
+  </div>
+</aside>
+
+<header class="top">
+  <div class="brand" id="top-brand">
+    <img src="mark.svg" width="36" height="36" alt="">
+    <span class="words"><span class="word">Ember</span><span class="by">by Igneum</span></span>
+  </div>
+  <div class="page-title" id="page-title" hidden>
+    <h1 id="page-title-text">Mine</h1>
+    <span class="page-sub" id="page-sub"></span>
+  </div>
+  <div class="top-right">
+    <div class="pill" id="pill"><span class="dot"></span><span id="pill-text">starting</span></div>
+  </div>
+</header>
+
+<!-- the status strip: one notice at a time (app.js, Notices) -->
+<div class="notices" id="notices" hidden>
+  <div class="notice" id="notice" role="status" aria-live="polite">
+    <i class="notice-dot" aria-hidden="true"></i>
+    <span class="notice-text" id="notice-text"></span>
+    <span class="notice-actions" id="notice-actions"></span>
+    <button class="notice-more" id="notice-more" data-act="more" title="The technical line" aria-label="Show the technical line" aria-expanded="false" hidden><span class="chev"></span></button>
+    <button class="notice-close" id="notice-close" data-act="close" title="Close" aria-label="Close">&times;</button>
+    <span class="notice-detail mono" id="notice-detail" hidden></span>
+    <span class="prog" id="notice-prog" hidden><i></i></span>
+  </div>
+</div>
+
+<!-- the quit question, in place of a dialog (the viewer never shows one) -->
+<!-- the restart cover (the founder's rule of 11:0x UK, 12 October 2026): an install or a restart never leaves the page
+     dark; the engine keeps its address (the port and the token), so this window reconnects by itself -->
+<div class="restart-cover" id="restart-cover" hidden><div class="rc-card"><img class="rc-mark" src="mark.svg" alt="" width="40" height="40"><h2 id="rc-title">Ember is restarting</h2><p class="help" id="rc-sub">The window reconnects by itself.</p></div></div>
+<div class="ask-wrap" id="ask-quit" hidden>
+  <div class="ask">
+    <span class="ask-text">Quit Ember? Mining stops, then the app closes.</span>
+    <button class="btn small primary" id="ask-quit-yes">Quit</button>
+    <button class="btn small ghost" id="ask-quit-no">Cancel</button>
+  </div>
+</div>
+
+<main id="main">
+
+  <!-- 1. welcome -->
+  <section class="screen" id="screen-welcome">
+    <div class="hero">
+      <div class="mark-wrap"><img src="mark.svg" width="72" height="72" alt=""></div>
+      <div class="eyebrow ember">The public test network &middot; development-network tokens; no monetary value</div>
+      <h1>Ember</h1>
+      <p class="lead">Mines Igneum with your graphics card, through the project’s pool or a node you name. One step to set up: the address the chain pays.</p>
+      <p class="help" id="positioning">A GPU-secured network for Ethereum-compatible applications and verifiable computation</p>
+      <div class="three">
+        <div class="tile">
+          <div class="k">01</div>
+          <div class="t">Runs in the background</div>
+          <div class="s">The window can close. The miner keeps going from the menu bar or the tray.</div>
+        </div>
+        <div class="tile">
+          <div class="k">02</div>
+          <div class="t">Uses your graphics card</div>
+          <div class="s">Every card you switch on mines. Its rate and its watts read live on the Cards page.</div>
+        </div>
+        <div class="tile">
+          <div class="k">03</div>
+          <div class="t">Pays an address you own</div>
+          <div class="s">The chain credits one address for this machine’s shares: one made here, or one you paste.</div>
+        </div>
+      </div>
+      <div class="cta">
+        <!-- F14 (the founder, 8 October 2026): automatic updates are a choice at install, honoured from here on -->
+        <label class="switch" id="w-auto-update-row"><input type="checkbox" id="w-auto-update" checked><span class="track"></span><span class="sw-text"><b>Update automatically</b> <span class="dim">Installs new versions at a quiet moment. Off, the app shows you each one and waits for Install now.</span></span></label>
+        <button class="btn primary big" id="btn-begin">Get started</button>
+      </div>
+      <p class="seedline mono">Nobody from Igneum will ever ask for your key.</p>
+    </div>
+  </section>
+
+  <!-- 2. cards -->
+  <section class="screen" id="screen-cards">
+    <div class="step">
+      <div class="eyebrow">step 1 of 4</div>
+      <h2>Your graphics card</h2>
+      <p class="sub" id="cards-sub">Asking the graphics cards to report in.</p>
+      <div class="cards" id="cards-list">
+        <div class="card detecting" id="cards-detecting">
+          <div class="spinner"></div>
+          <div>
+            <div class="t">Detecting</div>
+            <div class="s mono" id="detect-text">asking the graphics cards to report in</div>
+          </div>
+        </div>
+      </div>
+      <p class="note" id="cards-note" hidden></p>
+      <p class="note" id="cards-power" hidden>NVIDIA cards start at 80% of their power limit, which keeps them stable. Windows asks for administrator rights once for that.</p>
+      <p class="note" id="cards-help" hidden>A built-in GPU starts off. It is slow and shares the machine's memory.</p>
+      <div class="cta">
+        <button class="btn primary" id="btn-cards-next" disabled>Continue</button>
+        <button class="btn ghost" id="btn-cards-retry" hidden>Detect again</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. region and price (Ember Heat, mission item 7): the region list, a typed price never fetched, the restricted line -->
+  <section class="screen" id="screen-region">
+    <div class="step">
+      <div class="eyebrow">step 2 of 4</div>
+      <h2>Your electricity</h2>
+      <p class="sub">Every money figure in the app comes from the price you type here, in your currency. Nothing is fetched.</p>
+      <div class="field">
+        <div class="k">region</div>
+        <select class="addr-input select" id="region-select" aria-label="Region"></select>
+      </div>
+      <div class="field">
+        <div class="k">currency</div>
+        <select class="addr-input select" id="region-currency" aria-label="Currency"></select>
+        <p class="help ask-cur" id="region-currency-ask" hidden></p>
+      </div>
+      <div class="field">
+        <div class="k">price per kWh</div>
+        <div class="row">
+          <input type="number" class="addr-input mono short" id="region-price" min="0" max="100000" step="0.01" placeholder="26.32" aria-label="Electricity price per kWh"><span class="note" id="region-unit">pence per kWh</span>
+        </div>
+        <p class="help" id="region-note">Choose a region to see a typical price.</p>
+      </div>
+      <p class="restricted" id="region-restricted" hidden></p>
+      <div class="cta">
+        <button class="btn primary" id="btn-region-next">Continue</button>
+        <button class="btn ghost" id="btn-region-back">Back</button>
+        <button class="btn ghost" id="btn-region-skip">Skip for now</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. the network (Igneum 2.0, 8 October 2026): one card, the fresh-install default -->
+  <section class="screen" id="screen-network">
+    <div class="step">
+      <div class="eyebrow">step 3 of 4</div>
+      <h2>Which network</h2>
+      <p class="sub">The chain this machine mines. You can change it later in Settings; a change takes effect at the next start.</p>
+      <div class="net-cards" id="network-cards" role="radiogroup" aria-label="Network"></div>
+      <p class="help ask-cur" id="network-note" hidden></p>
+      <div class="cta">
+        <button class="btn primary" id="btn-network-next">Continue</button>
+        <button class="btn ghost" id="btn-network-back">Back</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. address -->
+  <section class="screen" id="screen-address">
+    <div class="step">
+      <div class="eyebrow">the one step</div>
+      <h2>Where should rewards go?</h2>
+      <p class="sub">The chain credits one address for this machine’s shares. Pick one way. Every supported card mines through the public pool from the start; the cards, the pool and the region live under Settings.</p>
+      <div class="options">
+        <label class="option on" id="opt-generate">
+          <input type="radio" name="mode" value="generate" checked>
+          <span class="radio"></span>
+          <span class="body">
+            <span class="t">Make me an address <span class="tag">recommended</span></span>
+            <span class="s">A key is made on this machine and stored in the app folder, readable by your user only. You see it once, to save it.</span>
+          </span>
+        </label>
+        <label class="option" id="opt-paste">
+          <input type="radio" name="mode" value="paste">
+          <span class="radio"></span>
+          <span class="body">
+            <span class="t">Use my own address</span>
+            <span class="s">Paste an address you control. It starts with 0x and has 40 characters after it.</span>
+            <input type="text" class="addr-input mono" id="addr-input" placeholder="0x" spellcheck="false" autocomplete="off">
+            <span class="err" id="addr-err" hidden>That is not an address. 0x followed by 40 hex characters.</span>
+          </span>
+        </label>
+      </div>
+      <p class="err" id="start-blocked" hidden></p>
+      <div class="cta">
+        <button class="btn primary big" id="btn-start">Continue</button>
+        <button class="btn ghost" id="btn-address-back">Back</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. the dashboard: four pages behind the rail -->
+  <section class="screen" id="screen-dashboard">
+
+    <!-- Overview: the fleet hero, the chain scene, the node line, activity -->
+    <section class="page" id="page-mine" data-page="mine">
+      <div class="clock-card" id="m-clock" hidden>
+        <p class="clock-msg" id="m-clock-msg"></p>
+        <div class="row"><button class="btn small primary" id="m-clock-sync">Sync clock</button><span class="note mono small" id="m-clock-result"></span></div>
+        <p class="note" id="m-clock-hint"></p>
+      </div>
+
+      <div class="hero-row">
+        <button class="toggle-big" id="btn-toggle" disabled>
+          <span class="ring"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9"/><path d="M6.5 6.5a8 8 0 1 0 11 0"/></svg></span>
+          <span class="tl" id="btn-toggle-text">Start mining</span>
+          <span class="spin" id="btn-toggle-spin" aria-hidden="true" hidden></span>
+        </button>
+        <!-- app-ia-26 (4.1 item 2): four numbers, each with its unit and one sub-line; W and MH/W hide when no card reports power -->
+        <div class="totals" id="totals">
+          <!-- the stat strip (the founder's word of 15 October 2026, "make it beautiful"; main's form): one row of even tiles,
+               the figure large and tabular, the unit small, the label in caps, a dim dash in the figure's shape from the first
+               paint until a figure lands (never an empty tile, never 0 for an unknown) -->
+          <div class="tot"><span class="l">Hash rate</span><span class="v ember fig ph" id="t-hash" data-ph="&#8212;">&#8212;</span><span class="k" id="t-hash-unit" data-k="MH/s">MH/s</span><span class="s" id="t-hash-sub">waiting</span></div>
+          <div class="tot" id="t-power-cell"><span class="l" id="t-power-label">Power</span><span class="v fig ph" id="t-power" data-ph="&#8212;">&#8212;</span><span class="k">W</span><span class="s" id="t-power-sub">no reading yet</span></div>
+          <div class="tot" id="t-earn-cell"><span class="l">Earnings</span><span class="v fig ph" id="t-earn" data-ph="&#8212;">&#8212;</span><span class="k" id="t-earn-unit" data-k="IGN a day">IGN a day</span><span class="s" id="t-earn-sub">at this rate</span></div>
+          <div class="tot" id="t-temp-cell"><span class="l">Temperature</span><span class="v fig ph" id="t-temp" data-ph="&#8212;">&#8212;</span><span class="k">&#176;C</span><span class="s" id="t-temp-sub">hottest card</span></div>
+          <div class="tot" id="t-chain-cell"><span class="l">Chain and pool</span><span class="v fig words ph" id="t-chain" data-ph="&#8212;">&#8212;</span><span class="k" id="t-chain-unit">&#160;</span><span class="s" id="t-chain-sub">connecting</span></div>
+          <div class="tot" id="t-ign-cell" hidden><span class="l">Earned</span><span class="v fig" id="t-ign">reading</span><span class="k">IGN</span><span class="s" id="t-ign-sub">last 24 hours</span></div>
+          <div class="tot" id="t-eff-cell" hidden><span class="v fig"><span id="t-eff">0</span></span><span class="k" id="t-eff-unit">MH/W</span><span class="s">hashes per watt</span></div>
+          <!-- the share lane (LAUNCH-GUARDS.md 2.9): the node's accepted shares this run, the refusals by reason on the sub-line; shown only while the node serves a share target -->
+          <div class="tot" id="t-shares-cell" hidden><span class="v" id="t-shares">0</span><span class="k">shares</span><span class="s" id="t-shares-sub">none refused</span></div>
+          <!-- main's ruling of 18:2x UK, 12 October 2026 (the founder's photo of the mini at 900 by 620): one short line under each
+               figure, never more; the no-value words are the card's footer once, in the small face -->
+          <div class="totals-foot" id="totals-foot">development-network tokens, no monetary value</div>
+        </div>
+        <!-- 0.2.3, the founder's ask: how the mining share status works, shown. Each accepted share a lit block arriving in
+             the row; the row fills toward the pool's next block; the pool's found block closes it and names this miner's
+             slice; rejected shares dim. Drawn from api/scene (the page's one feed), in the network scene's language. -->
+      </div>
+      <!-- the share row stands as its own card under the hero (the founder's bar of 12 October 2026: one card per thing) -->
+      <div class="card share-row" id="share-row" hidden>
+        <div class="share-track" id="share-track" aria-label="Your shares arriving toward the pool's next block"></div>
+        <div class="share-cap"><span class="mono" id="share-count">no share yet</span><span class="dim" id="share-slice"></span></div>
+        <p class="help share-held" id="share-held" hidden></p>
+        <p class="help share-help">Each lit block is a share the pool accepted. When the pool seals a block, your slice is paid exact to the wei.</p>
+      </div>
+
+      <!-- miner-ui-5: before the first block, the Poisson count-up; on a milestone, the block card (in place, never a dialog) -->
+      <div class="card wait-card" id="first-wait" hidden>
+        <div class="wait-row"><span class="wait-ring" aria-hidden="true"><svg viewBox="0 0 36 36"><circle class="track" cx="18" cy="18" r="15.5"></circle><circle class="arc" id="first-wait-arc" cx="18" cy="18" r="15.5"></circle></svg><span class="pct mono" id="first-wait-pct">0%</span></span>
+          <div class="wait-text"><div class="t" id="first-wait-line">Waiting for your first block.</div><div class="s" id="first-wait-sub"></div></div>
+        </div>
+      </div>
+      <div class="card block-card" id="block-card" hidden>
+        <div class="bc-head"><span class="eyebrow ember" id="bc-eyebrow">your first block</span><span class="bc-when mono" id="bc-when"></span><button class="notice-close bc-close" id="bc-close" title="Dismiss" aria-label="Dismiss the block card">&times;</button></div>
+        <h2 class="bc-title" id="bc-title">Block 0 is yours.</h2>
+        <p class="bc-line" id="bc-card"></p>
+        <p class="bc-line" id="bc-ign"></p>
+        <p class="bc-line dim" id="bc-rank"></p>
+        <p class="bc-hash mono" id="bc-hash"></p>
+        <div class="row wrap"><button class="btn small primary" id="bc-open">Open in the explorer</button><button class="btn small" id="bc-save">Save the card</button><button class="btn small ghost" id="bc-copy">Copy the link</button><span class="note mono small" id="bc-saved"></span></div>
+        <canvas id="bc-canvas" width="1200" height="630" hidden aria-hidden="true"></canvas>
+      </div>
+
+      <div class="card dag-card" id="dag-card">
+        <div class="card-head"><h3>The chain, live</h3><div class="head-right"><span class="eyebrow" id="dag-state">reading the chain</span></div></div>
+        <!-- the network scene (chain.js, the showcase seat's component): this miner's shares landing in blocks, fed by api/scene every block -->
+        <div id="scene" class="scene-slot"></div>
+        <!-- 0.2.3: the expected next block, from the chain feed's head time against the hour's mean (never a countdown
+             that goes negative: past the mean it reads any moment); reset on each seal -->
+        <div class="next-block" id="next-block" hidden><div class="nb-bar"><i id="nb-fill"></i></div><span class="mono" id="nb-text">next block</span></div>
+        <canvas id="dag" aria-hidden="true" hidden></canvas>
+      </div>
+
+      <!-- app-ia-26 (4.1 item 7): one node line; a click opens Settings > Node where the facts live -->
+      <button class="node-go" id="node-go" title=""><i class="dot" id="node-dot"></i><span id="node-line-text">Node starting</span><span class="chev" aria-hidden="true"></span></button>
+
+      <div class="card">
+        <div class="card-head"><h3>Activity</h3></div>
+        <div class="feed" id="d-events"><div class="empty">No events yet.</div></div>
+      </div>
+    </section>
+
+    <!-- Cards: every card with Ember as its second layer -->
+    <section class="page" id="page-cards" data-page="cards" hidden>
+      <!-- v0.2.1 (the founder's call, 8 October 2026): every card row on its own page: the state, the rate, the watts, the
+           degrees, the tune state, the switch, the 16 GB proving note -->
+      <div class="card" id="cards-card">
+        <div class="card-head"><h3>Your cards</h3><div class="head-right"><span class="eyebrow" id="d-cards-eyebrow">detecting</span></div></div>
+        <div class="gpu-list" id="d-cards"><div class="empty">Waiting for the engine.</div></div>
+        <p class="note" id="d-cards-note" hidden></p>
+      </div>
+    </section>
+
+    <section class="page" id="page-tune" data-page="tune" hidden>
+      <!-- app-ia-26 (the founder's audit, section 4.2): the strip (the fleet's three tiers, Tune all, ONE sentence, the measure
+           switch, the heat and power lines when they matter), then one card per graphics card (rendered by renderTune from
+           View.tuneCardHtml), then the knee rule once at the foot. Nothing about tuning anywhere else. -->
+      <div class="card tune-strip" id="tune-card">
+        <div class="ts-row">
+          <div class="tiers" id="tier-seg" role="radiogroup" aria-label="Tuning tier"></div>
+          <button class="btn small" id="btn-tune-all" hidden>Tune all</button>
+        </div>
+        <p class="line-text" id="tune-schedule"></p>
+        <label class="switch" id="s-sweep-row"><input type="checkbox" id="s-sweep"><span class="track"></span><span class="sw-text"><b>Measure cards by itself</b> <span class="dim">Once, 2 min into steady mining, then every 7 days and after a driver or program change.</span></span></label>
+        <label class="switch" id="s-climb-row" hidden><input type="checkbox" id="s-climb"><span class="track"></span><span class="sw-text"><b>Fine tuning</b> <span class="dim">Searches around the best point instead of stepping down a ladder.</span></span></label>
+        <p class="line-text heat-line" id="heat-line" hidden></p>
+        <p class="line-text" id="power-note" hidden><span id="power-note-text"></span> <button class="btn tiny ghost" id="power-note-go">Open Settings</button></p>
+      </div>
+      <div class="gpu-list tune-list" id="t-cards"><div class="empty">Waiting for the engine.</div></div>
+      <p class="line-text dim tune-foot" id="tier-rule">Ember never locks below the knee by itself. Going lower is your choice.</p>
+    </section>
+
+    <!-- Earnings -->
+    <!-- 0.2.8, the Fleet item: the owner's console served through the engine's own origin (api/fleet/console.html, the
+         page hiding its rail under that path), one section like Pools; nothing of another origin is loaded -->
+    <section class="page" id="page-fleet" data-page="fleet" hidden>
+      <div class="card fleet-card">
+        <div class="card-head"><h3>Fleet</h3><span class="eyebrow" id="fleet-eyebrow">your console</span></div>
+        <p class="help" id="fleet-line">Every rig of yours as the console sees it, through Ember’s own window. Restart, profiles and the log act from here; reboot and power-cycle stay on the console itself.</p>
+        <iframe id="fleet-frame" class="fleet-frame" title="Fleet console" src="about:blank" referrerpolicy="no-referrer" sandbox="allow-scripts allow-forms"></iframe>
+        <p class="help small" id="fleet-foot"></p>
+      </div>
+    </section>
+    <section class="page" id="page-earnings" data-page="earnings" hidden>
+      <!-- app-ia-26 (the founder's audit, 4.3): the headline is the measured last 24 hours from the engine's earned sums;
+           the three windows; Electricity, Payouts and Standing as one row each; the rungs behind Details; the projection
+           as one dim foot line that hides with its reason. No fee, no address card, no run line, no lifetime cell, no
+           first-hour timeline. Every number names its source on hover (title). -->
+      <div class="card">
+        <div class="earn">
+          <!-- main's order of 11:1x UK, 12 October 2026: the chain's balance first (the headline), the ledger's periods under it -->
+          <div class="earn-head"><span class="eyebrow" id="e-head-eyebrow">on the chain</span><span class="v fig"><svg class="ig-glyph coin" aria-hidden="true"><use href="#g-coin"/></svg><span id="e-head">reading</span></span><span class="s" id="e-head-sub"></span></div>
+          <div class="earn-three two">
+            <div class="earn-cell"><span class="k">Last 24 hours</span><span class="v fig"><svg class="ig-glyph coin" aria-hidden="true"><use href="#g-coin"/></svg><span id="e-d7">reading</span></span><span class="s" id="e-d7-sub"></span></div>
+            <div class="earn-cell"><span class="k">Paid so far</span><span class="v fig"><svg class="ig-glyph coin" aria-hidden="true"><use href="#g-coin"/></svg><span id="e-all">reading</span></span><span class="s" id="e-all-sub"></span></div>
+          </div>
+        </div>
+        <div class="earn-rows">
+          <div class="earn-row"><span class="k">Electricity</span><span class="v" id="e-cost">reading</span><span class="s" id="e-cost-sub"></span></div>
+          <div class="earn-row"><span class="k">Payouts</span><span class="v mono" id="e-pays">not set</span><span class="s" id="e-pays-sub"></span><span class="acts"><button class="btn tiny" data-copy="e-pays-full">Copy</button><button class="btn tiny ghost" id="r-wallet">Open the wallet</button></span><span id="e-pays-full" hidden>not set</span></div>
+          <div class="earn-row" id="e-standing-row"><span class="k">Standing</span><span class="v" id="e-standing">reading</span><span class="s" id="e-standing-sub"></span></div>
+          <!-- ED-05 (the founder, 11 October 2026): the dev fee on Earnings as its own line with the net amount -->
+          <div class="earn-row"><span class="k">Dev fee</span><span class="v" id="e-fee">reading</span><span class="s" id="e-fee-sub"></span></div>
+        </div>
+        <details class="earn-details" id="standing-details"><summary>Details</summary><ol class="rungs" id="rungs"></ol></details>
+        <p class="line-text dim earn-foot" id="e-projection" hidden></p>
+      </div>
+        <!-- the Live Work Ledger's first screen, folded into Earnings (0.2.3: the nav stays the kept skin's five) -->
+      <!-- the Live Work Ledger's first screen (the settlement seat's miner view v1, 12 October 2026): every share from this
+           address traced to the chain, every figure with its source named, nothing estimated, nothing animated; the
+           ledger's columns refresh when its file does (as of the read time shown). -->
+      <div class="card">
+        <div class="card-head"><h3 id="l-chain-head">This address on the chain</h3><span class="eyebrow mono addr" id="l-address">--</span></div>
+        <p class="help" id="l-asof">the ledger’s miner view is not read yet</p>
+        <div class="earn-rows" id="l-rows"></div>
+        <p class="note">The pool’s count is the pool’s statement; the sealers’ answers and the paid figure are the chain’s; the receipts are this machine’s. Development network: the coins have no monetary value.</p>
+      </div>
+    </section>
+
+    <!-- Prove -->
+
+    <!-- Settings -->
+    <section class="page" id="page-pools" data-page="pools" hidden>
+      <!-- the Pools page (DESIGN 2.7, PA-06; the founder's order of 20:4x UK, 13 October 2026): every listed pool from
+           its own disclosure document, beside the independent probe and the explorer's concentration, both labelled;
+           the project's pools labelled; nothing preselected; solo on the same screen with its node warning -->
+      <div class="card">
+        <div class="card-head"><h3>Pools</h3><span class="eyebrow" id="pools-eyebrow">reading</span></div>
+        <p class="help" id="pools-line">Every pool that files a listing, in the order of least concentration then lowest fee. Nothing is chosen for you: pick one, or mine solo below.</p>
+        <div class="pool-list" id="pool-list" aria-live="polite"><div class="pool-loading" id="pools-loading"><span class="spinner"></span><span>Reading the pools’ own documents and the probe</span></div></div>
+        <p class="help small pool-foot" id="pools-foot"></p>
+      </div>
+      <!-- main's audit of 21:0x UK, 13 October 2026, item 6: Solo and Add a pool side by side under the list, above the fold at 1440, stacked at 375 -->
+      <div class="pool-pair">
+        <div class="card pool-form" id="pool-solo">
+          <div class="card-head"><h3>Solo</h3><span class="eyebrow">your own node</span></div>
+          <p class="help">Every block you seal pays you in full, and nothing pays until you seal one. At this machine’s rate a block is rare; a pool pays for every accepted share.</p>
+          <div class="pool-warn" id="solo-warn"><span class="dot"></span><span>Solo needs a synced node you run. Ember refuses a node that is behind or not yours.</span></div>
+          <div class="box"><input type="text" id="solo-url" aria-label="Node URL" placeholder="https://node:8545" spellcheck="false" autocomplete="off"><button class="btn small" id="solo-use">Mine solo</button></div>
+          <p class="help small err-line" id="solo-note" hidden></p>
+        </div>
+        <div class="card pool-form">
+          <div class="card-head"><h3>Add a pool</h3><span class="eyebrow">host and port</span></div>
+          <p class="help">A pool that is not listed yet. Name it as host and port; a plain port (no TLS) takes the word notls after the port, as in host:3342 notls.</p>
+          <div class="box"><input type="text" id="pool-add-url" aria-label="Pool host and port" placeholder="host:port" spellcheck="false" autocomplete="off"><button class="btn small" id="pool-add-use">Use this pool</button></div>
+          <p class="help small err-line" id="pool-add-note" hidden></p>
+        </div>
+      </div>
+    </section>
+    <section class="page" id="page-settings" data-page="settings" hidden>
+      <!-- 0.2.8, the Fleet item: the console URL and the window's token (the token masked, never read back) -->
+      <div class="card" id="s-fleet-card">
+        <div class="card-head"><h3>Fleet console</h3><div class="eyebrow" id="s-fleet-eyebrow">off</div></div>
+        <p class="help">Your Ember Fleet console’s address (the token directory, ending in a slash) and a user token for this window. With them set, Fleet appears in the rail; the token stays in the engine and is sent only to that address.</p>
+        <div class="row">
+          <input type="text" class="addr-input mono" id="s-fleet-url" placeholder="https://host/_fleet/<token>/" spellcheck="false" autocomplete="off" aria-label="Fleet console URL">
+        </div>
+        <div class="row">
+          <input type="password" class="addr-input mono" id="s-fleet-token" placeholder="window token" spellcheck="false" autocomplete="off" aria-label="Fleet window token">
+          <button class="btn small" id="s-fleet-save">Save</button>
+          <button class="btn small ghost" id="s-fleet-clear">Clear</button>
+        </div>
+        <div class="err" id="s-fleet-err" hidden></div>
+        <p class="help small" id="s-fleet-note"></p>
+      </div>
+      <!-- app-ia-26 (4.4 item 1): Wallet, the address card from the old Earnings page -->
+      <div class="card" id="s-wallet-card">
+        <div class="card-head"><h3>Wallet</h3><div class="eyebrow" id="r-source"></div></div>
+        <div class="addr-big mono"><span id="r-address">not set</span><button class="btn small" data-copy="r-address">Copy</button></div>
+        <p class="help" id="r-address-help">The chain credits this address for this machine’s shares.</p>
+
+        <button class="disclose" id="addr-toggle" aria-expanded="false" aria-controls="addr-details"><span>Change address</span><span class="chev" aria-hidden="true"></span></button>
+        <div class="details" id="addr-details" hidden>
+          <div class="row">
+            <input type="text" class="addr-input mono" id="s-address-input" placeholder="0x" spellcheck="false" autocomplete="off" aria-label="New rewards address">
+            <button class="btn small" id="s-address-save">Change</button>
+          </div>
+          <div class="err" id="s-address-err" hidden></div>
+          <div class="ask inline" id="ask-address" hidden>
+            <span class="ask-text" id="ask-address-text"></span>
+            <button class="btn small primary" id="ask-address-yes">Confirm</button>
+            <button class="btn small ghost" id="ask-address-no">Cancel</button>
+          </div>
+        </div>
+
+        <button class="disclose" id="key-toggle" aria-expanded="false" aria-controls="key-details"><span id="key-toggle-text">Show my key</span><span class="chev" aria-hidden="true"></span></button>
+        <div class="details" id="key-details" hidden>
+          <p class="help" id="r-key-help"></p>
+          <div class="ask inline" id="ask-key">
+            <span class="ask-text">Show the private key on screen? Anyone who sees it can spend what the address holds.</span>
+            <button class="btn small primary" id="s-reveal">Show</button>
+            <button class="btn small ghost" id="ask-key-no">Cancel</button>
+          </div>
+          <div class="box mono key" id="s-key-box" hidden><span id="s-key"></span><button class="btn tiny" data-copy="s-key">Copy</button><button class="btn tiny ghost" id="s-hide">Hide</button></div>
+          <p class="note mono small" id="r-key-file"></p>
+        </div>
+
+        <div class="row wrap top-gap"><button class="btn small" id="s-wallet">Open the wallet</button><span class="note">Your balance is in the wallet.</span></div>
+      </div>
+
+      <div class="card">
+        <!-- app-ia-26 (4.4 item 2): Node: the network cards, one line, the facts behind Details (moved from Mine) -->
+        <div class="card-head"><h3>Work source</h3><span class="eyebrow" id="s-network-eyebrow"></span></div>
+        <p class="help" id="s-network-line"></p>
+        <p class="line-text" id="s-node-line">Node starting</p>
+        <p class="note" id="s-node-sub"></p>
+        <div class="net-cards" id="s-network-cards" role="radiogroup" aria-label="Network"></div>
+        <p class="help ask-cur" id="s-network-note" hidden></p>
+        <!-- the work source (the old base, step 3): a pool by host:port or a node by URL on the pinned chain; no node runs inside this app -->
+        <div class="field" id="s-source-row">
+          <div class="k">work source</div>
+          <p class="help" id="s-source-line"></p>
+          <div class="box"><select id="s-source-kind" aria-label="Work source kind"><option value="pool">Pool (host:port)</option><option value="node">Node (URL)</option></select>
+            <input type="text" id="s-source-url" aria-label="Work source address" placeholder="pool.igneum.network:3342 notls (the default), or node URLs such as https://rpc.igneum.network, separated by commas (every node takes your shares)" spellcheck="false">
+            <button class="btn small primary" id="s-source-apply">Apply</button></div>
+          <p class="help ask-cur" id="s-source-note" hidden></p>
+        </div>
+        <div class="ask inline" id="ask-network" hidden>
+          <span class="ask-text" id="ask-network-text"></span>
+          <button class="btn small primary" id="ask-network-yes">Switch</button>
+          <button class="btn small ghost" id="ask-network-no">Keep</button>
+        </div>
+        <details class="node-details" id="node-details"><summary>Details</summary>
+          <div class="kv">
+            <div><span class="k">state</span><span class="v mono" id="n-state-v"></span><span class="m" id="n-state-m"></span></div>
+            <div><span class="k">whose node</span><span class="v" id="n-source"></span><span class="m" id="n-source-m"></span></div>
+            <div><span class="k">height</span><span class="v mono" id="n-blocks">0</span><span class="m" id="n-blocks-sub">blocks this node holds</span></div>
+            <div><span class="k">peers</span><span class="v mono" id="n-peers">0</span><span class="m" id="n-peers-sub">other nodes it talks to</span></div>
+            <div><span class="k">version</span><span class="v mono" id="n-version">--</span><span class="m" id="d-node-net">the public test network</span></div>
+            <div><span class="k">headers</span><span class="v mono" id="n-headers">0</span><span class="m">headers arrive before blocks</span></div>
+            <div><span class="k">network blocks</span><span class="v mono" id="n-daa">0</span><span class="m">blocks the whole network has made (the DAA score)</span></div>
+            <div><span class="k">difficulty</span><span class="v mono" id="n-diff">0</span><span class="m">how hard the next block is to find</span></div>
+            <div><span class="k">tips</span><span class="v mono" id="n-tips">0</span><span class="m">open ends of the chain right now</span></div>
+            <div><span class="k">blue score</span><span class="v mono" id="n-blue">0</span><span class="m">blocks on the agreed main chain (the blue score)</span></div>
+            <div><span class="k">next program</span><span class="v mono" id="d-eta">--:--</span><span class="m" id="d-eta-sub">the hourly mining program</span></div>
+            <div><span class="k">last checkpoint</span><span class="v mono" id="f-lock">none yet</span><span class="m" id="f-note">a point the miners agreed can never be undone</span></div>
+            <div><span class="k">votes sent</span><span class="v mono" id="f-votes">0</span><span class="m">this machine signs a checkpoint every 30 s (a point the miners agree can never be undone)</span></div>
+          </div>
+          <div class="field">
+            <div class="k">rules fingerprint</div>
+            <div class="box mono"><span id="n-digest">not printed yet</span><button class="btn tiny" data-copy="n-digest">Copy</button></div>
+            <p class="help">Every node on the network shows the same fingerprint of the rules. A peer with another one is refused.</p>
+          </div>
+          <div class="field">
+            <div class="k">next rule change</div>
+            <div class="line-text" id="n-switch">none planned</div>
+            <p class="help" id="n-switch-help"></p>
+            <div class="switch-list mono" id="n-switches"></div>
+          </div>
+        </details>
+      </div>
+
+      <!-- app-ia-26 (4.4 item 3): Updates: the app version and its update, the Interface row -->
+      <div class="card" id="s-updates-card">
+        <div class="lead-row">
+          <div class="lead-text">
+            <h3 id="s-version">Ember</h3>
+            <!-- the founder's order of 10:5x UK, 12 October 2026: the channel named, the last check time, Check now -->
+            <p class="line-text" id="s-update-channel">Updates: automatic, over the air</p>
+            <p class="help" id="s-update-note">Not checked yet.</p>
+          </div>
+          <div class="row">
+            <button class="btn small primary" id="s-install" hidden>Install now</button>
+            <button class="btn small" id="s-update">Check now</button>
+          </div>
+        </div>
+        <label class="switch"><input type="checkbox" id="s-auto-update"><span class="track"></span><span class="sw-text"><b>Install updates by itself</b> <span class="dim">Downloads in the background and installs at a quiet moment, never while a share is in flight.</span></span></label>
+        <!-- app-ia-26 (4.4 item 3, A19): the Interface row under Updates -->
+        <p class="line-text" id="s-ui-line">Interface 1.0.0, built in</p>
+        <p class="help" id="s-ui-help-static">Small changes to this window arrive over the air, signed by Igneum.</p>
+        <p class="note" id="s-ui-help"></p>
+        <label class="switch"><input type="checkbox" id="s-ui-builtin"><span class="track"></span><span class="sw-text"><b>Use the built-in interface</b> <span class="dim">Serves the interface this version of the app was built with, even when a newer one has arrived over the air.</span></span></label>
+      </div>
+
+      <div class="card" id="s-power-card">
+        <div class="card-head"><h3>Power control</h3></div>
+        <label class="switch"><input type="checkbox" id="s-power-control"><span class="track"></span><span class="sw-text"><b>Power control</b> <span class="dim">Lets the app set NVIDIA power and clock limits. Windows asks for administrator rights once at install. Off, NVIDIA cards are measured and never set.</span><span class="dim" id="s-power-note"></span></span></label>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Electricity</h3><span class="eyebrow">typed, never fetched</span></div>
+        <div class="field">
+          <div class="k">region</div>
+          <select class="addr-input select" id="s-region" aria-label="Region"></select>
+        </div>
+        <div class="field">
+          <div class="k">currency</div>
+          <select class="addr-input select" id="s-currency" aria-label="Currency"></select>
+          <p class="help ask-cur" id="s-currency-ask" hidden></p>
+        </div>
+        <div class="field">
+          <div class="k">price per kWh</div>
+          <div class="row">
+            <input type="number" class="addr-input mono short" id="s-price" min="0" max="100000" step="0.01" placeholder="26.32" aria-label="Electricity price per kWh"><span class="note" id="s-price-unit">pence per kWh</span>
+            <button class="btn small" id="s-price-save">Save</button>
+          </div>
+          <p class="help" id="s-price-note"></p>
+        </div>
+        <p class="restricted" id="s-region-restricted" hidden></p>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Heat mode</h3><span class="eyebrow">Ember Heat</span></div>
+        <label class="switch"><input type="checkbox" id="s-heat"><span class="track"></span><span class="sw-text"><b>Hold a room temperature</b></span></label>
+        <p class="help">The cards heat for a share of every 10 minutes and rest for the rest. Your card is an electric heater that also earns.</p>
+        <p class="line-text" id="s-heat-line"></p>
+        <div class="row wrap">
+          <div class="field">
+            <div class="k">hold</div>
+            <div class="row"><input type="number" class="addr-input mono short" id="s-heat-set" min="5" max="30" step="0.5" placeholder="19" aria-label="Set point in degrees"><span class="note">°C</span></div>
+          </div>
+          <div class="field grow">
+            <div class="k">schedule</div>
+            <div class="row"><input type="text" class="addr-input mono" id="s-heat-schedule" placeholder="06:00 20, 22:00 16" spellcheck="false" autocomplete="off" aria-label="Schedule"><button class="btn small" id="s-heat-save">Save</button></div>
+          </div>
+        </div>
+        <p class="help">Blank holds one temperature all day. A schedule is a list of times and temperatures; each holds until the next. Times are this window's clock.</p>
+        <div class="field">
+          <div class="k">room now</div>
+          <div class="row"><input type="number" class="addr-input mono short" id="s-heat-room" min="-20" max="50" step="0.1" placeholder="19.5" aria-label="Room temperature now"><span class="note">°C from your own thermometer</span><button class="btn small" id="s-heat-room-save">Use it</button></div>
+          <p class="help" id="s-heat-room-note">A reading you type is the room for two hours. Without one the card's own sensor reads the room after 3 minutes of rest, within about 3 degrees. Typing a reading while the cards rest teaches the app the card's idle offset.</p>
+        </div>
+      </div>
+
+      <!-- Proving (app-ia-26): the Prove page's switches, tiers, line and details, folded under Settings -->
+      <div class="card shard-card" id="shard-card" hidden>
+        <div class="bc-head"><span class="eyebrow ember">proof shards</span><span class="bc-when mono" id="sc-when"></span></div>
+        <h2 class="bc-title small" id="sc-title">Your card proved shard 0 of block 0.</h2>
+        <p class="bc-line" id="sc-line"></p>
+        <p class="bc-line dim" id="sc-sub"></p>
+      </div>
+      <div class="card" id="s-proving-card">
+        <div class="lead-row">
+          <div class="lead-text">
+            <h3>Proving</h3>
+            <p class="help">Every block is turned into a short proof, in pieces called shards. Your cards prove shards and earn IGN for each one. 20 points of every block pay the provers.</p>
+          </div>
+          <label class="switch big" title="Prove on this machine"><input type="checkbox" id="s-prove" aria-label="Prove on this machine"><span class="track"></span></label>
+        </div>
+        <div class="row" id="pv-instead-row" hidden>
+          <div>
+            <h3>Prove instead of mining</h3>
+            <p class="help" id="pv-instead-help">A card under 16 GB holds the prover or the miner, never both (the miner holds 6 GB, a proof 8). On, the miner stops on that card while it proves and comes back when proving stops.</p>
+          </div>
+          <label class="switch big" title="Prove instead of mining"><input type="checkbox" id="s-prove-instead" aria-label="Prove instead of mining"><span class="track"></span></label>
+        </div>
+        <ul class="tier-list" id="pv-tiers"></ul>
+        <p class="line-text" id="pv-line"></p>
+        <p class="note" id="pv-note"></p>
+        <div class="row" id="pv-setup-row" hidden><button class="btn small primary" id="pv-setup">Set up</button><span class="note">Takes about 20 minutes, once.</span></div>
+        <button class="disclose" id="pv-toggle" aria-expanded="false" aria-controls="pv-details"><span>Details</span><span class="chev" aria-hidden="true"></span></button>
+        <div class="details" id="pv-details" hidden>
+          <div class="kv">
+            <div><span class="k">verifier</span><span class="v" id="pv-verifier">not read yet</span><span class="m" id="pv-verifier-help">the node checks a proof before it counts</span></div>
+            <div><span class="k">segments</span><span class="v" id="pv-seg">none yet</span><span class="m" id="pv-seg-note">whole segments (runs of 8 blocks) this machine proved</span></div>
+          </div>
+          <div class="field">
+            <div class="k">shard program id</div>
+            <div class="box mono"><span id="pv-program">not read yet</span><button class="btn tiny" data-copy="pv-program">Copy</button></div>
+          </div>
+          <div class="field">
+            <div class="k">aggregator id</div>
+            <div class="box mono"><span id="pv-aggregator">not read yet</span><button class="btn tiny" data-copy="pv-aggregator">Copy</button></div>
+            <p class="help">Every proof names the program that made it: the shard program for one shard, the aggregator for a whole segment. Other nodes accept a proof only from these two ids.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>This machine</h3><div class="head-right"><button class="btn tiny ghost" id="s-reset-recommended" title="Puts every setting back to the recommended default: updates on, Ember Tune on at Balanced, every card on, the public pool, the dev fee on. The address and the counters stay.">Reset to recommended</button></div></div>
+        <!-- the page's address (main's order of 11:0x UK, 12 October 2026): the fixed port, named here and in the installer's done line -->
+        <p class="line-text mono" id="s-page-line"></p>
+        <label class="switch"><input type="checkbox" id="s-login"><span class="track"></span><span class="sw-text"><b>Start at login</b> <span class="dim">Opens when you sign in and keeps mining in the background.</span></span></label>
+        <label class="switch"><input type="checkbox" id="s-profile"><span class="track"></span><span class="sw-text"><b>Make my page public</b> <span class="dim" id="s-profile-text">Off: igneum.network/address keeps your page unlisted. Nothing about this machine is published.</span></span></label>
+        <label class="switch" id="s-jobs-row"><input type="checkbox" id="s-jobs-allow"><span class="track"></span><span class="sw-text"><b>Allow remote jobs from Igneum</b> <span class="dim">Signed jobs from the team (a benchmark, a script, logs to collect) run here once and report back.</span></span></label>
+        <div class="row wrap indent"><span class="note" id="s-jobs-note"></span><button class="btn tiny ghost" id="s-jobs-check">Check for jobs</button><button class="btn tiny ghost" id="s-jobs-history-btn" aria-expanded="false">History</button></div>
+        <div class="details indent" id="s-jobs-history" hidden></div>
+        <p class="note mono small indent" id="s-jobs-key" hidden></p>
+        <div class="field">
+          <div class="k">name</div>
+          <div class="row">
+            <input type="text" class="addr-input" id="s-name" placeholder="a name for this machine" maxlength="40" spellcheck="false" aria-label="Machine name">
+            <button class="btn small" id="s-name-save">Rename</button>
+          </div>
+          <p class="help">A name for you only.</p>
+        </div>
+        <div class="field">
+          <div class="k">appearance</div>
+          <div class="seg" id="theme-seg" role="radiogroup" aria-label="Appearance">
+            <button class="seg-b" data-theme="system" role="radio" aria-checked="true">System</button>
+            <button class="seg-b" data-theme="light" role="radio" aria-checked="false">Light</button>
+            <button class="seg-b" data-theme="dark" role="radio" aria-checked="false">Dark</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Logs</h3></div>
+        <div class="row wrap">
+          <button class="btn small" id="s-log-copy">Copy the log</button>
+          <button class="btn small ghost" id="s-log-open">Show the log</button>
+          <span class="note">The last lines the app and the miner wrote, for a support message.</span>
+        </div>
+        <p class="note mono small" id="s-log-dir"></p>
+        <p class="note mono small" id="s-node-dir"></p>
+      </div>
+
+      <details class="card adv" id="s-advanced">
+        <summary><h3>Advanced</h3><span class="eyebrow">test networks</span></summary>
+        <label class="switch"><input type="checkbox" id="s-vote"><span class="track"></span><span class="sw-text"><b>Vote on checkpoints</b> <span class="dim">Signs a checkpoint every 30 s. Votes are what lock the chain. Leave it on.</span></span></label>
+        <label class="switch"><input type="checkbox" id="s-trust"><span class="track"></span><span class="sw-text"><b>Trust proofs without checking them</b> <span class="dim">Test networks only. The node includes proofs it never checked. Changing this restarts the node.</span></span></label>
+        <div class="ask inline" id="ask-trust" hidden>
+          <span class="ask-text" id="ask-trust-text"></span>
+          <button class="btn small primary" id="ask-trust-yes">Confirm</button>
+          <button class="btn small ghost" id="ask-trust-no">Cancel</button>
+        </div>
+        <div class="row wrap"><button class="btn small ghost" id="s-live" hidden>Open the live test network page</button><span class="note mono small" id="s-mid"></span></div>
+      </details>
+
+      <!-- main's audit of 21:2x UK, 13 October 2026, item 3: at phone width the bottom bar holds the six pages; Logs and Quit live here -->
+      <div class="card phone-only" id="s-foot-card">
+        <div class="card-head"><h3>This machine</h3><span class="eyebrow">logs and quit</span></div>
+        <div class="row wrap"><button class="btn small" id="s-logs">Open the logs</button><button class="btn small danger" id="s-quit">Quit Ember</button></div>
+        <p class="help small">Quit stops mining on this machine until Ember opens again.</p>
+      </div>
+      <!-- earnings-26 (the founder, 8 October 2026): the dev fee's one place in the app, last on Settings: the rate, what it
+           funds, the site's wording (site/miner.html), no control -->
+      <div class="card fee" id="s-fee-card">
+        <div class="card-head"><h3>The dev fee</h3><div class="head-right"><span class="eyebrow">1%</span></div></div>
+        <p class="help" id="s-fee-line">The Ember software takes a 1% dev fee. One block template in 100 is requested with the dev payout address instead of yours. The fee goes to Igneum Labs LLC, the company that ships the software.</p>
+      </div>
+    </section>
+  </section>
+</main>
+
+<!-- the update card (app.js, UpdateCard) -->
+<div class="upd-wrap" id="upd" hidden>
+  <div class="upd-card" id="upd-card" role="dialog" aria-modal="true" aria-labelledby="upd-name" aria-describedby="upd-line" tabindex="-1">
+    <div class="upd-mark" id="upd-mark">
+      <svg class="upd-ring" viewBox="0 0 96 96" aria-hidden="true"><circle class="track" cx="48" cy="48" r="44"></circle><circle class="arc" id="upd-arc" cx="48" cy="48" r="44"></circle></svg>
+      <img src="mark.svg" width="40" height="40" alt="">
+      <span class="upd-pct mono" id="upd-pct" hidden></span>
+    </div>
+    <div class="eyebrow ember">update</div>
+    <h2 class="upd-name" id="upd-name"></h2>
+    <p class="upd-line" id="upd-line"></p>
+    <p class="upd-cause mono" id="upd-cause" hidden></p>
+    <ul class="upd-notes" id="upd-notes"></ul>
+    <button class="upd-more" id="upd-more" type="button" aria-expanded="false" hidden>What changed</button>
+    <ul class="upd-all" id="upd-all" hidden></ul>
+    <p class="upd-meta mono" id="upd-meta"></p>
+    <div class="upd-actions" id="upd-actions"></div>
+  </div>
+</div>
+
+<!-- the key sheet, shown once -->
+<div class="sheet-wrap" id="sheet-key" hidden>
+  <div class="sheet">
+    <div class="eyebrow ember">shown once</div>
+    <h2>Save your key</h2>
+    <p class="sub">This key controls the rewards address. Keep a copy somewhere safe. Anyone with the key can spend what the address holds.</p>
+    <div class="field">
+      <div class="k">private key</div>
+      <div class="box mono key"><span id="key-private"></span><button class="btn tiny" data-copy="key-private">Copy</button></div>
+    </div>
+    <div class="field">
+      <div class="k">rewards address</div>
+      <div class="box mono"><span id="key-address"></span><button class="btn tiny" data-copy="key-address">Copy</button></div>
+    </div>
+    <p class="note">Stored at <span class="mono" id="key-file"></span>, readable by your user only. Settings can show it again.</p>
+    <label class="check"><input type="checkbox" id="key-ack"><span>I have saved my key</span></label>
+    <div class="cta">
+      <button class="btn primary big" id="btn-key-done" disabled>Start mining</button>
+    </div>
+  </div>
+</div>
+
+<!-- the log drawer (unchanged from miner-ui-2) -->
+<div class="drawer" id="drawer" aria-label="Logs">
+  <div class="drawer-grip" id="drawer-grip" title="Drag to resize"><i></i></div>
+  <div class="drawer-head">
+    <div class="chips" id="log-chips">
+      <button class="chip on" data-src="">all</button>
+      <button class="chip" data-src="app">app</button>
+      <button class="chip" data-src="node">node</button>
+      <button class="chip" data-src="miner">miner</button>
+      <button class="chip" data-src="watch">watch</button>
+    </div>
+    <div class="log-search">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+      <input type="search" id="log-search" placeholder="search" spellcheck="false" autocomplete="off" aria-label="Search the log">
+      <span class="count mono" id="log-count"></span>
+    </div>
+    <div class="log-nav">
+      <input type="text" class="mono" id="log-time" placeholder="HH:MM:SS" maxlength="8" spellcheck="false" autocomplete="off" aria-label="Jump to a time" title="Jump to a time (Enter)">
+      <button class="chip" id="log-last-error" title="Jump to the last error">last error</button>
+      <button class="chip" id="log-last-swap" title="Jump to the last program swap">last swap</button>
+    </div>
+    <div class="log-tools">
+      <span class="mono dim at" id="log-at" title="Time of the top line in view"></span>
+      <button class="chip" id="log-wrap" title="Wrap long lines (up to 5,000 lines)">wrap</button>
+      <button class="chip" id="log-copy" title="Copy the lines in view">copy</button>
+      <label class="check small"><input type="checkbox" id="log-follow" checked><span>follow</span></label>
+      <button class="chip" id="log-close" title="Close the log">close</button>
+    </div>
+  </div>
+  <div class="log-ruler" id="log-ruler" title="Click to jump"><span class="t0 mono" id="log-ruler-0"></span><span class="t1 mono" id="log-ruler-1"></span><i class="win" id="log-ruler-win"></i></div>
+  <div class="log-view" id="log-view">
+    <div class="log-pad" id="log-pad"><pre class="log" id="log"></pre></div>
+    <div class="log-empty mono" id="log-empty" hidden>Nothing logged yet.</div>
+  </div>
+  <button class="btn small log-jump" id="log-jump" hidden><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"></path></svg><span id="log-jump-text">Newest</span></button>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+<script src="chain.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

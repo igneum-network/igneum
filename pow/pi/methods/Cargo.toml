@@ -1,0 +1,11 @@
+[package]
+name = "pi-methods"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[build-dependencies]
+risc0-build = { version = "3.0.6" }
+
+[package.metadata.risc0]
+methods = ["guest"]

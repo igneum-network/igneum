@@ -1,0 +1,270 @@
+// Device code of the Igneum CUDA worker, RXE1 schemas 3 and 5 (docs/igneumhash/rxe1/SPEC-TEXT-v0.2-A2A3.md sections 1 to
+// 3, 5 and 11; REFERENCE-NOTES.md 1b for schema 2's src2 draw), written from the text and never from the reference. Compiled
+// by NVRTC after the schema 2 text (rx_rotl, rx_lp, rx_lp_words, rx_tag, rx_b3_hash, c_rx_sched in scope). Variant defines:
+//   RX_R, RX_K, RX_B     rounds, registers per lane, blocks per round (B >= 1 under F, E and P2)
+//   RX_G                 logical lanes per nonce (8, 16, 32): G threads of one warp, lane l of nonce g is thread G g + l
+//   RX_ROUTE             0 local, 1 fixed, 2 epoch (descriptors in c_rx_route), 3 state-dependent
+//   RX_C, RX_PAYLOAD     chunks per round and nominal payload bytes; RX_WPL = PAYLOAD / 4 / G words per lane
+//   RX_SCHEMA            3 (chunks from the dataset) or 5 (the chunk operand a register read, no dataset)
+//   RX_MODE              1 F, 2 E (the epoch's schedule in c_rx_sched), 3 P2 (a programme per nonce, generated on the device)
+//   RX_N_ITEMS           dataset items of 128 bytes (schema 3); 0 under schema 5
+#if defined(RX_SCHEMA) && RX_SCHEMA >= 3
+#define RX_WPL (RX_PAYLOAD / 4u / RX_G)
+#define RX_P4 (RX_PAYLOAD / 4u)
+#define RX_CHUNK_BYTES (RX_PAYLOAD / RX_C)
+#define RX_WPC (RX_P4 / RX_C)
+#if RX_SCHEMA == 3
+#define RX_N_REGIONS (RX_N_ITEMS * 128u / RX_CHUNK_BYTES)
+#endif
+// route 2: one u32 per (j, k): off | src << 8 | rot << 16 | op << 24
+__constant__ uint32_t c_rx_route[RX_R * 16];
+
+// BLAKE3 hash of a message of up to 4096 bytes (up to four chunks; the tree of the standard: chunks paired left to right,
+// an odd chunk promoted, PARENT then PARENT | ROOT)
+__device__ void rx3_b3_hash(const uint8_t* msg, uint32_t len, uint32_t out8[8]) {
+    if (len <= 2048) { rx_b3_hash(msg, len, out8); return; }
+    const uint32_t nchunks = (len + 1023) / 1024;
+    uint32_t cvs[4][8];
+    uint32_t o[16];
+    for (uint32_t ci = 0; ci < nchunks; ++ci) {
+        uint32_t cv[8]; for (int i = 0; i < 8; ++i) cv[i] = c_b3_iv[i];
+        const uint32_t clen = (ci + 1 == nchunks) ? (len - 1024 * ci) : 1024u;
+        const uint32_t nb = (clen + 63) / 64;
+        for (uint32_t b = 0; b < nb; ++b) {
+            uint32_t m[16]; for (int i = 0; i < 16; ++i) m[i] = 0;
+            const uint32_t off = 1024 * ci + 64 * b;
+            const uint32_t blen = (b + 1 == nb) ? (clen - 64 * b) : 64u;
+            for (uint32_t i = 0; i < blen; ++i) m[i >> 2] |= (uint32_t)msg[off + i] << (8 * (i & 3));
+            const uint32_t flags = (b == 0 ? B3_CHUNK_START : 0u) | (b + 1 == nb ? B3_CHUNK_END : 0u);
+            b3_compress_ctr(cv, m, ci, blen, flags, o);
+            for (int i = 0; i < 8; ++i) cv[i] = o[i];
+        }
+        for (int i = 0; i < 8; ++i) cvs[ci][i] = cv[i];
+    }
+    uint32_t pm[16];
+    if (nchunks == 3) {
+        for (int i = 0; i < 8; ++i) { pm[i] = cvs[0][i]; pm[8 + i] = cvs[1][i]; }
+        b3_compress_ctr(c_b3_iv, pm, 0, 64, B3_PARENT, o);
+        for (int i = 0; i < 8; ++i) { pm[i] = o[i]; pm[8 + i] = cvs[2][i]; }
+        b3_compress_ctr(c_b3_iv, pm, 0, 64, B3_PARENT | B3_ROOT, o);
+    } else {  // 4
+        uint32_t l8[8];
+        for (int i = 0; i < 8; ++i) { pm[i] = cvs[0][i]; pm[8 + i] = cvs[1][i]; }
+        b3_compress_ctr(c_b3_iv, pm, 0, 64, B3_PARENT, o);
+        for (int i = 0; i < 8; ++i) l8[i] = o[i];
+        for (int i = 0; i < 8; ++i) { pm[i] = cvs[2][i]; pm[8 + i] = cvs[3][i]; }
+        b3_compress_ctr(c_b3_iv, pm, 0, 64, B3_PARENT, o);
+        for (int i = 0; i < 8; ++i) { pm[i] = l8[i]; pm[8 + i] = o[i]; }
+        b3_compress_ctr(c_b3_iv, pm, 0, 64, B3_PARENT | B3_ROOT, o);
+    }
+    for (int i = 0; i < 8; ++i) out8[i] = o[i];
+}
+
+// T[idx] for a runtime idx without a local-memory array (the register file stays in registers)
+__device__ __forceinline__ uint32_t rx3_sel(const uint32_t* T, uint32_t idx) {
+    uint32_t v = T[0];
+#pragma unroll
+    for (uint32_t k = 1; k < RX_K; ++k) v = (idx == k) ? T[k] : v;
+    return v;
+}
+
+// section 8 with schema 2's src2 draw: q[0..3] to a descriptor src1 | src2 << 8 | rot << 16 | op << 24 for destination d
+__device__ __forceinline__ uint32_t rx3_desc(uint32_t q, uint32_t d) {
+    const uint32_t q0 = q & 0xFFu, q1 = (q >> 8) & 0xFFu, q2 = (q >> 16) & 0xFFu, q3 = (q >> 24) & 0xFFu;
+    const uint32_t src1 = (d + 1 + q0 % (RX_K - 1)) % RX_K;
+    const uint32_t r1 = (src1 + RX_K - d - 1) % RX_K;
+    uint32_t t = q1 % (RX_K - 2);
+    if (t >= r1) t += 1;
+    const uint32_t src2 = (d + 1 + t) % RX_K;
+    const uint32_t rot = 1 + q2 % 31;
+    const uint32_t op = (d + q3 % 4) % 4;
+    return src1 | (src2 << 8) | (rot << 16) | (op << 24);
+}
+
+extern "C" __global__ void __launch_bounds__(128)
+rx_search(uint64_t start_nonce, uint32_t count, const uint32_t* __restrict__ dataset, uint32_t items_unused,
+          uint32_t* __restrict__ scratch_unused, const uint32_t* __restrict__ params, const uint8_t* __restrict__ rxctx,
+          uint32_t* __restrict__ results, uint32_t max_results) {
+    const uint32_t lane = threadIdx.x & (RX_G - 1u);
+#if RX_G == 32
+    const uint32_t mask = 0xFFFFFFFFu;
+#else
+    const uint32_t mask = ((1u << RX_G) - 1u) << (threadIdx.x & (31u & ~(RX_G - 1u)));
+#endif
+    const uint32_t slot = (blockIdx.x * blockDim.x + threadIdx.x) / RX_G;
+    const uint32_t slots = (gridDim.x * blockDim.x) / RX_G;
+    uint8_t buf[2176];
+    uint32_t o[16];
+    for (uint32_t gid = slot; gid < count; gid += slots) {
+        const uint64_t nonce = start_nonce + (uint64_t)gid;
+        // seed = H("RXE1/nonce", [chain_id, pid, epoch_number, epoch_seed, header_blob, nonce])
+        uint32_t n = rx_tag(buf, 0, "RXE1/nonce", 10);
+        n = rx_lp(buf, n, rxctx, 8);
+        n = rx_lp(buf, n, rxctx + 8, 32);
+        n = rx_lp(buf, n, rxctx + 40, 8);
+        n = rx_lp(buf, n, rxctx + 48, 32);
+        n = rx_lp_words(buf, n, params, 8);
+        { uint8_t nb[8]; for (int i = 0; i < 8; ++i) nb[i] = (uint8_t)(nonce >> (8 * i)); n = rx_lp(buf, n, nb, 8); }
+        uint32_t seed[8];
+        rx_b3_hash(buf, n, seed);
+#if RX_MODE == 3
+        // P2: program_seed = H("RXE1/nonce-program", [seed]); the descriptors are generated per round below
+        uint32_t pseed[8];
+        { uint32_t pn = rx_tag(buf, 0, "RXE1/nonce-program", 18); pn = rx_lp_words(buf, pn, seed, 8); rx_b3_hash(buf, pn, pseed); }
+#endif
+        // S = X("RXE1/state", [seed], 4 G K): lane l takes words l K .. l K + K - 1
+        uint32_t s[RX_K];
+        {
+            uint8_t sm[64];
+            uint32_t sn = rx_tag(sm, 0, "RXE1/state", 10);
+            sn = rx_lp_words(sm, sn, seed, 8);
+            const uint32_t first = lane * RX_K;
+            b3_chunk_xof(nullptr, sm, sn, first >> 4, o);
+            const uint32_t off = first & 15u;
+#pragma unroll
+            for (uint32_t k = 0; k < RX_K; ++k) s[k] = o[off + k];
+        }
+#pragma unroll 1
+        for (uint32_t j = 0; j < RX_R; ++j) {
+            // A3: C chunk folds a_c over register (j + c) mod K of every lane, each its own derivation
+            uint32_t a_c[RX_C];
+#if RX_SCHEMA == 3
+            uint32_t region[RX_C];
+#endif
+#pragma unroll
+            for (uint32_t c = 0; c < RX_C; ++c) {
+                uint32_t v = rx_rotl(rx3_sel(s, (j + c) % RX_K), lane);
+#pragma unroll
+                for (uint32_t sh = 1; sh < RX_G; sh <<= 1) v ^= __shfl_xor_sync(mask, v, sh, RX_G);
+                uint32_t a = (j * 0x9E3779B9u) ^ (c * 0x7F4A7C15u) ^ v;
+                a = (a ^ (a >> 16)) * 0x85EBCA6Bu;
+                a = (a ^ (a >> 13)) * 0xC2B2AE35u;
+                a_c[c] = a;
+#if RX_SCHEMA == 3
+                region[c] = (a ^ (a >> 16)) & (RX_N_REGIONS - 1u);
+#endif
+            }
+            // the payload: lane l's words q = WPL l + m; word q sits in chunk q / WPC at word offset q mod WPC
+            uint32_t w[RX_WPL];
+#pragma unroll
+            for (uint32_t m = 0; m < RX_WPL; ++m) {
+                const uint32_t q = RX_WPL * lane + m;
+                const uint32_t c = q / RX_WPC;
+#if RX_SCHEMA == 3
+                uint32_t reg = region[0];
+#pragma unroll
+                for (uint32_t cc = 1; cc < RX_C; ++cc) reg = (c == cc) ? region[cc] : reg;
+                w[m] = __ldg(dataset + (uint64_t)reg * (RX_CHUNK_BYTES / 4u) + (q % RX_WPC));
+#else
+                uint32_t ac = a_c[0];
+#pragma unroll
+                for (uint32_t cc = 1; cc < RX_C; ++cc) ac = (c == cc) ? a_c[cc] : ac;
+                w[m] = rx3_sel(s, (j + m + RX_K / 2u) % RX_K) ^ ac;  // one pre-injection snapshot (the reading sent to the hash lead)
+#endif
+            }
+            // the injection: even m xor, odd m add, into register (j + m) mod K
+#pragma unroll
+            for (uint32_t m = 0; m < RX_WPL; ++m) {
+                const uint32_t r = (j + m) % RX_K;
+#pragma unroll
+                for (uint32_t k = 0; k < RX_K; ++k) if (k == r) s[k] = (m & 1u) ? s[k] + w[m] : s[k] ^ w[m];
+            }
+            // the B blocks from the block's snapshot; descriptors from the epoch's schedule (F, E) or generated per nonce (P2)
+#pragma unroll 1
+            for (uint32_t b = 0; b < RX_B; ++b) {
+                uint32_t T[RX_K];
+#pragma unroll
+                for (uint32_t k = 0; k < RX_K; ++k) T[k] = s[k];
+#if RX_MODE == 3
+                // lane d < K draws q = X("RXE1/op", [program_seed, LE32 j, LE32 b, LE32 d], 4) for destination d
+                uint32_t mydesc = 0;
+                if (lane < RX_K) {
+                    uint8_t om[80];
+                    uint32_t on = rx_tag(om, 0, "RXE1/op", 7);
+                    on = rx_lp_words(om, on, pseed, 8);
+                    { const uint32_t jj = j; on = rx_lp_words(om, on, &jj, 1); }
+                    { const uint32_t bb = b; on = rx_lp_words(om, on, &bb, 1); }
+                    { const uint32_t dd = lane; on = rx_lp_words(om, on, &dd, 1); }
+                    uint32_t oq[16];
+                    b3_chunk_xof(nullptr, om, on, 0, oq);
+                    mydesc = rx3_desc(oq[0], lane);
+                }
+#else
+                const uint32_t base = (j * RX_B + b) * RX_K;
+#endif
+#pragma unroll
+                for (uint32_t d = 0; d < RX_K; ++d) {
+#if RX_MODE == 3
+                    const uint32_t desc = __shfl_sync(mask, mydesc, d, RX_G);
+#else
+                    const uint32_t desc = c_rx_sched[base + d];
+#endif
+                    const uint32_t src1 = desc & 0xFFu, src2 = (desc >> 8) & 0xFFu, rot = (desc >> 16) & 0xFFu, op = (desc >> 24) & 3u;
+                    const uint32_t x = T[d], y = rx3_sel(T, src1), z = rx3_sel(T, src2);
+                    uint32_t r;
+                    if (op == 0) r = x + rx_rotl(y ^ z, rot);
+                    else if (op == 1) r = x ^ rx_rotl(y + z, rot);
+                    else if (op == 2) r = x + y * (z | 1u);
+                    else r = rx_rotl(x ^ y, rot) + z;
+                    s[d] = r;
+                }
+            }
+            // A2: the exchange from one snapshot of the whole group
+#if RX_ROUTE != 0
+            {
+                uint32_t T[RX_K];
+#pragma unroll
+                for (uint32_t k = 0; k < RX_K; ++k) T[k] = s[k];
+#pragma unroll
+                for (uint32_t k = 0; k < RX_K; ++k) {
+#if RX_ROUTE == 1
+                    const uint32_t nxt = __shfl_sync(mask, T[(k + 1) % RX_K], (lane + 1) % RX_G, RX_G);
+                    s[k] = T[k] + rx_rotl(nxt, 7);
+#elif RX_ROUTE == 2
+                    const uint32_t rd = c_rx_route[j * RX_K + k];
+                    const uint32_t off = rd & 0xFFu, src = (rd >> 8) & 0xFFu, rot = (rd >> 16) & 0xFFu, op = (rd >> 24) & 1u;
+                    const uint32_t v = rx_rotl(__shfl_sync(mask, rx3_sel(T, src), (lane + off) % RX_G, RX_G), rot);
+                    s[k] = op == 0 ? T[k] + v : (T[k] ^ __umulhi(T[k] | 1u, v)) + v;
+#else
+                    const uint32_t off = 1u + (T[(k + 1) % RX_K] >> 16) % (RX_G - 1u);
+                    const uint32_t v = __shfl_sync(mask, T[(k + 1) % RX_K], (lane + off) % RX_G, RX_G);
+                    s[k] = T[k] + rx_rotl(v, 7);
+#endif
+                }
+            }
+#endif
+        }
+        // out = H("RXE1/result", [seed, LE32_lane_major(S)]): lane 0 gathers G K words
+        uint32_t fn = 0;
+        if (lane == 0) { fn = rx_tag(buf, 0, "RXE1/result", 11); fn = rx_lp_words(buf, fn, seed, 8); const uint32_t len = 4u * RX_G * RX_K; buf[fn] = (uint8_t)len; buf[fn + 1] = (uint8_t)(len >> 8); buf[fn + 2] = (uint8_t)(len >> 16); buf[fn + 3] = (uint8_t)(len >> 24); fn += 4; }
+        for (uint32_t l = 0; l < RX_G; ++l) {
+#pragma unroll
+            for (uint32_t k = 0; k < RX_K; ++k) {
+                const uint32_t wv = __shfl_sync(mask, s[k], l, RX_G);
+                if (lane == 0) { const uint32_t pos = fn + 4 * (l * RX_K + k); buf[pos] = (uint8_t)wv; buf[pos + 1] = (uint8_t)(wv >> 8); buf[pos + 2] = (uint8_t)(wv >> 16); buf[pos + 3] = (uint8_t)(wv >> 24); }
+            }
+        }
+        if (lane == 0) {
+            uint32_t out8[8];
+            rx3_b3_hash(buf, fn + 4u * RX_G * RX_K, out8);
+            bool le = true;
+            for (int i = 0; i < 8; ++i) {
+                const uint32_t av = bswap32(out8[i]);
+                const uint32_t bv = params[8 + i];
+                if (av < bv) { le = true; break; }
+                if (av > bv) { le = false; break; }
+            }
+            if (le) {
+                const uint32_t rs = atomicAdd(&results[0], 1u);
+                if (rs < max_results) {
+                    uint32_t* e = results + 1 + rs * RESULT_WORDS;
+                    e[0] = (uint32_t)nonce; e[1] = (uint32_t)(nonce >> 32);
+                    for (int i = 0; i < 8; ++i) e[2 + i] = seed[i];
+                    for (int i = 0; i < 8; ++i) e[10 + i] = out8[i];
+                }
+            }
+        }
+        __syncwarp(mask);
+    }
+}
+#endif  // schemas 3 and 5

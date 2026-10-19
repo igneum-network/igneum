@@ -1,0 +1,26 @@
+{
+  "candidate": "rxe1",
+  "class": "nonce-boundary",
+  "generator": "ignpow abi 0 build 7c742f16; kawpow-0.9.4 = ravencoin-ethash@22549129 (v4.8.0, progpow 0.9.4, epoch 7500); autolykos-2 = ergo v6.0.7 AutolykosPowScheme (k 32, n 26, in-house BLAKE2b); igneumhash = IgneumHash-R0A versions 0 and 1 (SPEC-R0A-v0.md revision 0.4) and the R0B schedule version 2 (SPEC-R0B-schedule-v0.md), BLAKE3 1.8.2 portable; rxe1 = RXE1 experimental family (SPEC-TEXT-v0.1.md sections 6 to 8; dataset: the R0A v1 builder; BLAKE3 1.8.2 portable)",
+  "seed": "20261009",
+  "params": {"schema": 3, "mode": 1, "blocks": 1, "rounds": 64, "registers": 8, "group": 16, "route": 1, "chunks": 4, "payload_bytes": 256, "dataset_bytes": 2147483648},
+  "count": 16,
+  "vectors": [
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "0", "mix": "ed9002bee797b5f7207373f5a1349e0315d5a9b2692b9f1f2b06c08e7057ed15", "hash": "7ca37ec20dc44a78e5622329b1aa1aa539f7379a6545bbb4bf7afe57902854d9"},
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "1", "mix": "9747ece99bc82b1ebbe88ea53502e1ef4889ebc9889c32f0283d565db3084cbc", "hash": "03f47f19f981090ec329b114d181e8a7bfad6d7ca491d1b502442ac93deab920"},
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4294967295", "mix": "c64e3298b12107b205f8abe1a1377a5864e326ef4d376d730e085a5f82ee60a9", "hash": "0d92f23bece025a4612d46bd8a6ef1daa22c16c9b43e8e440276362c07f26df0"},
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "4294967296", "mix": "d74e9a1895be024dcd3cddb6ef947d1c1ed4a781daa0c4f513d5e7dda97939cd", "hash": "5dd51e95ca220ba97a0b99fb1aa16ec14f11919b6d045be7ea7e44502a4b2c13"},
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "9223372036854775807", "mix": "26bd509e4273146b35337823180b8c7176473a3aa18cb1c04c4ba8e48dc5d51d", "hash": "5f2cd5f16db1e73071241788c7ec738fc220fee91cbac419d67452902b8cf770"},
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "9223372036854775808", "mix": "3ea4a1a3c3c5d405317911ea51491844b6ce400cf1a9a169e7ca536cfd6a2652", "hash": "f19f750a2c8d4096db996e1e8e6e28164fa173cdbae365791cb18f2f20b66428"},
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "18446744073709551614", "mix": "3759a21bedfb40e7d9bbdf63efac8444a089bd71591fc5f41281d77dba9c3a50", "hash": "b50428b3cd3d29490bd58acc11e7124300239bb02a39704ef3b22efcbe5a928a"},
+    {"height": 1, "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307", "nonce": "18446744073709551615", "mix": "5ff74474377f6a15fafea98393bfb81dd5481bcedc5f83f594b18f282a349814", "hash": "dce2a936e050d2a32619402a74555bff2cb302c067a308fc459dab77f565b9ad"},
+    {"height": 1835008, "header": "3bd3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe", "nonce": "0", "mix": "8bb1926757fa2ca3140687183f22ab8de71b953d90ae6daeb846fe879186dbb1", "hash": "afc1ff39be4ad0bf5bae75c074894644cf7635a4f0b853a981f90ea8efa1c208"},
+    {"height": 1835008, "header": "3bd3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe", "nonce": "1", "mix": "99ab31d2b196a26e09ccae1acf2d27be4df78c399c39ad11831054032f64c3cb", "hash": "b20b88195fe0625b710ed8a207ebd7e7a51449af2debd18edb016b2ab3202950"},
+    {"height": 1835008, "header": "3bd3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe", "nonce": "4294967295", "mix": "6a8c95c8b727791e4f76dc6e80c2e00618f44a496de9d3aff9465604723dab2e", "hash": "01c154a3f3d61b6b5d8d65d5c2d913f4b4ade784cbfcb849bab3f5e3b6c681d3"},
+    {"height": 1835008, "header": "3bd3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe", "nonce": "4294967296", "mix": "2b061e6a7a21edb8e5ae6cd91390160c8bf0a31f947c3846d699b1beb58cd3c9", "hash": "bf7c19ca8eca4f01d4aeed1099ec0a756472423adafde911fa4b229e900e7073"},
+    {"height": 1835008, "header": "3bd3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe", "nonce": "9223372036854775807", "mix": "86a97ff2357a7ba69b175f354539cc5907f44b3a7aca528cc934ba5fb3f09f08", "hash": "ea3de0218131e94546cd2b6c5279e22f21e108e5092683d673fd1ada1136e472"},
+    {"height": 1835008, "header": "3bd3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe", "nonce": "9223372036854775808", "mix": "54dd37f9483bc7e2dc74ace03d54850a5c6672a7691982479f38945d1edc6af5", "hash": "e81debdc49afca47bb0d29e69d1e39e841cee4b1b8b24473d0f9d652d236a4c1"},
+    {"height": 1835008, "header": "3bd3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe", "nonce": "18446744073709551614", "mix": "47498ef9e5498c43b15e6a6d1912459692bd69d0f60ad06b07bfc37ced705473", "hash": "bd5cbfc9d7368fc0b5914df7c7c2b4d71f76f222c9a38185976c2f81db932981"},
+    {"height": 1835008, "header": "3bd3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe", "nonce": "18446744073709551615", "mix": "49f5c58b55ee617898125b46f7e7cb78137896dd7f22387ade3820f0c663da54", "hash": "bd9058731755decfaff6aba03eb12444eec0e5f29dbfd8292885eda5b3bc5c19"}
+  ]
+}

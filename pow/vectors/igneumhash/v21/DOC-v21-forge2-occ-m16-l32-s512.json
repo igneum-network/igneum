@@ -1,0 +1,1 @@
+{"version": 21, "rounds": 512, "program_ops": 16, "sequence": 32, "batch_log2": 12, "lanes": 16, "registers": 32, "scratch_kib": 1, "dataset_mib": 1024, "cache_mib": 64, "parents": 256, "item_bytes": 256, "fold_every": 64, "epoch_blocks": 4096, "chain_id": 7310, "fp_mode": 3}

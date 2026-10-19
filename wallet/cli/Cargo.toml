@@ -1,0 +1,21 @@
+[package]
+name = "igneum-wallet-cli"
+description = "Igneum Wallet on the command line: the test surface for the signing path and the tool for people who want no window"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+# nothing in this workspace is published to a registry; the crates reference each other by path
+publish = false
+
+[[bin]]
+name = "igneum-wallet"
+path = "src/main.rs"
+
+[dependencies]
+igneum-wallet-core = { path = "../core" }
+igneum-wallet-rpc = { path = "../rpc" }
+igneum-wallet-authority = { path = "../authority" }
+clap = { workspace = true }
+serde_json = { workspace = true }
+zeroize = { workspace = true }

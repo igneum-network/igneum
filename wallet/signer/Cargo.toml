@@ -1,0 +1,23 @@
+[package]
+name = "igneum-signer"
+description = "Igneum Wallet signer: the only process that touches a key; a line protocol on stdio, no network"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+# nothing in this workspace is published to a registry; the crates reference each other by path
+publish = false
+
+[[bin]]
+name = "igneum-signer"
+path = "src/main.rs"
+
+[dependencies]
+igneum-wallet-core = { path = "../core" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+zeroize = { workspace = true }
+# the identity key's derivation (pk = BLAKE3(tag(bond-pk) || sk), the chain's form); Apache-2.0 OR CC0-1.0, the workspace's pin
+blake3 = { workspace = true }
+# the memory guards (G4): setrlimit, prctl, mlockall; MIT or Apache-2.0
+libc = "0.2"

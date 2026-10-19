@@ -1,0 +1,201 @@
+// Device code of the Igneum CUDA worker, RXE1 (the project's engineering specification, docs/igneumhash/rxe1/
+// SPEC-TEXT-v0.1.md sections 6 to 8), written from the text and never from the reference. Compiled by NVRTC after the
+// FishHash and IgneumHash sources (b3_g, c_b3_iv, c_b3_perm, bswap32, b3_compress_ctr, b3_chunk_xof in scope).
+// Variant defines from the parameter record:
+//   RX_R        rounds (32 or 64)
+//   RX_K        registers per lane (8 or 16)
+//   RX_B        instruction blocks per round (0 under M, 1, 2 or 4 under F and E)
+//   RX_N_ITEMS  dataset items of 128 bytes (dataset_bytes / 128), a power of two
+// Sixteen logical lanes per nonce are sixteen threads (a half warp); lane l of nonce g is thread 16 g + l; every
+// cross-lane value moves by a shuffle inside the named sixteen-lane mask; no lane ever reads another nonce's state.
+// Every u32 wraps; rotations mask their count to 0..31; integers in the encoding are little-endian; the schedule is
+// host-generated (section 8) and read as descriptors from constant memory: byte 0 src1, byte 1 src2, byte 2 rotate,
+// byte 3 opcode, one u32 per (round, block, destination) in that order.
+#ifndef B3_PARENT
+#define B3_PARENT 4u
+#endif
+#define RX_SCHED_ENTRIES (RX_R * (RX_B > 0 ? RX_B : 1) * RX_K)
+__constant__ uint32_t c_rx_sched[RX_R * 4 * 16];
+
+__device__ __forceinline__ uint32_t rx_rotl(uint32_t x, uint32_t n) { n &= 31u; return n ? ((x << n) | (x >> (32 - n))) : x; }
+
+// Enc(tag, fields): LP(tag) || LP(field)...; appended into a byte buffer
+__device__ __forceinline__ uint32_t rx_lp(uint8_t* p, uint32_t n, const uint8_t* src, uint32_t len) {
+    p[n] = (uint8_t)len; p[n + 1] = (uint8_t)(len >> 8); p[n + 2] = (uint8_t)(len >> 16); p[n + 3] = (uint8_t)(len >> 24);
+    for (uint32_t i = 0; i < len; ++i) p[n + 4 + i] = src[i];
+    return n + 4 + len;
+}
+__device__ __forceinline__ uint32_t rx_lp_words(uint8_t* p, uint32_t n, const uint32_t* w, uint32_t nw) {
+    const uint32_t len = 4 * nw;
+    p[n] = (uint8_t)len; p[n + 1] = (uint8_t)(len >> 8); p[n + 2] = (uint8_t)(len >> 16); p[n + 3] = (uint8_t)(len >> 24);
+    for (uint32_t i = 0; i < nw; ++i) { const uint32_t v = w[i]; p[n + 4 + 4 * i] = (uint8_t)v; p[n + 5 + 4 * i] = (uint8_t)(v >> 8); p[n + 6 + 4 * i] = (uint8_t)(v >> 16); p[n + 7 + 4 * i] = (uint8_t)(v >> 24); }
+    return n + 4 + len;
+}
+__device__ __forceinline__ uint32_t rx_tag(uint8_t* p, uint32_t n, const char* t, uint32_t len) { return rx_lp(p, n, (const uint8_t*)t, len); }
+
+// BLAKE3 hash (32 bytes as 8 words) of a message of up to 2048 bytes: one chunk through b3_chunk_xof, two chunks
+// through two chunk chaining values and one parent compression with PARENT | ROOT (the tree of the standard).
+__device__ void rx_b3_hash(const uint8_t* msg, uint32_t len, uint32_t out8[8]) {
+    uint32_t o[16];
+    if (len <= 1024) {
+        b3_chunk_xof(nullptr, msg, len, 0, o);
+        for (int i = 0; i < 8; ++i) out8[i] = o[i];
+        return;
+    }
+    // chunk 0: 1024 bytes, not the root; its chaining value from the last block with CHUNK_END
+    uint32_t cv[8]; for (int i = 0; i < 8; ++i) cv[i] = c_b3_iv[i];
+    for (uint32_t b = 0; b < 16; ++b) {
+        uint32_t m[16]; for (int i = 0; i < 16; ++i) m[i] = 0;
+        for (uint32_t i = 0; i < 64; ++i) m[i >> 2] |= (uint32_t)msg[64 * b + i] << (8 * (i & 3));
+        const uint32_t flags = (b == 0 ? B3_CHUNK_START : 0u) | (b == 15 ? B3_CHUNK_END : 0u);
+        b3_compress_ctr(cv, m, 0, 64, flags, o);
+        for (int i = 0; i < 8; ++i) cv[i] = o[i];
+    }
+    uint32_t cv0[8]; for (int i = 0; i < 8; ++i) cv0[i] = cv[i];
+    // chunk 1: the remainder, counter 1
+    const uint32_t rem = len - 1024;
+    for (int i = 0; i < 8; ++i) cv[i] = c_b3_iv[i];
+    const uint32_t nb = (rem + 63) / 64;
+    for (uint32_t b = 0; b < nb; ++b) {
+        uint32_t m[16]; for (int i = 0; i < 16; ++i) m[i] = 0;
+        const uint32_t off = 1024 + 64 * b;
+        const uint32_t blen = (b + 1 == nb) ? (rem - 64 * b) : 64u;
+        for (uint32_t i = 0; i < blen; ++i) m[i >> 2] |= (uint32_t)msg[off + i] << (8 * (i & 3));
+        const uint32_t flags = (b == 0 ? B3_CHUNK_START : 0u) | (b + 1 == nb ? B3_CHUNK_END : 0u);
+        b3_compress_ctr(cv, m, 1, blen, flags, o);
+        for (int i = 0; i < 8; ++i) cv[i] = o[i];
+    }
+    // the parent: IV, message = cv0 || cv1, counter 0, block length 64, PARENT | ROOT
+    uint32_t pm[16]; for (int i = 0; i < 8; ++i) { pm[i] = cv0[i]; pm[8 + i] = cv[i]; }
+    b3_compress_ctr(c_b3_iv, pm, 0, 64, B3_PARENT | B3_ROOT, o);
+    for (int i = 0; i < 8; ++i) out8[i] = o[i];
+}
+
+// The search. rxctx: the per-epoch bytes the host prepares: chain_id (8, LE64), pid (32), epoch_number (8, LE64),
+// epoch_seed (32), in that order (80 bytes); params words 0..7 the header (32 bytes, the ABI header_blob), 8..15 the
+// target as big-endian words (the ABI compare, as every worker kernel; the text's little-endian compare is the
+// harness's and is recorded beside it).
+#if !defined(RX_SCHEMA) || RX_SCHEMA < 3
+extern "C" __global__ void __launch_bounds__(128)
+rx_search(uint64_t start_nonce, uint32_t count, const uint2* __restrict__ dataset, uint32_t items_unused,
+          uint32_t* __restrict__ scratch_unused, const uint32_t* __restrict__ params, const uint8_t* __restrict__ rxctx,
+          uint32_t* __restrict__ results, uint32_t max_results) {
+    const uint32_t lane = threadIdx.x & 15u;
+    const uint32_t mask = 0xFFFFu << (threadIdx.x & 16u);
+    const uint32_t slot = (blockIdx.x * blockDim.x + threadIdx.x) >> 4;
+    const uint32_t slots = (gridDim.x * blockDim.x) >> 4;
+    uint8_t buf[1152];
+    uint32_t o[16];
+    for (uint32_t gid = slot; gid < count; gid += slots) {
+        const uint64_t nonce = start_nonce + (uint64_t)gid;
+        // seed = H("RXE1/nonce", [chain_id, pid, epoch_number, epoch_seed, header_blob, nonce])
+        uint32_t n = rx_tag(buf, 0, "RXE1/nonce", 10);
+        n = rx_lp(buf, n, rxctx, 8);           // chain_id as LE64
+        n = rx_lp(buf, n, rxctx + 8, 32);      // pid
+        n = rx_lp(buf, n, rxctx + 40, 8);      // epoch_number as LE64
+        n = rx_lp(buf, n, rxctx + 48, 32);     // epoch_seed
+        n = rx_lp_words(buf, n, params, 8);    // header_blob: the 32-byte ABI header as stored (bytes)
+        { uint8_t nb[8]; for (int i = 0; i < 8; ++i) nb[i] = (uint8_t)(nonce >> (8 * i)); n = rx_lp(buf, n, nb, 8); }
+        uint32_t seed[8];
+        rx_b3_hash(buf, n, seed);
+        // S = X("RXE1/state", [seed], 64 K): lane l takes words l K .. l K + K - 1 of the output (lane first, register second)
+        uint32_t s[RX_K];
+        {
+            uint8_t sm[64];
+            uint32_t sn = rx_tag(sm, 0, "RXE1/state", 10);
+            sn = rx_lp_words(sm, sn, seed, 8);
+            // output block t holds words 16 t .. 16 t + 15; lane l's first word is l K
+            const uint32_t first = lane * RX_K;
+            const uint32_t t0 = first >> 4;
+            b3_chunk_xof(nullptr, sm, sn, t0, o);
+#if RX_K == 16
+            for (int k = 0; k < 16; ++k) s[k] = o[k];
+#else
+            const uint32_t off = first & 15u;
+            for (int k = 0; k < RX_K; ++k) s[k] = o[off + k];
+#endif
+        }
+        // the rounds
+#pragma unroll 1
+        for (uint32_t j = 0; j < RX_R; ++j) {
+            const uint32_t jk = j % RX_K, jk1 = (j + 1) % RX_K;
+            // a = j 0x9E3779B9 xor over lanes of rotl(S[l][j mod K], l), then the two mixes; one value per nonce
+            uint32_t v = rx_rotl(s[jk], lane);
+            v ^= __shfl_xor_sync(mask, v, 1, 16); v ^= __shfl_xor_sync(mask, v, 2, 16);
+            v ^= __shfl_xor_sync(mask, v, 4, 16); v ^= __shfl_xor_sync(mask, v, 8, 16);
+            uint32_t a = (j * 0x9E3779B9u) ^ v;
+            a = (a ^ (a >> 16)) * 0x85EBCA6Bu;
+            a = (a ^ (a >> 13)) * 0xC2B2AE35u;
+            const uint32_t index = (a ^ (a >> 16)) & (RX_N_ITEMS - 1u);
+            // w = the 32 words of item index; lane l takes w[2 l], w[2 l + 1]
+            const uint2 w = dataset[(uint64_t)index * 16u + lane];
+            s[jk] ^= w.x;
+            s[jk1] += w.y;
+            // the B blocks: every destination once per block from the block's snapshot
+#if RX_B > 0
+#pragma unroll 1
+            for (uint32_t b = 0; b < RX_B; ++b) {
+                uint32_t T[RX_K];
+#pragma unroll
+                for (int k = 0; k < RX_K; ++k) T[k] = s[k];
+                const uint32_t base = (j * RX_B + b) * RX_K;
+#pragma unroll
+                for (uint32_t d = 0; d < RX_K; ++d) {
+                    const uint32_t desc = c_rx_sched[base + d];
+                    const uint32_t src1 = desc & 0xFFu, src2 = (desc >> 8) & 0xFFu, rot = (desc >> 16) & 0xFFu, op = (desc >> 24) & 3u;
+                    const uint32_t x = T[d], y = T[src1], z = T[src2];
+                    uint32_t r;
+                    if (op == 0) r = x + rx_rotl(y ^ z, rot);
+                    else if (op == 1) r = x ^ rx_rotl(y + z, rot);
+                    else if (op == 2) r = x + y * (z | 1u);
+                    else r = rx_rotl(x ^ y, rot) + z;
+                    s[d] = r;
+                }
+            }
+#endif
+            // S[l][k] = T[l][k] + rotl(T[(l + 1) mod 16][(k + 1) mod K], 7) from the round's snapshot
+            {
+                uint32_t T[RX_K];
+#pragma unroll
+                for (int k = 0; k < RX_K; ++k) T[k] = s[k];
+#pragma unroll
+                for (int k = 0; k < RX_K; ++k) {
+                    const uint32_t nxt = __shfl_sync(mask, T[(k + 1) % RX_K], (lane + 1) & 15u, 16);
+                    s[k] = T[k] + rx_rotl(nxt, 7);
+                }
+            }
+        }
+        // out = H("RXE1/result", [seed, LE32_lane_major(S)]): lane 0 gathers 16 K words
+        uint32_t fn = 0;
+        if (lane == 0) { fn = rx_tag(buf, 0, "RXE1/result", 11); fn = rx_lp_words(buf, fn, seed, 8); const uint32_t len = 64 * RX_K; buf[fn] = (uint8_t)len; buf[fn + 1] = (uint8_t)(len >> 8); buf[fn + 2] = (uint8_t)(len >> 16); buf[fn + 3] = (uint8_t)(len >> 24); fn += 4; }
+        for (uint32_t l = 0; l < 16; ++l) {
+#pragma unroll
+            for (int k = 0; k < RX_K; ++k) {
+                const uint32_t wv = __shfl_sync(mask, s[k], l, 16);
+                if (lane == 0) { const uint32_t pos = fn + 4 * (l * RX_K + k); buf[pos] = (uint8_t)wv; buf[pos + 1] = (uint8_t)(wv >> 8); buf[pos + 2] = (uint8_t)(wv >> 16); buf[pos + 3] = (uint8_t)(wv >> 24); }
+            }
+        }
+        if (lane == 0) {
+            uint32_t out8[8];
+            rx_b3_hash(buf, fn + 64 * RX_K, out8);
+            bool le = true;
+            for (int i = 0; i < 8; ++i) {
+                const uint32_t av = bswap32(out8[i]);
+                const uint32_t bv = params[8 + i];
+                if (av < bv) { le = true; break; }
+                if (av > bv) { le = false; break; }
+            }
+            if (le) {
+                const uint32_t rs = atomicAdd(&results[0], 1u);
+                if (rs < max_results) {
+                    uint32_t* e = results + 1 + rs * RESULT_WORDS;
+                    e[0] = (uint32_t)nonce; e[1] = (uint32_t)(nonce >> 32);
+                    for (int i = 0; i < 8; ++i) e[2 + i] = seed[i];   // mix_out = seed
+                    for (int i = 0; i < 8; ++i) e[10 + i] = out8[i];  // hash_out = out
+                }
+            }
+        }
+        __syncwarp(mask);
+    }
+}
+#endif  // schema 2

@@ -1,0 +1,24 @@
+# upstream: https://github.com/tromp/cuckoo
+# commit: 558528250f981e900e9d1b1d3fd87a741a54e6e5
+# licence: FAIR MINING (LICENSE.txt)
+# vendored unchanged (the in-house rule's named-source form); verify: fetch.sh cuckaroo29-5585282 re-fetches and checks every blob sha
+LICENSE.txt c06eaa4b0883f3b0f96e4230d90fe0f9c72f1354 1500
+README.md 8d1b5c110f4dc246efb43e1b4a1648932ead9717 12514
+src/cuckaroo/cuckaroo.hpp e956f610ab28e0333508088641bf78a643cb6386 5925
+src/cuckaroo/cuckaroo.c b02e1cb427a432de5c9a2a4603769370943d5dd5 1829
+src/cuckaroo/simple.cpp c1996c1d17e1a962c6c7d01df3d3d4c2add545c7 3924
+src/cuckaroo/graph.hpp 7b81bb639cd7c9490e09e745a12b1cf261425177 4922
+src/cuckaroo/bitmap.hpp bde8a15b008d843272c9eee9baae0e999b7c385b 1527
+src/cuckaroo/compress.hpp fefcb8dabde3e31ff4b72275608b0549ae78c971 1668
+src/cuckaroo/Makefile 13c68420c1ea6136d75ca4bd5915a41f5ec7d3e9 2831
+src/cuckaroo/mean.hpp dba9dbe0337be0d28fb20c7faaa87b4ec1cfd371 40313
+src/cuckaroo/mean.cpp 0afc6a5a9b5dd4fa8e4958075f4441df1d6deba4 5255
+src/cuckaroo/mean.cu a235f763db3c2bdff7dc55db27db8b15b9c7f621 27713
+src/crypto/siphash.cuh 9d248cd28eeddeba1820ce399e240d2ee1352d33 2853
+src/threads/barrier.hpp 8385ca01736ec86b06df036588fa89185cdd6f59 1110
+src/crypto/siphash.hpp 25322e90dbe0c50a9b66c3bd782710a312231e80 1655
+src/crypto/siphashxN.h a997d645922336a8cde685593f1b7c7ba3083c9e 8811
+src/crypto/blake2.h ad62f260e7397d9404a62e3aaa24053fa2ceacb5 6455
+src/crypto/blake2-impl.h 5dff7fc7a3d836360b5fed69993a8b44ff100f6f 4175
+src/crypto/blake2b-ref.c cd38b1ba0083c4d8125b2f27e03498376946dc37 10057
+src/crypto/portable_endian.h e89694a443ce789b067df932db61a9cd17b8bc5f 2991

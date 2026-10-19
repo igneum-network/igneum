@@ -1,0 +1,50 @@
+[package]
+name = "igneum-app"
+version = "0.2.40"
+edition = "2021"
+description = "Ember engine: supervises the node, the miner and the GPU workers, and serves the dashboard on 127.0.0.1"
+license = "MIT"
+publish = false
+build = "build.rs"   # Windows targets: links resources/igneum-app.rc (coin icon, version block) into the exe
+
+[[bin]]
+name = "igneum-app"
+path = "src/main.rs"
+
+# the publisher's manifest signer (packaging/ota/publish-release-manifest.sh); built here, never shipped
+[[bin]]
+name = "igneum-ota-sign"
+path = "src/bin/ota-sign.rs"
+
+[features]
+# review B F14 (8 October 2026): the lab build runs our fleet's remote jobs under a separate signing root and takes the
+# manifest's consensus override; the public miner (the default) has no code path that runs a job. Built with
+# IGNEUM_LAB_PUBLIC_KEY=<hex of $IGNEUM_SECRETS_DIR/lab-signing/key.pub> cargo build --features lab
+lab = []
+
+[dependencies]
+# the worker layer (docs/product-a/OLD-BASE.md step 2): the restart's supervisor (protocol v0 workers, the in-process
+# verifier, the transition state machine, the keyed share path, pools and failover) and its protocol crate, used as
+# libraries in place of the old engine's miner launch and text parsing
+igneum-supervisor = { path = "../../../crates/igneum-supervisor" }
+igneum-worker-proto = { path = "../../../crates/igneum-worker-proto" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+k256 = { version = "0.13", default-features = false, features = ["arithmetic", "std"] }
+sha3 = { version = "0.10", default-features = false }
+getrandom = "0.2"
+# over-the-air updates (src/manifest.rs, src/ota.rs): Ed25519 manifest signatures and sha256 of the downloads
+ed25519-dalek = { version = "2", default-features = false, features = ["std"] }
+sha2 = { version = "0.10", default-features = false }
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[profile.release]
+opt-level = 2
+lto = "thin"
+codegen-units = 4
+strip = true
+
+# its own workspace root (the restart's miner/Cargo.toml excludes this tree until the worker layer lands)
+[workspace]

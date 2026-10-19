@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "doc": "scene/feed-contract.md: the one JSON shape the chain scene reads, from the observer's /api/live and from the miner app's api/live alike",
+  "top": ["ok", "now", "state", "blocks", "miners", "events", "finality", "proving"],
+  "top_extensions": ["partial"],
+  "state": ["stale", "age_s", "network", "node_version", "height", "block_count", "header_count", "blue_score", "difficulty", "hashes_per_second_estimate", "peers", "mempool", "blocks_60s", "blocks_per_second_60s", "blocks_per_minute", "miners_10m", "observer_started_at", "observer_lag_s", "queue_depth", "updated_at"],
+  "state_extensions": ["source", "you_blocks", "node"],
+  "block": ["hash", "number", "blue_score", "daa", "ts", "rx", "parents", "chain", "miner", "color", "locked", "final", "shards", "proven"],
+  "miner": ["id", "blocks", "share", "last_seen", "engine"],
+  "event": ["ts", "kind", "text"],
+  "finality": ["supported", "active", "next_index", "latest_locked_index", "latest_locked_hash", "latest_locked_blue_score", "params", "weights", "checkpoints"],
+  "checkpoint": ["index", "hash", "blue_score", "daa", "state", "signed", "active", "total", "fraction_active", "fraction_total", "votes", "voters", "locked_at", "updated_at"],
+  "shard": ["i", "n", "state", "prover", "lag", "payout", "pgas"],
+  "proving_unsupported": ["supported", "reason"],
+  "proving_supported": ["supported", "active", "activation_daa", "tip_daa", "verifier", "pool", "paid_shards_total", "shard_budget_pgas", "blocks_10m", "blocks_fully_proven_10m", "shards_proven_10m", "shards_paid_10m", "median_proof_lag_s", "provers_10m"],
+  "color": ["blue", "red", "pending"],
+  "shard_state": ["planned", "proving", "verified", "paid"],
+  "checkpoint_state": ["pending", "locked"],
+  "miner_id": "^[0-9a-f]{8}$"
+}

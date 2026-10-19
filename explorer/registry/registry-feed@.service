@@ -1,0 +1,22 @@
+# The registry feed as a template unit: one instance per network, named by the network's public chain id
+# (16 October 2026, F-351: the public test network's registry in force was not readable from the public names; the
+# genesis entry alone was served). The instance reads its node's RPC and its two paths from an environment file the
+# host writes at install, so the tree names no host and no path:
+#   mkdir -p $HOME/.config/igneum
+#   printf 'REGISTRY_FEED_RPC=http://<the reader node on the mesh>:<its rpc port>\nREGISTRY_FEED_DIR=<the directory holding registry-feed.py>\nREGISTRY_FEED_OUT=<the served path>/registry.json\n' > $HOME/.config/igneum/registry-feed-<chain id>.env
+#   systemctl --user enable --now registry-feed@<chain id>
+# The served file is the chain's answer and nothing else (chainId, head, the registry in force, every landing's document
+# with its height and hashes, the rows checked against the chain); it is live, so it stands outside the genesis set's
+# SHA256SUMS, like status.json.
+[Unit]
+Description=registry feed for chain %i: the registry in force read into registry.json every thirty seconds
+After=network-online.target
+
+[Service]
+EnvironmentFile=%h/.config/igneum/registry-feed-%i.env
+ExecStart=/usr/bin/python3 ${REGISTRY_FEED_DIR}/registry-feed.py --rpc ${REGISTRY_FEED_RPC} --out ${REGISTRY_FEED_OUT} --every 30
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

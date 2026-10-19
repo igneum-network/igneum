@@ -1,0 +1,19 @@
+[Unit]
+Description=Ember, the Igneum miner
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=@OPT@/ember mine --config @CONF@ --every 30
+Restart=always
+RestartSec=30
+# the worker's compiled kernels and the miner's own state stay under the user's home
+Environment=IGNEUM_WORKER_CACHE=%h/.local/state/ember/worker-cache
+Environment=IGNEUM_DEV_UNCHECKED_WORKERS=0
+# Mesa's rusticl lists the AMD cards only with its driver named (the engine sets this for the OpenCL worker when unset)
+Environment=RUSTICL_ENABLE=radeonsi
+Nice=5
+
+[Install]
+WantedBy=default.target

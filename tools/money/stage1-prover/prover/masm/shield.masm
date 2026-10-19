@@ -1,0 +1,38 @@
+# Money stage 1, cut 4: the shield statement money-shield-v1. A shield carries a public value into one
+# new note; the proof binds the note's commitment to that value so the pool's supply is exact inside
+# (the commitment's value limbs are the shield's value, below 2^32 each), with pk and r hidden.
+#
+# Public input (the operand stack at the start): SH = H(H(DOMAIN, CM), V), DOMAIN = [chain_id, 1, 0, 0],
+# V the value as four 32-bit limbs (limb 0 on top). Public output: SH, carried through.
+# Private (the advice stack, in the order read): DOMAIN, CM, V, then the note's V, PK, R.
+# Memory: 0 DOMAIN, 16 CM, 24 V; the note at 200: +0 V, +4 PK, +8 R, +12 CM.
+
+# [base, ...] -> [...]: the note from the advice stack (V, PK, R); CM written at base+12.
+proc output
+    padw adv_loadw u32assertw
+    dup.4 mem_storew_le
+    padw adv_loadw
+    dup.8 add.4 mem_storew_le
+    swapw hmerge
+    padw adv_loadw
+    dup.8 add.8 mem_storew_le
+    swapw hmerge
+    dup.4 add.12 mem_storew_le
+    dropw drop
+end
+
+begin
+    # => [SH]
+    padw adv_loadw mem_storew_le.0
+    padw adv_loadw mem_storew_le.16 swapw hmerge
+    padw adv_loadw mem_storew_le.24 swapw hmerge
+    # => [SH', SH]
+    dupw.1 assert_eqw
+    # => [SH]
+    mem_load.1 push.1 assert_eq
+    padw mem_loadw_le.24 u32assertw dropw
+    push.200 exec.output
+    padw mem_loadw_le.200 padw mem_loadw_le.24 assert_eqw
+    padw mem_loadw_le.212 padw mem_loadw_le.16 assert_eqw
+    # => [SH]
+end

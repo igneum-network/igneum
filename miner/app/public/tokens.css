@@ -1,0 +1,204 @@
+/* Igneum design tokens (site/design/tokens.css, 11 October 2026). One file, every surface: the site, the dev-chain
+   pages, the litepaper, Ember's window, the wallet's window. The system behind it is site/design/DESIGN-SYSTEM.md;
+   the plan that puts it on each surface is site/design/ADOPTION.md.
+
+   Rules of this file:
+   - section 1 is tokens only (custom properties); a surface that already has a stylesheet loads this file FIRST and
+     keeps its own rules, because the names below are the names every surface already uses (obsidian, graphite, row,
+     line, ember, molten, bone, ink-2, ash); the file is the one place their values live;
+   - section 2 is the eight idioms, prefixed ig- so nothing collides; a surface adopts them one at a time;
+   - nothing newer than 2022 CSS (the Windows WebView2 host of both windows): no color-mix, no nesting, no :has;
+   - dark is the default; light follows the system unless [data-theme] says otherwise; both carry the same meaning. */
+
+/* ---------- 1. tokens ---------- */
+:root{
+  color-scheme:dark;
+  /* ground and surfaces */
+  --obsidian:#0C0C0E;         /* the ground: every page, every window */
+  --graphite:#16161A;         /* a card */
+  --row:#111114;              /* a row, a rail, an input, the inside of a track */
+  --line:#2A2A30;             /* the hairline */
+  --line-2:#3A3A42;           /* the hairline when hovered, the empty ring of a dial */
+  /* text */
+  --bone:#F4F1EC;             /* words, numbers */
+  --ink-2:#C9C7C2;            /* a paragraph under a heading, a sub line */
+  --ash:#9A9A9E;              /* a label, a unit, a quiet note */
+  /* heat and action */
+  --ember:#F2541B;            /* heat and action: the one accent, the primary button, the hot end of a reading */
+  --ember-hi:#FF6A2B;         /* ember under the pointer */
+  --ember-ink:#0C0C0E;        /* text on ember */
+  --molten:#FFB35C;           /* close, provisional, within reach, estimated */
+  --hot:#FFF3E2;              /* white-hot: a reading at the target's edge (the dial's last step before met) */
+  /* the three states that are never heat */
+  --met:#4FD38A;              /* met, verified, on chain: green and nothing else is green */
+  --running:#6AA9FF;          /* running, in progress, a job not yet read */
+  --bad:#FF5A5A;              /* not yet, failed, refused */
+  /* tints (rgba, not color-mix: the WebView2 host) */
+  --ember-tint:rgba(242,84,27,.10);
+  --ember-glow:rgba(242,84,27,.55);
+  --molten-tint:rgba(255,179,92,.10);
+  --met-tint:rgba(79,211,138,.12);
+  --met-glow:rgba(79,211,138,.45);
+  --running-tint:rgba(106,169,255,.12);
+  --bad-tint:rgba(255,90,90,.12);
+  --hover:rgba(255,255,255,.04);
+  --scrim:rgba(12,12,14,.72);
+  --glass:rgba(12,12,14,.93);
+  --shadow:0 24px 80px rgba(0,0,0,.33);
+  /* the three faces */
+  --display:'Unbounded','Unbounded Fallback','Arial Black',Arial,sans-serif;        /* titles, hero numbers: 500, 700, 900 */
+  --sans:'IBM Plex Sans','Plex Sans Fallback',system-ui,-apple-system,Arial,sans-serif; /* words: 400, 500, 600 */
+  --mono:'IBM Plex Mono','Plex Mono Fallback',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; /* labels, units, addresses, small numbers: 400, 500 */
+  /* the type scale (px: the windows and the site share one ruler) */
+  --t-label:11px;             /* mono, uppercase, .16em: an eyebrow, a unit, a pill */
+  --t-small:12px;             /* mono or sans: a sub line, a proof line */
+  --t-ui:13px;                /* the windows' body */
+  --t-body:15px;              /* a card's paragraph */
+  --t-lead:17px;              /* the site's body, a lede at phone width */
+  --t-lede:19px;              /* a lede from 860 px */
+  --t-h3:17px;                /* a card's title (sans 600 or display 700) */
+  --t-h2:clamp(26px,3vw,42px);   /* display 700 */
+  --t-h1:clamp(34px,5.2vw,62px); /* display 900 */
+  --t-num:24px;               /* a number in a row (display 900) */
+  --t-num-lg:40px;            /* a number on a card */
+  --t-num-hero:58px;          /* the one number on a screen */
+  --lh-tight:1.05;--lh-head:1.2;--lh-body:1.55;
+  --track-label:.16em;        /* letter spacing of an uppercase mono label */
+  --track-num:-.02em;         /* letter spacing of a display number */
+  /* spacing (4 px ruler) */
+  --s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-5:24px;--s-6:32px;--s-7:48px;--s-8:64px;
+  --gutter:16px;              /* the page's side gutter at phone width; 28 from 561 px; 36 from 1101 px */
+  --card-pad:20px;            /* inside a card at phone width; 24 from 561 px */
+  --max:1280px;
+  /* radius */
+  --r-card:16px;--r-row:12px;--r-btn:8px;--r-pill:5px;--r-dot:50%;
+  /* motion */
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --dur-hover:150ms;          /* a hover, a focus ring */
+  --dur-state:250ms;          /* a state change: a pill, a lock, a page */
+  --dur-reading:800ms;        /* a colour moving with a reading */
+  --dur-fill:1200ms;          /* a fill moving to a new value */
+  --dur-dial:1600ms;          /* the dial's arc */
+  /* the hairline chart rules (DESIGN-SYSTEM.md section 9) */
+  --chart-axis:var(--line-2);--chart-grid:var(--line);--chart-ink:var(--ash);--chart-series:var(--ember);--chart-series-2:var(--molten);--chart-series-3:var(--running);--chart-target:var(--bone);
+}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --obsidian:#F4F1EC;--graphite:#FFFFFF;--row:#FAF8F5;--line:#E2DED8;--line-2:#CFCAC2;
+  --bone:#16161A;--ink-2:#3C3C42;--ash:#6B6B70;
+  --ember:#D0420D;--ember-hi:#E04A14;--ember-ink:#FFFFFF;--molten:#B8731F;--hot:#1E1A17;
+  --met:#1E8F55;--running:#2A62B8;--bad:#B0362B;
+  --ember-tint:rgba(208,66,13,.09);--ember-glow:rgba(208,66,13,.35);--molten-tint:rgba(184,115,31,.10);
+  --met-tint:rgba(30,143,85,.12);--met-glow:rgba(30,143,85,.35);--running-tint:rgba(42,98,184,.12);--bad-tint:rgba(176,54,43,.12);
+  --hover:rgba(0,0,0,.04);--scrim:rgba(244,241,236,.72);--glass:rgba(244,241,236,.95);--shadow:0 24px 70px rgba(48,32,24,.06);
+}
+@media (prefers-color-scheme:light){
+  :root:not([data-theme="dark"]){
+    color-scheme:light;
+    --obsidian:#F4F1EC;--graphite:#FFFFFF;--row:#FAF8F5;--line:#E2DED8;--line-2:#CFCAC2;
+    --bone:#16161A;--ink-2:#3C3C42;--ash:#6B6B70;
+    --ember:#D0420D;--ember-hi:#E04A14;--ember-ink:#FFFFFF;--molten:#B8731F;--hot:#1E1A17;
+    --met:#1E8F55;--running:#2A62B8;--bad:#B0362B;
+    --ember-tint:rgba(208,66,13,.09);--ember-glow:rgba(208,66,13,.35);--molten-tint:rgba(184,115,31,.10);
+    --met-tint:rgba(30,143,85,.12);--met-glow:rgba(30,143,85,.35);--running-tint:rgba(42,98,184,.12);--bad-tint:rgba(176,54,43,.12);
+    --hover:rgba(0,0,0,.04);--scrim:rgba(244,241,236,.72);--glass:rgba(244,241,236,.95);--shadow:0 24px 70px rgba(48,32,24,.06);
+  }
+}
+@media (min-width:561px){:root{--gutter:28px;--card-pad:24px}}
+@media (min-width:1101px){:root{--gutter:36px}}
+/* the names the surfaces already use for the same things (so an older stylesheet reads this file without a change) */
+:root{
+  --ground:var(--obsidian);--surface:var(--graphite);--surface-2:var(--row);--ink:var(--bone);--quiet:var(--ash);
+  --head:var(--display);--f-display:var(--display);--f-sans:var(--sans);--f-mono:var(--mono);
+  --ember-12:var(--ember-tint);--molten-10:var(--molten-tint);--ember-text:var(--ember);--molten-text:var(--molten);
+  --ok:var(--met);--warn:var(--molten);--blue:var(--running);
+  --card-r:var(--r-card);--row-r:var(--r-row);
+  --t-xs:var(--t-label);--t-sm:var(--t-small);--t-base:var(--t-ui);--t-md:14px;--t-lg:var(--t-body);--t-xl:var(--t-h3);
+}
+/* reduced motion: nothing moves, every state still reads from colour and words */
+@media (prefers-reduced-motion:reduce){
+  :root{--dur-hover:0ms;--dur-state:0ms;--dur-reading:0ms;--dur-fill:0ms;--dur-dial:0ms}
+  *,*:before,*:after{animation:none!important;transition:none!important}
+}
+html[data-motion=off]{--dur-hover:0ms;--dur-state:0ms;--dur-reading:0ms;--dur-fill:0ms;--dur-dial:0ms}
+html[data-motion=off] *,html[data-motion=off] *:before,html[data-motion=off] *:after{animation:none!important;transition:none!important}
+
+/* ---------- 2. the idioms (ig-) ---------- */
+/* the ground */
+.ig-ground{background:var(--obsidian);color:var(--bone);font:var(--t-lead)/var(--lh-body) var(--sans);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+.ig-ground[data-density=window]{font-size:var(--t-ui)}
+/* the card: one surface, one hairline, one radius; a hover lifts the hairline, never the card's colour */
+.ig-card{background:var(--graphite);border:1px solid var(--line);border-radius:var(--r-card);padding:var(--card-pad);min-width:0;position:relative;transition:border-color var(--dur-hover) var(--ease),transform var(--dur-state) var(--ease)}
+.ig-card:hover{border-color:var(--line-2)}
+.ig-card.is-met{border-color:var(--met-glow);box-shadow:0 0 0 1px var(--met-tint) inset,0 24px 70px -30px var(--met-glow)}
+.ig-card.is-hot{border-color:rgba(255,179,92,.45);box-shadow:0 24px 70px -30px var(--ember-glow)}
+.ig-card.is-bad{border-color:rgba(255,90,90,.45)}
+.ig-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--s-3);margin-bottom:var(--s-3)}
+.ig-card-head h3{margin:0;font:600 var(--t-h3)/var(--lh-head) var(--sans);color:var(--bone)}
+/* the label: mono, uppercase, letter-spaced; the one treatment for an eyebrow, a unit, a table head */
+.ig-label{font:500 var(--t-label)/1.6 var(--mono);letter-spacing:var(--track-label);text-transform:uppercase;color:var(--ash)}
+/* the pill: a state in a word, coloured by what the state means; the border is the colour, the ground stays */
+.ig-pill{display:inline-flex;align-items:center;gap:6px;font:500 10px/1.45 var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:5px 9px;border-radius:var(--r-pill);border:1px solid currentColor;color:var(--ash);white-space:nowrap;transition:color var(--dur-state) var(--ease)}
+.ig-pill i{width:6px;height:6px;border-radius:var(--r-dot);background:currentColor;flex:none}
+.ig-pill.is-met{color:var(--met)}.ig-pill.is-running{color:var(--running)}.ig-pill.is-close{color:var(--molten)}.ig-pill.is-hot{color:var(--ember)}.ig-pill.is-bad{color:var(--bad)}.ig-pill.is-open{color:var(--ash)}
+.ig-pill.is-running i{animation:ig-pulse 1.8s infinite}
+@keyframes ig-pulse{0%{box-shadow:0 0 0 0 rgba(106,169,255,.55)}70%{box-shadow:0 0 0 8px rgba(106,169,255,0)}100%{box-shadow:0 0 0 0 rgba(106,169,255,0)}}
+/* the number: display 900, tight, tabular; its unit beside it in the label face; its meaning under it in the sub face */
+.ig-num{display:flex;align-items:baseline;gap:var(--s-2);flex-wrap:wrap;min-width:0}
+.ig-num b{font:900 var(--t-num-lg)/1 var(--display);letter-spacing:var(--track-num);color:var(--bone);font-variant-numeric:tabular-nums;transition:color var(--dur-reading) var(--ease),text-shadow var(--dur-reading) var(--ease)}
+.ig-num.lg b{font-size:var(--t-num-hero)}.ig-num.sm b{font-size:var(--t-num)}
+.ig-num small{font:500 var(--t-label)/1.5 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ash);white-space:nowrap}
+.ig-num b.is-ember{color:var(--ember)}
+.ig-num b.is-hot{color:var(--hot);text-shadow:0 0 26px rgba(255,179,92,.45)}
+.ig-num b.is-met{color:var(--met);text-shadow:0 0 30px var(--met-glow)}
+.ig-sub{font:400 var(--t-small)/1.5 var(--mono);color:var(--ash);margin-top:var(--s-1);overflow-wrap:anywhere}
+/* the grade: a reading's word beside it, in the label face, never a colour alone */
+.ig-grade{font:500 var(--t-label)/1.6 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ash)}
+.ig-grade.is-measured{color:var(--met)}.ig-grade.is-provisional,.ig-grade.is-estimated{color:var(--molten)}.ig-grade.is-model,.ig-grade.is-prototype{color:var(--ash)}.ig-grade.is-pending{color:var(--running)}
+/* the track: a value against a target line; the fill is heat, the target is bone, the ground is a row */
+.ig-track{position:relative;height:12px;border-radius:6px;background:var(--row);border:1px solid var(--line);margin:var(--s-3) 0 var(--s-5);overflow:visible}
+.ig-track .fill{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:linear-gradient(90deg,var(--ember),var(--molten));transition:width var(--dur-fill) var(--ease)}
+.ig-track .fill.is-met{background:linear-gradient(90deg,#2fb46d,var(--met))}
+.ig-track .fill.is-running{background:linear-gradient(90deg,#3b4b63,var(--running))}
+.ig-track .fill.is-bad{background:linear-gradient(90deg,#b63c3c,var(--bad))}
+.ig-track .fill.is-idle{background:linear-gradient(90deg,#3a3a42,#55555f)}
+.ig-track .tgt{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--bone);box-shadow:0 0 0 2px var(--graphite)}
+.ig-track .tgt:after{content:attr(data-word);position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font:500 9px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--bone);white-space:nowrap}
+.ig-scale{display:flex;justify-content:space-between;gap:var(--s-3);font:500 10px/1.4 var(--mono);color:var(--ash);letter-spacing:.06em}
+.ig-scale span:first-child{flex:1;min-width:0;overflow-wrap:anywhere}.ig-scale span:last-child{white-space:nowrap}
+/* the dial: a ring filled by heat (ember to molten), white-hot at the edge, green only when met; the number inside */
+.ig-dial{position:relative;width:200px;height:200px;margin:0 auto}
+.ig-dial svg{width:100%;height:100%;overflow:visible;display:block}
+.ig-dial .ring-bg{fill:none;stroke:var(--line-2);stroke-width:14}
+.ig-dial .ring-fg{fill:none;stroke:url(#ig-heat);stroke-width:14;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset var(--dur-dial) var(--ease),stroke var(--dur-reading) var(--ease);filter:drop-shadow(0 0 6px var(--ember-glow))}
+.ig-dial.is-met .ring-fg{stroke:var(--met);filter:drop-shadow(0 0 8px var(--met-glow))}
+.ig-dial .in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none}
+.ig-dial .in b{font:900 48px/1 var(--display);letter-spacing:var(--track-num);color:var(--bone);transition:color var(--dur-reading) var(--ease),text-shadow var(--dur-reading) var(--ease)}
+.ig-dial.is-hot .in b{color:var(--hot);text-shadow:0 0 26px rgba(255,179,92,.45)}
+.ig-dial.is-met .in b{color:var(--met);text-shadow:0 0 30px var(--met-glow)}
+.ig-dial .in span{font:500 var(--t-label)/1.7 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--ash);margin-top:var(--s-1)}
+.ig-dial .word{text-align:center;font:900 14px/1 var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--molten);margin-top:var(--s-3);transition:color var(--dur-reading) var(--ease)}
+.ig-dial.is-met+.word,.ig-dial.is-met .word{color:var(--met)}
+/* the button: ember for the one action on a screen, ghost for the rest; min-height 44 at phone width */
+.ig-btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);min-height:44px;padding:0 var(--s-4);border-radius:var(--r-btn);border:1px solid var(--line-2);background:transparent;color:var(--bone);font:600 13px/1 var(--sans);cursor:pointer;text-decoration:none;transition:border-color var(--dur-hover) var(--ease),background var(--dur-hover) var(--ease),color var(--dur-hover) var(--ease)}
+.ig-btn:hover{border-color:var(--bone);background:var(--hover)}
+.ig-btn.primary{background:var(--ember);border-color:var(--ember);color:var(--ember-ink)}
+.ig-btn.primary:hover{background:var(--ember-hi);border-color:var(--ember-hi)}
+.ig-btn.small{min-height:34px;padding:0 var(--s-3);font-size:12px}
+.ig-btn:focus-visible,.ig-card a:focus-visible{outline:2px solid var(--ember);outline-offset:4px}
+.ig-btn:disabled{opacity:.55;cursor:not-allowed}
+/* the state line: one line of plain words with a dot, the only place a window says what it is doing */
+.ig-state{display:inline-flex;align-items:center;gap:var(--s-2);font:500 var(--t-small)/1.5 var(--mono);color:var(--ink-2);min-width:0}
+.ig-state i{width:8px;height:8px;border-radius:var(--r-dot);background:var(--ash);flex:none;transition:background var(--dur-state) var(--ease)}
+.ig-state.is-running i{background:var(--running);animation:ig-pulse 1.8s infinite}.ig-state.is-mining i{background:var(--ember)}.ig-state.is-met i{background:var(--met)}.ig-state.is-close i{background:var(--molten)}.ig-state.is-bad i{background:var(--bad)}
+/* the row: a list's line on the row surface */
+.ig-row{display:grid;gap:var(--s-3);align-items:center;background:var(--row);border:1px solid var(--line);border-radius:var(--r-row);padding:var(--s-3) var(--s-4);min-width:0}
+/* the page at phone width: one column, 16 px gutters, no horizontal scroll, every grid child allowed to shrink */
+.ig-page{max-width:var(--max);margin:0 auto;padding:0 var(--gutter);min-width:0}
+.ig-page *{min-width:0}
+.ig-page img,.ig-page svg,.ig-page canvas,.ig-page pre{max-width:100%}
+.ig-page table{display:block;overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}
+@media (min-width:721px){.ig-page table{display:table}}
+.ig-grid{display:grid;gap:var(--s-4);grid-template-columns:minmax(0,1fr)}
+@media (min-width:561px){.ig-grid.c2,.ig-grid.c3,.ig-grid.c4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:901px){.ig-grid.c3{grid-template-columns:repeat(3,minmax(0,1fr))}.ig-grid.c4{grid-template-columns:repeat(4,minmax(0,1fr))}}

@@ -1,0 +1,23 @@
+# The annotated power read (OpenSTA inside openroad -no_init). Placeholders filled by run_proof.sh / run_lane.sh:
+#   @LEFS@ the platform's tech and cell LEFs (openroad's link_design needs a technology), @LIBS@ liberty files (space separated), @NETLIST@ the gate-level verilog, @TOP@ the top module,
+#   @SDC@ the constraints (create_clock on clk), @VCD@ the RTL simulation's VCD, @SCOPE@ its dut scope (slashes),
+#   @NETS@ the nets dump to write, @ANNOTATE@ the annotate.tcl to source (or "" for the propagated run),
+#   @REPORT@ the power report path.
+foreach lef {@LEFS@} { read_lef $lef }
+foreach lib {@LIBS@} { read_liberty $lib }
+read_verilog @NETLIST@
+link_design @TOP@
+read_sdc @SDC@
+# 1. the ports' activity from the VCD (the ports only: what every "ports, propagated" figure of record used)
+if {[catch { read_vcd -scope @SCOPE@ @VCD@ } err]} { puts "read_vcd: $err" }
+set ::nets_out @NETS@
+source [file join [file dirname [info script]] nets.tcl]
+set annotate "@ANNOTATE@"
+if {$annotate ne ""} {
+  # 2. the interior: every matched net's driver pins set from the same VCD's per-bit activity
+  source $annotate
+}
+report_activity_annotation
+report_power > @REPORT@
+report_power -instances [get_cells *] > @REPORT@.inst
+puts [exec cat @REPORT@]

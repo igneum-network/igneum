@@ -1,0 +1,509 @@
+{
+ "note": "Protocol engineer A's proposal (P-I01), 9 October 2026: chain id 7310, IGN, 18 decimals, EIP-1559 fees, Igneum EVM-1 (Shanghai plus EIP-1153, 5656 and 6780; no blob opcodes; no EIP-4399). Every entry is proposed until the founder ratifies P-I01. The first build box's devnet runs on the build mesh (not public); its Pay set and test assets are listed under contracts and test_assets with the block and commit. Every development chain carries chain id 7310 (the first build box's devnet, devnet2, devnet3, devnet4, devnet5): a signed transaction is valid on all of them, so a wallet or an application pins a chain by its genesis_hash (eth_getBlockByNumber 0x0) and never by the chain id alone (11 October 2026, D-B14).",
+ "mesh_addresses": "not public: the build mesh's endpoints behind the role words here (the archive reader, the sealers, the readers) live in a private file outside the public mirror's scope (dev/chain/private/mesh-endpoints.json on the box); a builder reads the public names in each entry's rpc, explorer, feed, pool and faucet lines",
+ "networks": [
+  {
+   "name": "Igneum devnet (the first build box)",
+   "short": "igneum-devnet",
+   "chain_id": 7310,
+   "proposed": true,
+   "live": true,
+   "native_currency": {
+    "name": "Igneum",
+    "symbol": "IGN",
+    "decimals": 18
+   },
+   "rpc": [
+    "the build mesh endpoint (the build mesh only; not public)"
+   ],
+   "explorer": [],
+   "eip1559": true,
+   "evm": "igneum-evm-1",
+   "block_target_seconds": 15,
+   "contracts": {
+    "deployed_block": 548,
+    "commit": "c8759fa (source); box tree d123c61",
+    "compiler": {
+     "solc": "0.8.28",
+     "evm_version": "cancun",
+     "optimizer_runs": 10000,
+     "via_ir": false,
+     "openzeppelin": "v5.7.0"
+    },
+    "deployer": "0x4a9646e0f74547987a45F04f4ea4648541ec2D0F",
+    "IgneumPay": "0x2C419DEeE7ce4CdCAD12B9387C7cEC52484a915c",
+    "IgneumRecurring": "0x5F3FFD5dBCfe651d7B1CC4f65f769B4EC34240de",
+    "IgneumEscrow": "0xeFD33cbeB04155fccdffB5f457a8aE1FdCAD8EeF",
+    "deployed_at_uk": "10 Oct 2026 01:06",
+    "note": "addresses are a function of the deployer and the nonce; a re-seal re-deploys in this order (the 4337 pair first) so they hold; the earlier chains' addresses (IgneumPay at 0x520326D1...46b1) are retired",
+    "nonces": {
+     "EntryPoint": 0,
+     "SimpleAccountFactory": 1,
+     "IgneumPay": 2,
+     "IgneumRecurring": 3,
+     "IgneumEscrow": 4,
+     "TestToken": 5,
+     "TestCollectible": 6,
+     "Faucet": 7
+    },
+    "erc4337": {
+     "EntryPoint_v0_7_0": "0x520326D1813968eDe18953935cf2f8981ba946b1",
+     "SimpleAccountFactory": "0x4efC5F321Edcb73c84179e87ce774E22b5292a2d",
+     "deployed_block": 517,
+     "compiler": {
+      "solc": "0.8.28",
+      "evm_version": "cancun",
+      "via_ir": true,
+      "optimizer_runs": 1000000,
+      "source": "eth-infinitism/account-abstraction v0.7.0 7af70c8"
+     }
+    }
+   },
+   "test_assets": {
+    "TestToken": "0x17b6E4727FF3313c72B0976a823817201409Bc1C",
+    "TestCollectible": "0x24c0b00306070d4F48c94687d309d0c4568b5EbD",
+    "Faucet": "0xB1106e6488A81B3a4816a87f1FDd6De9CB369f2F"
+   },
+   "genesis_hash": "0xdd91c21e498df949b07ca4a8818fae9ff1fa1ef83962625ab33ca76aefca50ec"
+  },
+  {
+   "name": "Igneum devnet4",
+   "short": "igneum-devnet4",
+   "chain_id": 7310,
+   "proposed": true,
+   "live": true,
+   "native_currency": {
+    "name": "Igneum",
+    "symbol": "IGN",
+    "decimals": 18
+   },
+   "rpc": [
+    "the build mesh endpoint (sealer A, the build mesh only; not public)",
+    "the build mesh endpoint (the compliant peer)"
+   ],
+   "explorer": [],
+   "eip1559": true,
+   "evm": "igneum-evm-1",
+   "block_target_seconds": 15,
+   "genesis_hash": "0x61b947c7da97135a38e0c226078b5004df9262421de400484a0d212cd9c7181c",
+   "note": "the protocol team's research chain for work authority (docs/igneumhash/authority/PROTOTYPE.md section 2): the bonded rule from height 40, the sortition rule from 80, the chain-native payout list; the same chain id as every dev chain, so a wallet tells it apart by the genesis hash and nothing else; a PROTOTYPE, nothing adopted",
+   "authority": {
+    "registry": "0x0000000000000000000000000000000000000b0d",
+    "registry_version": 2,
+    "operations": {
+     "bond": "a transaction to the registry with value and the 32-byte identity key as data, from the bond's account (a fresh key records the caller; another account on a held key reverts; over the cap reverts); nothing is ever released on this registry",
+     "read": "eth_call to the registry with the 32-byte key and no value: 96 bytes back, amount, account (as a word), signer",
+     "set_signer": "a 64-byte call (key, signer) with no value from the bond's account; zero means the identity key itself signs"
+    },
+    "rpc": [
+     "igneum_authority",
+     "igneum_sortition",
+     "igneum_bondOf(key, block)",
+     "igneum_verifyBlock(rlp)",
+     "igneum_blockRLP(number)",
+     "igneum_getWork"
+    ],
+    "sortition": {
+     "height": 80,
+     "epoch_blocks": "100, then 300 from height 205",
+     "seed_blocks": 16,
+     "expected": 1,
+     "delta_seconds": 6,
+     "max_round": 16,
+     "unbonded_round": 17,
+     "max_payouts": 256
+    }
+   },
+   "contracts": {},
+   "test_assets": {}
+  },
+  {
+   "name": "Igneum devnet5",
+   "short": "igneum-devnet5",
+   "chain_id": 7315,
+   "proposed": true,
+   "live": true,
+   "native_currency": {
+    "name": "Igneum",
+    "symbol": "IGN",
+    "decimals": 18
+   },
+   "rpc": [
+    "https://build.igneum.network/devnet5/rpc (public, read-only: eth, net, web3 and igneum reads; writes and admin refused; 503 while held)",
+    "wss://build.igneum.network/devnet5/ws (public, through a filtering relay since 11 October 2026 15:27 UK: eth reads, net, web3, the igneum reads and eth_subscribe/eth_unsubscribe forwarded; every other method, eth_sendRawTransaction included, answered -32601 and never forwarded; a batch with any refused call answered whole; text frames, 64 KiB a message, 20 calls a batch)",
+    "the build mesh endpoint (sealer A, the build mesh only; not public)",
+    "the build mesh endpoint (the compliant peer)",
+    "the build mesh endpoint (sealer B)"
+   ],
+   "explorer": [],
+   "eip1559": true,
+   "evm": "igneum-evm-1",
+   "block_target_seconds": 15,
+   "network_id": 7351,
+   "genesis_hash": "0xcb0784a9b97803f8ff38cba00356943a0dd27caf675bfeb051611682414da358",
+   "note": "the frozen rule set (docs/igneumhash/LAUNCH-GUARDS.md section 2) live from genesis; stood up by the protocol team on 11 October 2026 (10:5x UK) with the registry in its version 3 NATIVE form (core/vm/igneumreg at the registry address; a placeholder code 0xfe sits there so a node without the native form reverts; docs/igneumhash/authority/KEYED-FORM.md section 4); the genesis hash changes with any genesis flag, so a re-sealed devnet5 is pinned again by reading; the dev faucet 0x8EfB...6bE0 is funded; the per-key cap at genesis is 83.2 IGN (26 percent of the 320 IGN floor); a PROTOTYPE, nothing adopted",
+   "authority": {
+    "registry": "0x0000000000000000000000000000000000000b0d (the prototype's address until the protocol team says otherwise)",
+    "registry_version": 3,
+    "operations": {
+     "read": "key (32), value 0: 128 bytes back (amount, account, signer, exit address), each a word",
+     "bond": "key (32) with value: a fresh key records the origin as the account AND the exit address; a bonded key accepts more from its account only; the amount after must be within the cap",
+     "bond_with_exit": "key (32) || exit (32, the address right-aligned) with value: the bond with its exit address set in the bond transaction (a fresh key), or, by the account, a change of the exit address with the top-up (the lock is NOT modelled on the lab build: the exit changes at once)",
+     "set_signer": "key (32) || signer (32, an Ed25519 public key), value 0, by the account",
+     "claim_lab": "the STAND-IN on the lab build: sk (32) || to (32, the address right-aligned) || zero (32), value 0, by anyone presenting the secret: pk = G(sk) must be bonded; the whole amount leaves at once and the key is unbonded; to equal to the exit address pays everything (the holder's orderly exit); any other to pays less phi = one quarter burnt to the fund; a reveal in a transaction is readable by the sealer that sees it first, which the proof form removes",
+     "claim": "the form the registry takes when the risc0 verifier is in the node (the protocol team sends the sha): key (32), the claimant's address as a 32-byte word, the share s_0 (32), then the proof pi (the Groth16 wrap per the project's ruling of 10:30 UK; the composite receipt stays in the block body): the key-bound proof of SPEC-R0A 0.9.1 under domain 1 with K 1 over m_0 = BLAKE3(tag(\"IgneumHash/R0A/hostile\") || C || pk || LE64(nonce_b) || to) with C = u64be(chain id), the registry verifying the receipt against PI_IMAGE_ID and the journal u8(1) || LE32(1) || pk || m_0 || s_0; the same payout rule as claim_lab. The bond key is pk = G(sk) = BLAKE3(tag(\"IgneumHash/R0A/bond-pk\") || sk), never an Ed25519 key; the proof is made by pow/pi's pi-claim from the secret's file"
+    },
+    "ruled": "main, 11 Oct 2026 10:30 UK: the claim carries the small Groth16 wrap of the receipt (sub-kilobyte; the hash team defines the per-domain receipt kind in SPEC 0.9.1 and the pi-claim entry points), not the composite receipt (221 KB, over the node's 128 KiB transaction bound); C in the claim message is the chain id as u64 big-endian (7315 here), the vector set's test C only on devnet4's rows, labelled; the protocol team lands this chain with the registry version 3 in these forms with the wrap",
+    "status": "D-B15, the team's PROPOSAL of the calldata forms (revised 11 Oct 2026 10:xx UK on the project's correction: the claim and the release carry the proof pi, not a signature; the wrap per the project's ruling of 10:30); the protocol team's registry decides; every chain refuses the version 3 forms until one carries them, and the wallet labels them DEV-ONLY"
+   },
+   "contracts": {},
+   "test_assets": {},
+   "genesis_note": "devnet5's chain of record is run 9 (the project's ruling of 11 October 2026, the record on main 8cc4010c; no further reset without the project's word), read from sealer A's block 0; the earlier runs' hashes (run 8 0xe7adfe8e...5a71, the first run 0xd2e5fd21...f075) are retired with those chains",
+   "public": true,
+   "submit": "https://build.igneum.network/devnet5/submit (public, POST, eth_sendRawTransaction alone forwarded to node A, every other method refused, a tight per-source limit; the project's word of 11 October 2026, reliability builds it; a wallet or an application that reads from the public endpoint posts its signed transactions here)"
+  },
+  {
+   "name": "Igneum devnet7",
+   "short": "igneum-devnet7",
+   "chain_id": 7317,
+   "network_id": 7371,
+   "proposed": true,
+   "live": true,
+   "public": true,
+   "record": "the LAUNCH-EQUIVALENT chain (the protocol team, tests/igneumhash/protocol-a/out/devnet7-genesis.json; the fresh wallet's default chain from 11 October 2026, the founder's order)",
+   "native_currency": {
+    "name": "Igneum",
+    "symbol": "IGN",
+    "decimals": 18
+   },
+   "genesis_hash": "0xb47f1cc6f3bd46ac0c414a0b02a712c9d2ec421d8c2b14b045a7df969c9dc51b",
+   "genesis_note": "the record's genesis, read equal on the public endpoint at 19:0x UK on 11 October 2026; a wallet pins the chain by it and reads a re-seal under 7317 as devnet7 unpinned",
+   "rpc": [
+    "https://build.igneum.network/devnet7/rpc (public, read-only through reliability's filter: eth, net, web3 and the igneum reads getWork, shareStats, shareCredit, sortition, supply and bondOf (the key's 32-byte hash as the argument); writes and admin refused)",
+    "the build mesh endpoint (sealer A7, the build mesh only; not public)"
+   ],
+   "submit": "https://build.igneum.network/devnet7/submit (public, POST, eth_sendRawTransaction alone forwarded to sealer A7, 2 a second with a burst of 5 per source, the body 128 KB; every other method and every batch refused; reliability, 11 October 2026)",
+   "explorer": [],
+   "eip1559": true,
+   "evm": "igneum-evm-1",
+   "block_target_seconds": 15,
+   "authority": {
+    "registry": "the engine block's registry address (as devnet5's)",
+    "registry_version": 3,
+    "sortition": true
+   },
+   "fund": {
+    "contract": "IgneumFund",
+    "address": "0xDC251E18eD87248B255B46F503e60A770b3DF9D3",
+    "deploy_tx": "0x6c94bbc4f00e0e4f7fdf639b3a678cfbf73cfd5f5c592af32b0e820fd5cdaed9",
+    "signer_set": "placeholder: seven keys made on the builder, the first three company-connected; the founder replaces them by his named seven, and the fund spends nothing until the set is published",
+    "record": "dev/chain/igneum-fund-devnet7.json",
+    "mandate": "docs/igneumhash/FUND-MANDATE-2026-10-11.md section 5",
+    "note": "a devnet stand-in: the launch chain's genesis names the launch deployment's address as IgneumIssuance.FundAddress",
+    "supersedes": "0x5aA23FcBf6859663a674c30A83D13b121667F60B (the form before the migrate path)"
+   }
+  },
+  {
+   "name": "Igneum devnet8",
+   "short": "igneum-devnet8",
+   "chain_id": 7318,
+   "network_id": null,
+   "proposed": true,
+   "live": false,
+   "public": true,
+   "record": "none yet",
+   "native_currency": {
+    "name": "Igneum",
+    "symbol": "IGN",
+    "decimals": 18
+   },
+   "genesis_hash": "",
+   "genesis_note": "the bench chain between devnet7 and devnet9; the fallback default if devnet9 slips (the project's word); no pin in the wallet, read by name under its id",
+   "rpc": [
+    "https://build.igneum.network/devnet8/rpc (if reliability serves it; unconfirmed)"
+   ],
+   "submit": "https://build.igneum.network/devnet8/submit (unconfirmed)",
+   "explorer": [],
+   "eip1559": true,
+   "evm": "igneum-evm-1",
+   "block_target_seconds": 15,
+   "authority": {
+    "registry": "the engine block's registry address (as devnet5's)",
+    "registry_version": 4,
+    "sortition": true,
+    "note": "version 4: the penalties live (equivocation forfeits the whole bond, a hostile claim burns a quarter), the post height and the lock written per key (wallet-security's W-1, 12 October 2026)"
+   }
+  },
+  {
+   "name": "Igneum devnet9",
+   "short": "igneum-devnet9",
+   "chain_id": 7319,
+   "network_id": 7391,
+   "proposed": true,
+   "live": false,
+   "public": true,
+   "record": "the protocol team's devnet9 line; the wallet's pin wallet/core/src/chain.rs GENESIS_DEVNET9",
+   "native_currency": {
+    "name": "Igneum",
+    "symbol": "IGN",
+    "decimals": 18
+   },
+   "genesis_hash": "0xeae5e6083195fe58658b1f13771362b19a38a0bffb5c8808d458993ee9f54ea1",
+   "genesis_note": "read from A9 (the build mesh endpoint) and pod a's public RPC at block 0 on 12 October 2026, 01:5x UK (A9 sealing from 01:35 UK; the project's word: no re-cut); the wallet's pin GENESIS_DEVNET9",
+   "rpc": [
+    "https://rpc.igneum.network (public since 12 October 2026 01:50 UK: eth reads and eth_sendRawTransaction on the one host, net, web3, the igneum reads; 20 calls a second per source; reliability)",
+    "the build mesh endpoint (A9, the build mesh only)"
+   ],
+   "submit": "https://rpc.igneum.network (the same host takes eth_sendRawTransaction; no separate submit route on devnet9)",
+   "explorer": [
+    "https://explorer.igneum.network (Blockscout, chain 7319, from outside since 12 October 2026 01:42 UK; /block/<n>, /tx/<hash>, /address/<0x>; the JSON API under /api/v2/)"
+   ],
+   "eip1559": true,
+   "evm": "igneum-evm-1",
+   "block_target_seconds": 20,
+   "authority": {
+    "registry": "the engine block's registry address (as devnet5's)",
+    "registry_version": 4,
+    "sortition": true,
+    "note": "version 4: the penalties live (equivocation forfeits the whole bond, a hostile claim burns a quarter), the post height and the lock written per key (wallet-security's W-1, 12 October 2026)"
+   },
+   "contracts": {
+    "record": "dev/chain/igneum-kit-devnet9.json (the kit), dev/chain/igneum-fund-devnet9.json (the fund)",
+    "deployer": "0x72d1f19224f092F6B2ea1c5dc09Fa1B7492A3B56",
+    "deploy_commit": "02883c2e04e1689d5c25db7b5253cbe19ad708bf",
+    "order": "the ERC-4337 pair at nonces 0 and 1, the Pay set at 2 to 7, the DevFaucet at 8, the BondFaucet v1 at 9 (superseded) and v2 at 10; evm-pay's E11 read nine of nine AGREE against this source at 08:58 UK on 12 October 2026 (docs/evm/records/E11-P7-devnet9-2026-10-12)",
+    "compiler": {
+     "pay_set_and_faucets": "solc 0.8.28, evm cancun, optimizer 10,000 runs, via_ir false, bytecode_hash none (contracts/foundry.toml)",
+     "erc4337_pair": "solc 0.8.28, evm cancun, optimizer 1,000,000 runs, via_ir true (dev/erc4337/foundry.toml; the reference EntryPoint v0.7.0 vendored under contracts/lib/account-abstraction, this project's own deployment verified from source)"
+    },
+    "EntryPoint": "0x93482Fa8A07BBA7d3cC33058DD4f51a8A30a66B4",
+    "SimpleAccountFactory": "0xF7649aaa2999402D69444470C5B56d136b1365Cb",
+    "IgneumPay": "0xbdb2f735a78c9aaf190f3010a70d654245050140",
+    "IgneumRecurring": "0x1407edb45e98caa3ce5a7918c6d112b6569d02ba",
+    "IgneumEscrow": "0xfa4d6cf9d47d5c0735a984df8648c08bb1398bc9",
+    "TestToken": "0x1c1E109cdb582000b8b2e168599d096C573CF69b",
+    "TestCollectible": "0x9a26B54782dd1a6CCF406F64607f193F52D3e371",
+    "Faucet": "0x713E232c0501F50DF1F92cD19f03f83860933262",
+    "DevFaucet": "0x671D4f197b5F37430751bD9acA38789806dAcD23",
+    "BondFaucet": "0xD235241bC06afDDa79f1834f4a702c67d0118Eda",
+    "IgneumFund": "0xE54CE7E3b2c93a4D87aBcE7D3853C02BB3BAAf14",
+    "IgneumFund_deploy_tx": "0x948cc3a0621ba2eea4a12d60c686cc31c8fd0b17f2dc7fbd8ad510000a5d03b6",
+    "WorkPay": "0x15411e6ec2b174dbd838edacf62807edf60b9ddd (the work-api lane's; docs/work-api/records/devnet9-workpay-contracts.json)",
+    "pay_set_deploy_commit": "22d2e815 (the F-12 bound, PayTypes.PUSH_GAS 100,000; deployed 12 October 2026 10:2x UK at the deployer's nonces 11 to 13, blocks 1334 to 1336; the record dev/chain/igneum-pay-redeploy-devnet9.json)",
+    "superseded": {
+     "IgneumPay": "0x750EaaBdf51eeEe522713c12aDe95fE4bAe6d59A",
+     "IgneumRecurring": "0x142D218CCF2D20E57cC2FdF56F2616D25C20ad60",
+     "IgneumEscrow": "0xA02f16323063c792D128F24853E81eB47201e658",
+     "note": "the first Pay set at the deploy commit 02883c2e, deployed and left as it is; superseded by the F-12 set, never called by the wallet or the demo from 12 October 2026 10:2x UK"
+    }
+   },
+   "faucet": {
+    "contract": "0x671D4f197b5F37430751bD9acA38789806dAcD23",
+    "drip_ign": 25,
+    "cooldown_s": 86400,
+    "daily_cap_ign": 5000,
+    "funded_ign": 175000,
+    "relay": "https://build.igneum.network/devnet9/faucet (POST {\"address\"}; GET /state)",
+    "label": "development-network tokens; no monetary value",
+    "bond_contract": "0xD235241bC06afDDa79f1834f4a702c67d0118Eda",
+    "bond": "three units and the fee (87 IGN) once per bond key hash and per address, twenty keys a day; POST /devnet9/faucet/bond {address, key_hash}; for the Authority Desk's one-tap bond"
+   },
+   "fund": {
+    "contract": "IgneumFund",
+    "address": "0xE54CE7E3b2c93a4D87aBcE7D3853C02BB3BAAf14",
+    "deploy_tx": "0x948cc3a0621ba2eea4a12d60c686cc31c8fd0b17f2dc7fbd8ad510000a5d03b6",
+    "signer_set": "placeholder: seven keys made on the builder, the first three company-connected; the founder's named seven replace them; the fund spends nothing until the set is published",
+    "record": "dev/chain/igneum-fund-devnet9.json",
+    "mandate": "docs/igneumhash/FUND-MANDATE-2026-10-11.md section 5"
+   },
+   "builder_lab": "docs/build/BUILDER-LAB.md; https://build.igneum.network/lab/ (the script igneum-lab with its sum in SHA256SUMS); verification by bytecode over the public RPC and in the explorer",
+   "block_target_note": "20 s (docs/chain/devnet9/ACTIVATION-1.md); measured 21.2 s a block over blocks 148 to 248 on the public RPC (the builder team's reading, 12 October 2026; economics' F5)",
+   "note_superseded": "superseded as the public test network by chain 7320 on 13 October 2026; the chain stays a named pin in the wallet"
+  },
+  {
+   "name": "Igneum old public test network",
+   "short": "igneum-old-public-test-network",
+   "chain_id": 7320,
+   "network_id": 7392,
+   "proposed": true,
+   "live": false,
+   "public": false,
+   "record": "the network team's genesis line (block 0 served by A10 at 2026-10-12T21:06:55Z); the wallet's pin wallet/core/src/chain.rs GENESIS_7320 (0.0.8, the default chain)",
+   "native_currency": {
+    "name": "Igneum",
+    "symbol": "IGN",
+    "decimals": 18
+   },
+   "genesis_hash": "0xd45af8c64c56cf102aee3deb763d327394eb49fbe5b2f55b1bbd461e457f1468",
+   "genesis_note": "read from the node team's reader (the build mesh endpoint) at block 0 on 12 October 2026 22:09 UK against the network team's line; the same allocation as devnet9; the public test network from 13 October 2026",
+   "rpc": [
+    "https://rpc10.igneum.network (the old public test network's reads after its retirement; the public name rpc.igneum.network serves 7322 since 04:24:45 UK 16 October 2026)",
+    "the build mesh endpoint (the node team's reader, the build mesh only)"
+   ],
+   "submit": "none: the chain is retired; its reads under https://rpc10.igneum.network",
+   "explorer": [
+    "none under the public name: explorer.igneum.network serves chain 7322 since 03:16Z 16 October 2026"
+   ],
+   "eip1559": true,
+   "evm": "igneum-evm-1",
+   "block_target_seconds": 20,
+   "authority": {
+    "registry": "the engine block's registry address (as devnet5's)",
+    "registry_version": 4,
+    "sortition": true,
+    "note": "version 4: the penalties live (equivocation forfeits the whole bond, a hostile claim burns a quarter), the post height and the lock written per key (wallet-security's W-1, 12 October 2026)"
+   },
+   "contracts": {
+    "record": "dev/chain/7320-pay.json (the Pay set), dev/chain/7320-erc4337.json (the 4337 pair), dev/chain/7320-faucets.json (the faucets), dev/chain/igneum-fund-7320-three.json (the fund)",
+    "deployer": "0x72d1f19224f092F6B2ea1c5dc09Fa1B7492A3B56",
+    "deploy_commit": "22d2e815 (the Pay set and the 4337 pair), 5364724b (the faucets), ff2da7d4 (the fund)",
+    "order": "on chain 7320 the kit deployer's nonces run: the DevFaucet at 0 and the BondFaucet v2 at 1 (14 October 01:00Z), IgneumPay at 2 and the fund at 3 (block 6034), IgneumRecurring at 4, IgneumEscrow at 5, EntryPoint at 6 and SimpleAccountFactory at 7 (block 6065); the published nonce-0/1 pair addresses of devnet9 do not hold here",
+    "compiler": {
+     "pay_set_and_faucets": "solc 0.8.28, evm cancun, optimizer 10,000 runs, via_ir false, bytecode_hash none (contracts/foundry.toml)",
+     "erc4337_pair": "solc 0.8.28, evm cancun, optimizer 1,000,000 runs, via_ir true (dev/erc4337/foundry.toml; the reference EntryPoint v0.7.0 vendored under contracts/lib/account-abstraction, this project's own deployment verified from source)"
+    },
+    "EntryPoint": "0x9a26b54782dd1a6ccf406f64607f193f52d3e371",
+    "SimpleAccountFactory": "0x713e232c0501f50df1f92cd19f03f83860933262",
+    "IgneumPay": "0x750EaaBdf51eeEe522713c12aDe95fE4bAe6d59A",
+    "IgneumRecurring": "0xa02f16323063c792d128f24853e81eb47201e658",
+    "IgneumEscrow": "0x1c1e109cdb582000b8b2e168599d096c573cf69b",
+    "DevFaucet": "0x93482fa8a07bba7d3cc33058dd4f51a8a30a66b4",
+    "BondFaucet": "0xf7649aaa2999402d69444470c5b56d136b1365cb",
+    "IgneumFund": "0x142d218ccf2d20e57cc2fdf56f2616d25c20ad60",
+    "not_on_7320": "the devnet9 entry's test assets and the rest of its twelve are not deployed on 7320 (nothing else at the deployer's nonces 0 to 7)"
+   },
+   "faucet": {
+    "dev_faucet": "0x93482fa8a07bba7d3cc33058dd4f51a8a30a66b4",
+    "bond_faucet": "0xf7649aaa2999402d69444470c5b56d136b1365cb",
+    "relay": "none: the one relay serves 7322 since 08:39:01Z 16 October 2026 (faucet.igneum.network, build.igneum.network/faucet, the /devnet9/faucet alias); the same faucet addresses on this chain are no longer dripped",
+    "record": "dev/chain/7320-faucets.json"
+   },
+   "fund": {
+    "IgneumFund": "0x142d218ccf2d20e57cc2fdf56f2616d25c20ad60",
+    "chain_fund_address": "0x0000000000000000000000000000000000007320",
+    "fund_v2_height": 8000,
+    "record": "dev/chain/igneum-fund-7320-three.json"
+   },
+   "builder_lab": "docs/build/BUILDER-LAB.md; https://build.igneum.network/lab/ (the script igneum-lab with its sum in SHA256SUMS); verification by bytecode over the public RPC and in the explorer",
+   "block_target_note": "20 s (docs/chain/devnet9/ACTIVATION-1.md); measured 21.2 s a block over blocks 148 to 248 on the public RPC (the builder team's reading, 12 October 2026; economics' F5)",
+   "pay": {
+    "IgneumPay": "0x750EaaBdf51eeEe522713c12aDe95fE4bAe6d59A",
+    "IgneumRecurring": "0xa02f16323063c792d128f24853e81eb47201e658",
+    "IgneumEscrow": "0x1c1e109cdb582000b8b2e168599d096c573cf69b",
+    "commit": "22d2e815",
+    "record": "dev/chain/7320-pay.json"
+   },
+   "erc4337": {
+    "EntryPoint": "0x9a26b54782dd1a6ccf406f64607f193f52d3e371",
+    "SimpleAccountFactory": "0x713e232c0501f50df1f92cd19f03f83860933262",
+    "commit": "22d2e815",
+    "record": "dev/chain/7320-erc4337.json",
+    "note": "the reference pair v0.7.0 at the deployer's nonces 6 and 7; the kit's published nonce-0/1 addresses do not hold on 7320"
+   },
+   "retired": "retired at block 15371 on 16 October 2026 (the network team's line, 11:33 UK); superseded by the public test network, chain 7322",
+   "superseded_by": 7322
+  },
+  {
+   "name": "Igneum public test network",
+   "short": "igneum-public-test-network",
+   "chain_id": 7322,
+   "network_id": 7394,
+   "proposed": true,
+   "live": true,
+   "public": true,
+   "record": "the public test network on the VECTOR form from genesis (the project's path (a), 15 October 2026): docs/chain/7322/ (the genesis set of record at main 462c276d9: params, schedule, authority, sortition, difficulty, vector, README). The founder's go on the public name's swap to 7322 (18:3x UK 15 October 2026): step one tonight (the feed, the site, the explorer, 7322's own RPC host, the pool at :3342), step two done in the night of 15 to 16 October 2026 (the pool's :3341 at 03:45 UK, rpc.igneum.network at 04:24:45 UK): the public names serve chain 7322. The old public test network (7320) retired at block 15371 on 16 October 2026, its reads under rpc10.igneum.network.",
+   "native_currency": {
+    "name": "Igneum",
+    "symbol": "IGN",
+    "decimals": 18
+   },
+   "genesis_hash": "0x45828a34b05153fd2a9d0b7c49e84ec2289c38dd2f8c755729321e4f9c2236ea",
+   "genesis_note": "the network team's GENESIS RE-SERVED line on the re-cut set (462c276d9, 17:1x UK 15 October 2026); read back from A12 (the archive reader, the build mesh endpoint) at block 0 on 15 October 2026 18:45 UK and again at head 211 (18:5x UK); the feed's network.genesis_hash the same",
+   "rpc": [
+    "https://rpc.igneum.network (the public name, chain 7322 since 04:24:45 UK 16 October 2026; eth reads and eth_sendRawTransaction)",
+    "https://rpc12.igneum.network (7322's own public host from step one of the swap, kept beside the public name; eth reads and eth_sendRawTransaction)",
+    "the build mesh endpoint (A12, the archive reader, the build mesh only; its WS endpoint beside it)"
+   ],
+   "submit": "https://rpc.igneum.network and https://rpc12.igneum.network (either host takes eth_sendRawTransaction)",
+   "explorer": [
+    "https://explorer.igneum.network (chain 7322 since 03:16Z 16 October 2026)"
+   ],
+   "feed": [
+    "https://build.igneum.network/feed/7322/status.json (always; the chain's own path, served since 10:29Z 16 October 2026)",
+    "https://build.igneum.network/feed/status.json (the root feed, chain 7322 since the root swap of 15 October 2026)"
+   ],
+   "pool": "pool.igneum.network:3341 and :3342 (one 7322 stratum on both ports since 03:45 UK 16 October 2026; the old public test network's pool retired)",
+   "eip1559": true,
+   "evm": "igneum-evm-1",
+   "block_target_seconds": 12,
+   "block_target_note": "12 s: the target under node 0.10.40 (the public test network's move to 12-second blocks dated 16 October 2026, the founder's decision); the research chain measured 12.3 s a block over 16:05 to 17:05 UK on 16 October 2026 (292 blocks, none replaced); the figure stands until the public test network's own hour is read. Before: 20 s (difficulty.json target 20, halfLife 3600, dtMax 3600); the bounded tail from genesis (sortition.json tailDelta 10: the rounds past round 0 every 10 s, tMin 6); measured 23.6 s mean over the last 60 minutes at block 170 (the feed, 18:4x UK 15 October 2026)",
+   "vector": {
+    "form": "VectorWork from genesis: three lanes, 0 = bandwidth (igneumhash version 15), 1 = Anvil (version 21, DOC-v21-forge2-anvilr-pair-k2-lean-p64-m16-l8-s128, revealBlocks 64), 2 = raster (version 18); payShares [1, 1, 1] and balancedLanes [0, 1, 2] from genesis; WholeWork's breadth form from 1",
+    "floors": "bandwidth dMin 234,000,000 dRef 936,000,000; Anvil dMin 9,800,000 dRef 39,200,000; raster dMin 16,000 dRef 80,000 (one RTX 4090 a lane at the 20 s target, the references at the 80 s coverage target)",
+    "registry": "chain-held from genesis: registryKey 0xfa086a627664a8d2196f89504b049032189022cc (reliability's custody on the store box, never on a node); a re-registration is a signed transaction to 0x0000000000000000000000000000000000000b0e with data IGNV + the document; noticeBlocks 64; igneum_vectorRegistry serves the registration in force",
+    "record": "docs/chain/7322/vector.json (sha256 0481025a79c7df01… at 462c276d9)"
+   },
+   "authority": {
+    "registry": "0x0000000000000000000000000000000000000b0d (the engine block's registry address)",
+    "registry_version": 4,
+    "sortition": true,
+    "cap_ign": 500000,
+    "lock_blocks": 200,
+    "note": "version 4 as chain 7320's: the penalties live (equivocation forfeits the whole bond, a hostile claim burns a quarter), the post height and the lock written per key; bRefBps 1600, sRef 11,780,607 IGN"
+   },
+   "contracts": {
+    "record": "the faucet pair deployed on 7322 by the product team at 18:5x UK 15 October 2026 (the sources are the chain's own blocks: DevFaucet created in block 207, BondFaucet in block 208, both funded in block 210; the product team's record beside this file, dev/chain/7322-faucets.json at a40fb9128, in the form of dev/chain/7320-faucets.json); the Pay set, the 4337 pair and the fund land by their seats' deployments with their records beside this file as chain 7320's; the chain fund address 0x0000000000000000000000000000000000007322 accrues from genesis",
+    "deployer": "0x72d1f19224f092F6B2ea1c5dc09Fa1B7492A3B56 (the kit deployer as on chain 7320; funded 50 IGN from the dev account in block 204, tx 0x05f187a1b3ef73ac691b81e9047b378c209a74b76c492236d2c5aed529c08a8e; nonce 0 = DevFaucet, nonce 1 = BondFaucet, so both hold chain 7320's addresses by CREATE's rule)",
+    "DevFaucet": "0x93482fa8a07bba7d3cc33058dd4f51a8a30a66b4 (block 207)",
+    "BondFaucet": "0xf7649aaa2999402d69444470c5b56d136b1365cb (block 208)",
+    "not_on_7322": "chain 7320's other addresses do not hold on 7322 (a different chain from genesis): no IgneumPay, IgneumRecurring, IgneumEscrow, EntryPoint, SimpleAccountFactory or IgneumFund until deployed here"
+   },
+   "faucet": {
+    "dev_faucet": "0x93482fa8a07bba7d3cc33058dd4f51a8a30a66b4 (DevFaucet: dripAmount 25 IGN, cooldown 86,400 s, dailyCap 5,000 IGN; deployed in block 207, tx 0x3d7cf041388ed05945d22c058c155031c2d52e3d6d15ed5df09e7fca50a4fa90, 558,748 gas; the runtime code byte-identical to chain 7320's at the same address; funded 175,000 IGN in block 210, tx 0xfa7e36c1c8ced913a6a8ae997b3822732a51943878a495b60b131b42acff4dd8)",
+    "bond_faucet": "0xf7649aaa2999402d69444470c5b56d136b1365cb (BondFaucet: dripAmount 87 IGN (the bond), dailyCap 1,740 IGN; deployed in block 208, tx 0xd8c55ef851b0a6b95d08ca2091c6070de00a0c872049e18f4d8bd690a2967e86, 555,638 gas; the runtime code byte-identical to chain 7320's at the same address; funded 2,000 IGN in block 210, tx 0x62f72532b4cbf2d7cba36cbe33f1203838149588f0e79948496ac06d48abc8bf)",
+    "relayer": "0x13c4b67a57bf69ce7dfac20c7b3fb5022d9d183c (as on chain 7320; funded 1,000 IGN in block 210, tx 0x392e59f4836946ec8d206cec35b964674ad522af84ff587c39f47db308f5c989)",
+    "relay": "https://faucet.igneum.network and https://build.igneum.network/faucet (POST / {address}, GET /state, POST /bond): the one relay, re-pointed to 7322 on 16 October 2026 at 08:39:01Z (its reads and the send on the archive reader A12, the public name on /state); the old path https://build.igneum.network/devnet9/faucet kept as an alias for the shipped wallets; the first public drip on 7322 proven from outside at 09:39:42 UK: tx 0x49a03bc05390e998281c05050446402314f1b3577426b5907d31f18f19df1e9b in block 1765",
+    "record": "dev/chain/7322-faucets.json (the product team's record of record on main at a40fb9128, chain 7320's form) and the chain's blocks 207, 208 and 210 (read back from A12 at 18:5x UK 15 October 2026, head 211)"
+   },
+   "fund": {
+    "IgneumFund": "none yet",
+    "chain_fund_address": "0x0000000000000000000000000000000000007322",
+    "record": "none yet (the fund seat's deployment on 7322 with its record as dev/chain/igneum-fund-7320-three.json)"
+   },
+   "builder_lab": "docs/build/BUILDER-LAB.md; https://build.igneum.network/lab/ (verification by bytecode over the public RPC and in the explorer once the Pay set is deployed on 7322)",
+   "previous": "chain 7320 (Igneum old public test network) stays the previous public test network at its own path: rpc.igneum.network until step two, then by its own host as the network team names it; its entry above stands"
+  },
+  {
+   "name": "anvil (local stand-in)",
+   "short": "anvil",
+   "chain_id": 31337,
+   "proposed": false,
+   "live": false,
+   "native_currency": {
+    "name": "Igneum",
+    "symbol": "IGN",
+    "decimals": 18
+   },
+   "rpc": [
+    "http://127.0.0.1:8545"
+   ],
+   "explorer": [],
+   "eip1559": true,
+   "evm": "cancun (anvil); superset of igneum-evm-1 except for the difficulty opcode semantics",
+   "block_target_seconds": 1,
+   "contracts": {},
+   "test_assets": {}
+  }
+ ],
+ "wallet_add_network": {
+  "chainId": "0x1c8e",
+  "chainName": "Igneum devnet (proposed)",
+  "nativeCurrency": {
+   "name": "Igneum",
+   "symbol": "IGN",
+   "decimals": 18
+  },
+  "rpcUrls": [],
+  "blockExplorerUrls": []
+ }
+}

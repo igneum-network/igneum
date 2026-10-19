@@ -1,0 +1,19 @@
+{
+ "chain": "the old public test network (chain 7320)",
+ "chain_id": 7320,
+ "commit": "22d2e815",
+ "deployer": "0x72d1f19224f092F6B2ea1c5dc09Fa1B7492A3B56",
+ "contracts": {
+  "EntryPoint": {
+   "address": "0x9a26b54782dd1a6ccf406f64607f193f52d3e371",
+   "deploy_tx": "0x7e40a608dc3aa2bf7fb6cf3a8250c78acc9531d9c978925ebac1b4ef3a3aec43",
+   "block": 6065
+  },
+  "SimpleAccountFactory": {
+   "address": "0x713e232c0501f50df1f92cd19f03f83860933262",
+   "deploy_tx": "0x18daba4525c6976904d301c1331253b4138b84850101ce3fb45a44c21632a3d3",
+   "block": 6065
+  }
+ },
+ "note": "the reference ERC-4337 pair at the kit deployer's next nonces on chain 7320; not the kit's published nonce-0/1 addresses (those nonces carry the faucets on 7320)"
+}

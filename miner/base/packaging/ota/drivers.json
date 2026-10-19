@@ -1,0 +1,61 @@
+{
+ "updated": "2026-10-07",
+ "note": "The per-vendor driver table (branch driver-check). The app installs a driver on one click from the vendor's own server, checked against the sha256 and the Authenticode signature; it never ships one. Every row's sha256, size and signer were read from the file fetched from the vendor's own server on 7 October 2026 (Intel on the first Windows machine after the SHA512 Intel prints matched; NVIDIA and AMD on the mirror box: sha256sum and the PKCS7 subject out of the PE security directory through openssl). A row's min_version is what the worker needs (NVIDIA: CUDA 12.8 = driver 570 or newer; AMD: Adrenalin 25.x = 32.0.32000 or newer; Intel: the Arc driver the worker's rotate rewrite is proven on, 32.0.101.9034 or newer).",
+ "vendors": {
+  "nvidia": {
+   "min_version": "570.00",
+   "version": "617.42",
+   "url": "https://us.download.nvidia.com/Windows/617.42/617.42-desktop-win10-win11-64bit-international-dch-whql.exe",
+   "size": 990853168,
+   "sha256": "f115c92760f1d677ae88f7ee114be20c10ef28a9e725736821a08218054867ca",
+   "hash_source": "https://www.nvidia.com/en-us/drivers/ (GeForce Game Ready 617.42 WHQL, 6 October 2026); the sha256 computed on the mirror box from the file at this URL, Authenticode subject CN=NVIDIA Corporation, O=NVIDIA Corporation, L=Santa Clara (DigiCert G4 chain)",
+   "args": [
+    "-s",
+    "-noreboot"
+   ],
+   "reboot_codes": [
+    1
+   ],
+   "signer": "NVIDIA",
+   "linux_package": "nvidia-driver-570",
+   "hive_package": "nvidia-driver-update 570"
+  },
+  "amd": {
+   "min_version": "32.0.32000.0",
+   "version": "26.9.2",
+   "url": "https://drivers.amd.com/drivers/whql-amd-software-adrenalin-edition-26.9.2-win11-b.exe",
+   "size": 1000800840,
+   "sha256": "593c1d734f9e5a539a8c2f851fe8295d4f2910a878d3a2e21cd51b7ed4d42d39",
+   "hash_source": "https://www.amd.com/en/support/downloads/drivers.html/graphics/radeon-rx/radeon-rx-9000-series/amd-radeon-rx-9070-xt.html (AMD Software Adrenalin Edition 26.9.2 WHQL, 29 September 2026, the win11-b build for current GPUs); the sha256 computed on the mirror box from the file at this URL (fetched with an amd.com Referer, which drivers.amd.com requires), Authenticode subject CN=Advanced Micro Devices, O=Advanced Micro Devices (Sectigo chain)",
+   "args": [
+    "-install",
+    "-silent"
+   ],
+   "reboot_codes": [
+    3010
+   ],
+   "signer": "Advanced Micro Devices",
+   "linux_package": "amdgpu-install --usecase=opencl",
+   "hive_package": "amd-ocl-install 26.9",
+   "referer": "https://www.amd.com/"
+  },
+  "intel": {
+   "min_version": "32.0.101.6733",
+   "version": "32.0.101.9034",
+   "url": "https://downloadmirror.intel.com/929959/gfx_win_101.9034.exe",
+   "size": 932631144,
+   "sha256": "72ba7eea08a0cc18650603976ff9433dfdf84d23d4cbbee662a4df9f2856ae98",
+   "hash_source": "https://www.intel.com/content/www/us/en/download/785597/ (SHA512 3fc6f9b4...3cf3f0 on the page; the sha256 is of the same file, read on the first Windows machine on 7 October 2026)",
+   "args": [
+    "-s"
+   ],
+   "reboot_codes": [
+    14,
+    1014
+   ],
+   "signer": "Intel",
+   "linux_package": "intel-opencl-icd",
+   "hive_package": "intel-opencl-icd (apt)"
+  }
+ }
+}

@@ -1,0 +1,27 @@
+[package]
+name = "igneum-cli"
+description = "The command-line miner: the same supervisor as the desktop app, without a window"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "ember"
+path = "src/main.rs"
+
+# the old name, kept as an alias for one release (the same source, included)
+[[bin]]
+name = "igneum-cli"
+path = "src/bin/igneum-cli.rs"
+
+[features]
+default = ["ignpow"]
+ignpow = ["igneum-supervisor/ignpow"]
+
+[dependencies]
+igneum-supervisor = { workspace = true }
+igneum-worker-proto = { workspace = true }
+clap = { workspace = true }
+serde_json = { workspace = true }
+serde = { workspace = true }
+ctrlc = "3.4"

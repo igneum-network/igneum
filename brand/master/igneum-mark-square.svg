@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Igneum master mark, 4 October 2026. The mark sits in a black square. No circle, no ring, no border, never on another colour.
+       Square: #0C0C0E (the site's obsidian token). Mark: #F2541B ember, the flame's centre cut in obsidian.
+       Mark geometry: the exact polygons from site/index.html's header (100 x 100 viewBox); mark height 92 units = 62% of the square,
+       so scale 6.901 and translate 166.95. Clear space on every side is at least 20% of the square. -->
+  <rect width="1024" height="1024" fill="#0C0C0E"/>
+  <g transform="translate(166.95 166.95) scale(6.901)">
+    <polygon points="50,4 74,34 67,58 80,54 61,96 39,96 20,54 33,58 26,34" fill="#F2541B"/>
+    <polygon points="50,42 59,58 50,82 41,58" fill="#0C0C0E"/>
+  </g>
+</svg>

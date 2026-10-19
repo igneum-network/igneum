@@ -1,0 +1,97 @@
+{
+ "contract": "IgneumFund",
+ "form": "the three-signer opening (GOVERNANCE 8; the amended mandate section 2)",
+ "address": "0x142d218ccf2d20e57cc2fdf56f2616d25c20ad60",
+ "chain_id": 7320,
+ "genesis": "0xd45af8c64c56cf102aee3deb763d327394eb49fbe5b2f55b1bbd461e457f1468",
+ "commit": "ff2da7d4",
+ "deploy_tx": "0xad738f686a6d141ae6d2f642a60c76295de53337a909e8375b7ca672fac24779",
+ "deploy_block": 6034,
+ "size": 3,
+ "quorums": {
+  "spend": 2,
+  "freeze": 1,
+  "change": 2,
+  "migrate": 3,
+  "replace": 3,
+  "max_company_connected": 1
+ },
+ "chain_fund_address": "0x0000000000000000000000000000000000007320",
+ "signers": [
+  {
+   "address": "0x58bF7fB0C39c039DBc2116CE4372f4887ffDD0fb",
+   "company_connected": true
+  },
+  {
+   "address": "0x35b6CAAFaC576e21677156969F3200867634E2BF",
+   "company_connected": false
+  },
+  {
+   "address": "0x9bb4Fcc764e66FA0Af891eF98f9aa16b070ac9DE",
+   "company_connected": false
+  }
+ ],
+ "signer_set": "placeholder: three keys made on the builder for the exercise; the founder's three replace them in the named deployment; the fund spends nothing until the set is published with acceptances",
+ "deployer": "0x72d1f19224f092F6B2ea1c5dc09Fa1B7492A3B56",
+ "stray_instance": {
+  "address": "0x123751b892bbf28e4040520bc934995d609902cb",
+  "deploy_tx": "0x2f061108b0a4b5b4126b539aa512128a481bef541fac643ce91d48c014728791",
+  "deploy_block": 1352,
+  "note": "the same form deployed a second time by the contracts team's re-run of the deploy script to read its cut-off output (12 October 2026, 10:2x UK); read by no row; the lesson: a deploy script is never re-run to read its output"
+ },
+ "instance_of_record": {
+  "address": "0x142d218ccf2d20e57cc2fdf56f2616d25c20ad60",
+  "deploy_tx": "0xad738f686a6d141ae6d2f642a60c76295de53337a909e8375b7ca672fac24779",
+  "deploy_block": 6034,
+  "commit": "ff2da7d4",
+  "quorums": {
+   "spend": 2,
+   "freeze": 1,
+   "change": 2,
+   "migrate": 3,
+   "replace": 3,
+   "max_company_connected": 1
+  },
+  "explorer": "verified by the contracts team's submission",
+  "note": "the same form as devnet9's instance of record (the security review's reading and the project's rulings of 12 October 2026), the same three placeholder keys; the founder's three replace them in the named deployment"
+ },
+ "earlier_instances": [
+  {
+   "address": "0xc6df8d5cfb640a1df0ba486fab279df9d1a028f2",
+   "deploy_tx": "0xf03e6b04224923a8b0cda30dfa38560326fa931d5033e020961d396c5149988a",
+   "deploy_block": 1348,
+   "commit": "22d2e815",
+   "note": "the first sized form, before the security review's reading; read MET by economics (DATA-35)"
+  },
+  {
+   "address": "0x7c992dc99353239596a0fe7913488165e3338b4a",
+   "deploy_tx": "0x62d21eec6c47ba0c1f77d3f00f8d1ce611b4ef7ead4d9eeffad58a7062b95062",
+   "deploy_block": 1386,
+   "commit": "d0997b52",
+   "note": "the migrate quorum alone (the first half); superseded by the instance of record the same hour"
+  }
+ ],
+ "form_note": "the top-level address, commit, quorums and deploy fields are the instance of record's (ff2da7d4 at 0x51a79b50, block 1,391); the first and the intermediate forms are under earlier_instances; the stray under stray_instance",
+ "chain_fund_address_note": "the address the protocol pays one percent of every block to on devnet9 (IgneumIssuance.FundAddress; node/params/config_igneum.go: the dev chain's visible stand-in is the chain id as an address, as devnet7's 0x...7317 is asserted in config_igneum_issuance_test.go); NOT the governance contract, which the launch chain's parameter names (chain 7320's consensus-side item); the chain's credit accrues at this address with no spend path, so its balance must equal igneum_supply's fund column to the wei (the feed's chain_fund block reads both); set by fund-ops on the project's order of 16:3x UK, 12 October 2026, CONFIRMED from the chain at 16:26 UK on 12 October 2026 (head 2178, read from the exercise's bonded stand-in node during the Labs-outage hold): igneum_supply.fundIssued 173091888427734374274 wei and eth_getBalance of this address 173091888427734374274 wei, equal to the wei over 2,178 blocks with no transaction to it (the block carries no payee field; the equality of the balance to the fund column is the confirmation), the governance contract's balance 0",
+ "chain_fund_confirmation": {
+  "note": "to be read by economics against igneum_supply.fundIssued at a head on chain 7320 (FO-21's form); the stand-in's balance at head 6036 above"
+ },
+ "network_id": 7392,
+ "deployed_utc": "2026-10-14T08:12Z",
+ "deployed_by": "the product team on the founder's word of 14 October 2026 09:03 UK through main; from the kit deployer at the pending nonce behind the Pay set's deploy; the explorer: verified by the contracts team's submission",
+ "role": "the fund's contract of record on chain 7320, the public test network (the devnet9 instance 0x51a79b50 becomes the exercise instance)",
+ "stand_in": {
+  "address": "0x0000000000000000000000000000000000007320",
+  "balance_wei_at_head_6036": "479698181152343747988",
+  "path": "the protocol team's FundV2 rule fork at a height H (the node carries no re-pointing of IgneumChainIssuance[7320].FundAddress and no carry today): from H Finalize credits the contract and at H moves the stand-in's whole balance to it in one transfer, the supply identity unchanged; a node release rolled before H; the height and release named by the protocol team when cut",
+  "status": "held at the stand-in until FundV2 at 8000; from 8000 the contract is credited and the stand-in's whole balance moves to it at 8000",
+  "fork": {
+   "name": "FundV2",
+   "height": 8000,
+   "fund_v2_address": "0x142d218ccf2d20e57cc2fdf56f2616d25c20ad60",
+   "node_release": "the next free node number for chain 7320 after 0.10.11 (0.10.12), cut by the release team on the protocol team's GREEN, rolled before 6400",
+   "protocol_a_commit": "ff9b3b048 (the protocol team's branch, 14 October 2026 09:1x UK)",
+   "height_note": "moved from 6400 to 7200 (11:4x UK) and to 8000 (the protocol team on the project's word, 14 October 2026 15:0x UK, 646adb8d9): 0.10.12 still behind its proofs when 7200 passed; the stand-in accrues to 8000 (about 20:00 UK), where Finalize moves its whole balance to the contract and credits it from there"
+  }
+ }
+}

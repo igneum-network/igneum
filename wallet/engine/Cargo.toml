@@ -1,0 +1,27 @@
+[package]
+name = "igneum-wallet-engine"
+description = "Igneum Wallet engine: the local service the window talks to; holds public state, talks to the node and to the signer"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+# nothing in this workspace is published to a registry; the crates reference each other by path
+publish = false
+
+[[bin]]
+name = "igneum-wallet-engine"
+path = "src/main.rs"
+
+[dependencies]
+igneum-wallet-core = { path = "../core" }
+igneum-wallet-rpc = { path = "../rpc" }
+igneum-wallet-authority = { path = "../authority" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+rand_core = { workspace = true }
+# the zeroized request body and signer line (G2)
+zeroize = { workspace = true }
+# the updater (update.rs): the download with resume, the release key's SSH signature, the package's sha256
+ureq = { workspace = true }
+sha2 = { workspace = true }
+ed25519-dalek = { workspace = true }

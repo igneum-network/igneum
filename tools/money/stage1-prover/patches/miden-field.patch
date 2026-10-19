@@ -1,0 +1,78 @@
+diff -ruN -x target a/src/lib.rs b/src/lib.rs
+--- a/src/lib.rs	2026-10-18 21:46:48.830599486 +0000
++++ b/src/lib.rs	2026-10-18 21:46:48.834599465 +0000
+@@ -42,8 +42,9 @@
+     PackedValue, PermutationMonomial, Powers, PrimeCharacteristicRing, PrimeField, PrimeField64,
+     RawDataSerializable, TwoAdicField, batch_multiplicative_inverse,
+     extension::{
+-        Binomial, BinomialExtensionField, BinomiallyExtendable, ExtensionAlgebra,
+-        HasTwoAdicBinomialExtension,
++        Binomial, BinomialExtensionField, BinomiallyExtendable, CubicTrinomial,
++        CubicTrinomialExtendable, CubicTrinomialExtensionField, ExtensionAlgebra,
++        HasTwoAdicBinomialExtension, HasTwoAdicCubicExtension,
+     },
+     integers::QuotientMap,
+ };
+diff -ruN -x target a/src/native/mod.rs b/src/native/mod.rs
+--- a/src/native/mod.rs	2026-10-18 21:46:48.830599486 +0000
++++ b/src/native/mod.rs	2026-10-18 21:46:48.834599465 +0000
+@@ -18,8 +18,9 @@
+     Field, InjectiveMonomial, Packable, PermutationMonomial, PrimeCharacteristicRing, PrimeField,
+     PrimeField64, RawDataSerializable, TwoAdicField,
+     extension::{
+-        Binomial, BinomiallyExtendable, ExtensionAlgebra, HasTwoAdicBinomialExtension,
+-        binomial_mul, binomial_square,
++        Binomial, BinomiallyExtendable, CubicTrinomial, CubicTrinomialExtendable, ExtensionAlgebra,
++        HasTwoAdicBinomialExtension, HasTwoAdicCubicExtension, binomial_mul, binomial_square,
++        cubic_square, trinomial_cubic_mul,
+     },
+     impl_raw_serializable_primefield64,
+     integers::QuotientMap,
+@@ -428,6 +429,47 @@
+     }
+ }
+ 
++// IGNEUM MONEY stage one, the 128-bit cut (tools/money/stage1-prover/patches): the cubic extension F_p[X]/(X^3 - X - 1), p3-goldilocks's instance,
++// delegated exactly as the quadratic and quintic ones above are, so the STARK's challenge field
++// can be the 192-bit one (miden-air config.rs, CubeFelt). The VM's own ext2 operations keep QuadFelt.
++impl ExtensionAlgebra<Self, 3, CubicTrinomial> for Felt {
++    #[inline]
++    fn ext_mul(a: &[Self; 3], b: &[Self; 3], res: &mut [Self; 3]) {
++        trinomial_cubic_mul::<Self>(a, b, res);
++    }
++
++    #[inline]
++    fn ext_square(a: &[Self; 3], res: &mut [Self; 3]) {
++        cubic_square::<Self>(a, res);
++    }
++}
++
++impl CubicTrinomialExtendable for Felt {
++    const FROBENIUS_MATRIX: [[Self; 3]; 3] = {
++        let m = <Goldilocks as CubicTrinomialExtendable>::FROBENIUS_MATRIX;
++        [
++            [Self(m[0][0]), Self(m[0][1]), Self(m[0][2])],
++            [Self(m[1][0]), Self(m[1][1]), Self(m[1][2])],
++            [Self(m[2][0]), Self(m[2][1]), Self(m[2][2])],
++        ]
++    };
++
++    const EXT_GENERATOR: [Self; 3] = {
++        let g = <Goldilocks as CubicTrinomialExtendable>::EXT_GENERATOR;
++        [Self(g[0]), Self(g[1]), Self(g[2])]
++    };
++}
++
++impl HasTwoAdicCubicExtension for Felt {
++    const EXT_TWO_ADICITY: usize = <Goldilocks as HasTwoAdicCubicExtension>::EXT_TWO_ADICITY;
++
++    #[inline]
++    fn ext_two_adic_generator(bits: usize) -> [Self; 3] {
++        let g = <Goldilocks as HasTwoAdicCubicExtension>::ext_two_adic_generator(bits);
++        [Self(g[0]), Self(g[1]), Self(g[2])]
++    }
++}
++
+ impl ExtensionAlgebra<Self, 5, Binomial<Self>> for Felt {
+     #[inline]
+     fn ext_mul(a: &[Self; 5], b: &[Self; 5], res: &mut [Self; 5]) {

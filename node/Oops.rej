@@ -1,0 +1,19 @@
+@@ -160,12 +160,12 @@
+ // of entries by height and block hash, the equivocation evidence, the push
+ // targets and the endorser loop.
+ type endorseState struct {
+-	mu       sync.Mutex
+-	chainID  uint64
+-	pool     map[uint64]map[common.Hash]map[endorseUnit][]byte // height -> block hash -> (key, unit) -> entry bytes
+-	seen     map[uint64]map[endorseUnit]common.Hash            // height -> (key, unit) -> the first block hash endorsed
+-	equiv    []EquivocationEvidence
+-	pushTo   []string
++	mu      sync.Mutex
++	chainID uint64
++	pool    map[uint64]map[common.Hash]map[endorseUnit][]byte // height -> block hash -> (key, unit) -> entry bytes
++	seen    map[uint64]map[endorseUnit]common.Hash            // height -> (key, unit) -> the first block hash endorsed
++	equiv   []EquivocationEvidence
++	pushTo  []string
+ 	// announcer is the share mesh's endorsement gossip (eth/protocols/ishr,
+ 	// ISHR3): the endorser's own list for a block, handed beside the push
+ 	// so every sealer's pool holds every endorser's set, an open-seat

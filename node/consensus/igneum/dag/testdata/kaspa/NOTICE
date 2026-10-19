@@ -1,0 +1,7 @@
+The six GHOSTDAG test DAGs of rusty-kaspa (github.com/kaspanet/rusty-kaspa, testing/integration/testdata/dags/, ISC licence), fetched 19 October 2026 from the master branch; dag0.json is the PHANTOM paper figure at k = 4. SHA-256 of each as fetched:
+6e1fbe4599d405bdeab686c8546b666eb435e4274745a691c87b7e29c615c72a  dag0.json
+360921785867d097b42c9703f387b6ec57b16a3e076350bb97030f93ecf60bed  dag1.json
+c01bf3a51787cfd40c66e41eb972d67fe4c256a8431aa78dfda144e1dafd9646  dag2.json
+7137bde3b8623b65e1def5e5a4e6adccca6a82e211c162b8b7bed07abf470cfd  dag3.json
+c082a10ea76c3346c75bac8feb0a6b1cfd1a822730e599ebc9c2587a73d72674  dag4.json
+0c551ad45c81fb3e34d97f8eec08befd908a7f324100eb2a5d473003de73841e  dag5.json

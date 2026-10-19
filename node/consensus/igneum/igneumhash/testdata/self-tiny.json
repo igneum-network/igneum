@@ -1,0 +1,154 @@
+{
+ "algorithm": "igneumhash",
+ "spec": "SPEC-R0A-v0 revision 0.3",
+ "params": {
+  "chainId": 7310,
+  "version": 0,
+  "datasetBytes": 1048576,
+  "scratchBytes": 4096,
+  "rounds": 8,
+  "lanes": 8,
+  "epochLength": 100,
+  "itemChain": 1,
+  "cacheBytes": 0,
+  "parents": 0
+ },
+ "vectors": [
+  {
+   "name": "tiny-a",
+   "headerHash": "00000000000000000000000000000000000000000000000000000000000000ff",
+   "height": 0,
+   "nonce": 1,
+   "difficulty": "1",
+   "valid": true,
+   "expect": {
+    "paramsHash": "19493656a1780fa867ffb88c18e7d75015712ad8e286142f80618ac3404fbfde",
+    "seed": "717bb2cb1a3540d14c14c135c9e660e991fba7d600ac0629e8612669667fe966",
+    "epoch": 0,
+    "epochSeed": "c8fbb2bd7e70120a244463945c5ad6ccd0814eb6a99f43cfa8028ad17d2b0190",
+    "datasetId": "61b0217600b046701503e7d899d021e098dbd078a2187f1e4639d717a39f349c",
+    "mix": "e42d87c842f7ad09582bb716c119992ad5b23f8ac087400aee05ab2fc11d4c18",
+    "digest": "e596179a90f23d00ffa0a36a241a2a3071aa0fe49aa8536707c17ec2be949032"
+   }
+  },
+  {
+   "name": "tiny-b",
+   "headerHash": "01000000000000000000000000000000000000000000000000000000000000fe",
+   "height": 37,
+   "nonce": 1000004,
+   "difficulty": "1",
+   "valid": true,
+   "expect": {
+    "paramsHash": "19493656a1780fa867ffb88c18e7d75015712ad8e286142f80618ac3404fbfde",
+    "seed": "d8a1a4ea0890bedd186524336acae680a9c90b26fb50c89a068e50472f7f32b9",
+    "epoch": 0,
+    "epochSeed": "c8fbb2bd7e70120a244463945c5ad6ccd0814eb6a99f43cfa8028ad17d2b0190",
+    "datasetId": "61b0217600b046701503e7d899d021e098dbd078a2187f1e4639d717a39f349c",
+    "mix": "0f932cc4fe7b6a54c365e7c2d517fec185ec80940c10d110352f7fced175d81e",
+    "digest": "26c0c209fa354fed3a9911d5587ceb79b13002a3ae83e4edb45f882385aa8164"
+   }
+  },
+  {
+   "name": "tiny-c",
+   "headerHash": "02000000000000000000000000000000000000000000000000000000000000fd",
+   "height": 74,
+   "nonce": 2000007,
+   "difficulty": "1",
+   "valid": true,
+   "expect": {
+    "paramsHash": "19493656a1780fa867ffb88c18e7d75015712ad8e286142f80618ac3404fbfde",
+    "seed": "c7f4d715c7b37de70e762a72fea62232118d3a07d1f4a9056a55a679f07fd894",
+    "epoch": 0,
+    "epochSeed": "c8fbb2bd7e70120a244463945c5ad6ccd0814eb6a99f43cfa8028ad17d2b0190",
+    "datasetId": "61b0217600b046701503e7d899d021e098dbd078a2187f1e4639d717a39f349c",
+    "mix": "f59c9437e66668d83ded57c75d500a38f4ccb6d43dd11fd51c7c02df9f751424",
+    "digest": "936973379562d1da676527dae77b115fdc45f5bba44f81440fbf2a409483ba12"
+   }
+  },
+  {
+   "name": "tiny-d",
+   "headerHash": "03000000000000000000000000000000000000000000000000000000000000fc",
+   "height": 111,
+   "nonce": 3000010,
+   "difficulty": "1",
+   "valid": true,
+   "expect": {
+    "paramsHash": "19493656a1780fa867ffb88c18e7d75015712ad8e286142f80618ac3404fbfde",
+    "seed": "df31c13819817d339db2fc057565c58a532910945be5fa55e68f05ae3c528f67",
+    "epoch": 1,
+    "epochSeed": "b451e3716202a6fce4c2a1ad74b1a97bef8b91724ec862873956bd291982f9f9",
+    "datasetId": "93b209c71c1b15a6323a290731d15f65c91c27fa9ee8239af63e4bae8b9ff7f4",
+    "mix": "3bb45b6fbac760cac62639137dfbd5f70a2384502506ae787f9122090b03a806",
+    "digest": "9f711c55bdd85608ebecbace5597d8f60904479e58aa947a1307a2913d69f0e5"
+   }
+  },
+  {
+   "name": "tiny-e",
+   "headerHash": "04000000000000000000000000000000000000000000000000000000000000fb",
+   "height": 148,
+   "nonce": 4000013,
+   "difficulty": "1",
+   "valid": true,
+   "expect": {
+    "paramsHash": "19493656a1780fa867ffb88c18e7d75015712ad8e286142f80618ac3404fbfde",
+    "seed": "3deae50e466206ec19490feeeaa2af794cd3d675e68a5fa04bd772509b007674",
+    "epoch": 1,
+    "epochSeed": "b451e3716202a6fce4c2a1ad74b1a97bef8b91724ec862873956bd291982f9f9",
+    "datasetId": "93b209c71c1b15a6323a290731d15f65c91c27fa9ee8239af63e4bae8b9ff7f4",
+    "mix": "23b5fd0320dead81a70f27ad0a148d1cdf1ad3c2d353df20c67b5680a01985df",
+    "digest": "35fdf07fd43a11f844b29f83b6d0aa88e4162f12200a2be326d5ae606aec5b77"
+   }
+  },
+  {
+   "name": "tiny-f",
+   "headerHash": "05000000000000000000000000000000000000000000000000000000000000fa",
+   "height": 185,
+   "nonce": 5000016,
+   "difficulty": "1",
+   "valid": true,
+   "expect": {
+    "paramsHash": "19493656a1780fa867ffb88c18e7d75015712ad8e286142f80618ac3404fbfde",
+    "seed": "e81fe8994479a3b416730d56a8974e169a6b9d95f9e36cb0e9d5997fbc55be1c",
+    "epoch": 1,
+    "epochSeed": "b451e3716202a6fce4c2a1ad74b1a97bef8b91724ec862873956bd291982f9f9",
+    "datasetId": "93b209c71c1b15a6323a290731d15f65c91c27fa9ee8239af63e4bae8b9ff7f4",
+    "mix": "820b839328d2727e573899f8e0dad61cdf24bffb6c604c0c4bc02b6f60ffca1c",
+    "digest": "30f9ab61e9ce46d5f6e93171c0b3c89268241cad3c49307ef0d797364f9a0aa1"
+   }
+  },
+  {
+   "name": "tiny-g",
+   "headerHash": "06000000000000000000000000000000000000000000000000000000000000f9",
+   "height": 222,
+   "nonce": 6000019,
+   "difficulty": "1",
+   "valid": true,
+   "expect": {
+    "paramsHash": "19493656a1780fa867ffb88c18e7d75015712ad8e286142f80618ac3404fbfde",
+    "seed": "7a5f19dd09f9778fb1fadfdbacdd8f10bf4320513a653b15cfaa0a47d5a37bdb",
+    "epoch": 2,
+    "epochSeed": "a6cea14fce1f3c6e2c0be40c0cc53b8e8de6a4ac2cfd33b589908261ac3b7b7e",
+    "datasetId": "c65b49cbf0932353c0bd39b4d7163f1dadc91299e993f581e06f6882b7f934a9",
+    "mix": "3b45d18547f77ff551cb2f5d1688009215beed00055dc2b18bf9c77a41fde03a",
+    "digest": "a37a12575a87659441263394bebf63e020621dfcd126d436ada257edb46f5168"
+   }
+  },
+  {
+   "name": "tiny-h",
+   "headerHash": "07000000000000000000000000000000000000000000000000000000000000f8",
+   "height": 259,
+   "nonce": 7000022,
+   "difficulty": "1",
+   "valid": true,
+   "expect": {
+    "paramsHash": "19493656a1780fa867ffb88c18e7d75015712ad8e286142f80618ac3404fbfde",
+    "seed": "3af06566efa4ee2f2c821a723043700ca0d2a2c92a5ca3d9caa27882a741c9b4",
+    "epoch": 2,
+    "epochSeed": "a6cea14fce1f3c6e2c0be40c0cc53b8e8de6a4ac2cfd33b589908261ac3b7b7e",
+    "datasetId": "c65b49cbf0932353c0bd39b4d7163f1dadc91299e993f581e06f6882b7f934a9",
+    "mix": "ad1fc56db71335de3f7c7157b57f61b7a9766d90393c0cc4136194268c210d4a",
+    "digest": "9bc57529f69b46dd92825a13233b81de13d85ef141e6c19d6fe5b23003e4cf85"
+   }
+  }
+ ]
+}

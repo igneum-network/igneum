@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Igneum Wallet</title>
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="app.css">
+</head>
+<body data-phase="welcome" data-page="home">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-fp" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 7.7A9.2 9.2 0 0 1 12 4.1c1.5 0 2.9.3 4.1.9"/><path d="M5.2 16.6A12.5 12.5 0 0 1 4.6 12a7.4 7.4 0 0 1 14.8 0v4"/><path d="M8.5 20a9 9 0 0 1-1.3-4.7V12a4.8 4.8 0 0 1 9.6 0v1.5"/><path d="M12 11a1 1 0 0 1 1 1v2a6 6 0 0 1-1 3.3"/><path d="M15.6 20a10 10 0 0 0 .9-2.6"/></g></symbol></svg>
+
+<!-- the rail: five sections (wallet-ui-3: Home, Send, Receive, History, Settings), Lock and Quit in the foot. Under
+     720 px it is a bottom tab bar. The welcome, create, import and lock screens have no rail. -->
+<aside class="rail" id="rail" hidden>
+  <div class="rail-brand">
+    <img src="mark.svg" width="28" height="28" alt="">
+    <span class="word">IGNEUM</span>
+  </div>
+  <nav class="rail-nav" id="rail-nav" aria-label="Sections">
+    <button class="nav on" data-page="home" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></button>
+    <button class="nav" data-page="send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg><span>Send</span></button>
+    <button class="nav" data-page="receive"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg><span>Receive</span></button>
+    <button class="nav" data-page="history"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>History</span></button>
+    <button class="nav" data-page="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg><span>Settings</span><i class="nav-dot" id="nav-updates-dot" hidden></i></button>
+  </nav>
+  <div class="rail-foot">
+    <div class="rail-status mono" id="rail-status"></div>
+    <button class="nav small" id="btn-lock"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>Lock</span></button>
+    <button class="nav small danger" id="btn-quit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9"/><path d="M6.5 6.5a8 8 0 1 0 11 0"/></svg><span>Quit</span></button>
+    <div class="rail-version mono" id="foot-version"></div>
+  </div>
+</aside>
+
+<header class="top">
+  <div class="brand" id="top-brand">
+    <img src="mark.svg" width="30" height="30" alt="">
+    <span class="word">IGNEUM</span><span class="miner">WALLET</span>
+  </div>
+  <div class="page-title" id="page-title" hidden>
+    <h1 id="page-title-text">Home</h1>
+    <span class="page-sub" id="page-sub"></span>
+  </div>
+  <div class="top-right">
+    <div class="pill" id="pill"><span class="dot"></span><span id="pill-text">starting</span></div>
+    <button class="btn small ghost narrow-only" id="btn-lock-top" hidden>Lock</button>
+  </div>
+</header>
+
+<!-- the status strip: the update line, one notice at a time -->
+<div class="notices" id="notices" hidden>
+  <div class="notice" id="notice" role="status" aria-live="polite">
+    <span class="notice-text" id="notice-text"></span>
+    <span class="notice-actions" id="notice-actions"></span>
+    <button class="notice-close" id="notice-close" title="Close" aria-label="Close">&times;</button>
+    <span class="prog" id="notice-prog" hidden><i></i></span>
+  </div>
+</div>
+
+<!-- the quit question, in place of a dialog -->
+<div class="ask-wrap" id="ask-quit" hidden>
+  <div class="ask">
+    <span class="ask-text">Quit Igneum Wallet? The bundled node stops with it.</span>
+    <button class="btn small primary" id="ask-quit-yes">Quit</button>
+    <button class="btn small ghost" id="ask-quit-no">Cancel</button>
+  </div>
+</div>
+
+<main id="main">
+
+  <!-- welcome -->
+  <section class="screen" id="screen-welcome">
+    <div class="hero">
+      <div class="mark-wrap"><img src="mark.svg" width="72" height="72" alt=""></div>
+      <div class="eyebrow ember" id="welcome-eyebrow">devnet v4 &middot; nothing is bought or sold</div>
+      <h1>Igneum Wallet</h1>
+      <p class="lead">Your IGN and your key, on this machine. The key is made here and never leaves this app.</p>
+      <div class="three">
+        <div class="tile"><div class="k">01</div><div class="t">Your key stays here</div><div class="s">Sealed with a password you choose. Signing happens inside the app.</div></div>
+        <div class="tile"><div class="k">02</div><div class="t">Final means verified</div><div class="s">A payment is final when this wallet has checked the network's certificate itself.</div></div>
+        <div class="tile"><div class="k">03</div><div class="t">Works with the miner</div><div class="s">Uses the miner app's node when it runs here. Imports the miner's key in one tap.</div></div>
+      </div>
+      <div class="cta">
+        <button class="btn primary big" id="go-create">Create a wallet</button>
+        <button class="btn big" id="go-import">Import</button>
+      </div>
+      <p class="seedline mono">Nobody from Igneum will ever ask for your words or your key.</p>
+    </div>
+  </section>
+
+  <!-- create -->
+  <section class="screen" id="screen-create">
+    <div class="step" id="create-1">
+      <div class="eyebrow">step 1 of 3</div>
+      <h2>Choose a password</h2>
+      <p class="sub">It locks the key on this machine. Nobody can reset it for you. At least 8 characters.</p>
+      <label class="field"><span class="k">Password</span><input type="password" id="create-pw" autocomplete="new-password"></label>
+      <label class="field"><span class="k">Again</span><input type="password" id="create-pw2" autocomplete="new-password"></label>
+      <div class="err" id="create-err"></div>
+      <div class="cta"><button class="btn primary big" id="create-next">Make my words</button><button class="btn ghost" id="create-back">Back</button></div>
+    </div>
+    <div class="step" id="create-2" hidden>
+      <div class="eyebrow">step 2 of 3</div>
+      <h2>Write these 24 words down</h2>
+      <p class="sub">They are the wallet. Anyone with them has your IGN. They are shown once.</p>
+      <ol class="words" id="words"></ol>
+      <div class="field"><div class="k">your address</div><div class="box mono"><span id="create-address"></span><button class="btn tiny" data-copy="create-address">Copy</button></div></div>
+      <div class="cta"><button class="btn primary big" id="create-written">I wrote them down</button></div>
+    </div>
+    <div class="step" id="create-3" hidden>
+      <div class="eyebrow">step 3 of 3</div>
+      <h2>Type three of them</h2>
+      <p class="sub">So the paper is right before the words are gone from the screen.</p>
+      <div class="checks" id="checks"></div>
+      <div class="err" id="confirm-err"></div>
+      <div class="cta"><button class="btn primary big" id="create-confirm">Open my wallet</button><button class="btn ghost" id="create-again">Show the words again</button></div>
+    </div>
+  </section>
+
+  <!-- import -->
+  <section class="screen" id="screen-import">
+    <div class="step">
+      <div class="eyebrow">import</div>
+      <h2>Bring a key here</h2>
+      <p class="sub">Words from any wallet, a raw private key, or the key the miner app made on this machine.</p>
+      <div class="seg" id="import-mode" role="radiogroup" aria-label="What to import">
+        <button class="seg-b on" data-mode="seed" role="radio" aria-checked="true">24 words</button>
+        <button class="seg-b" data-mode="key" role="radio" aria-checked="false">Private key</button>
+        <button class="seg-b" data-mode="miner" id="seg-miner" role="radio" aria-checked="false">Miner's key</button>
+      </div>
+      <label class="field" id="import-data-field"><span class="k" id="import-data-label">The words, in order</span><textarea id="import-data" rows="4" spellcheck="false" autocomplete="off"></textarea></label>
+      <p class="note" id="import-miner-note" hidden>The miner app's key file on this machine will be read. Rewards keep going to the same address.</p>
+      <label class="field"><span class="k">New password for this machine</span><input type="password" id="import-pw" autocomplete="new-password"></label>
+      <label class="field"><span class="k">Again</span><input type="password" id="import-pw2" autocomplete="new-password"></label>
+      <div class="err" id="import-err"></div>
+      <div class="cta"><button class="btn primary big" id="import-go">Import</button><button class="btn ghost" id="import-back">Back</button></div>
+    </div>
+  </section>
+
+  <!-- the lock screen (lock-screen.js, app.js onLockScreen; 0.1.4, kept): the mark on the ember glow, the name, the
+       short address, one primary control. -->
+  <section class="screen lock" id="screen-unlock">
+    <div class="lock-body">
+      <div class="lock-coin"><span class="lock-glow" aria-hidden="true"></span><div class="mark-wrap lock-mark"><img src="mark.svg" width="88" height="88" alt=""></div></div>
+      <h1 class="lock-title">Igneum Wallet</h1>
+      <p class="lock-address mono" id="unlock-address"></p>
+      <p class="lock-line bridge-waiting" id="unlock-bridge" hidden></p>
+      <div class="lock-controls">
+        <div class="lock-touch" id="unlock-bio" hidden>
+          <button class="btn primary big fp lock-btn" id="unlock-touch" type="button"><svg width="22" height="22" aria-hidden="true"><use href="#i-fp"></use></svg><span id="unlock-touch-text">Unlock with Touch ID</span></button>
+          <div class="lock-line" id="unlock-bio-note" aria-live="polite"></div>
+          <button class="lock-link" id="unlock-use-pw" type="button">Use password</button>
+        </div>
+        <form id="unlock-form" class="unlock lock-form" hidden>
+          <input type="password" id="unlock-pw" placeholder="Password" autocomplete="current-password" aria-label="Password">
+          <button class="btn primary big" type="submit" id="unlock-submit">Unlock</button>
+        </form>
+        <div class="err lock-err" id="unlock-err"></div>
+      </div>
+      <p class="seedline lock-foot">Forgot it? Only the 24 words or the key open this wallet again.</p>
+    </div>
+  </section>
+
+  <!-- home: five pages behind the rail -->
+  <section class="screen" id="screen-home">
+
+    <!-- Home -->
+    <section class="page" id="page-home" data-page="home">
+      <div class="card hero-card">
+        <div class="bal-row">
+          <div class="bal" id="h-bal"><span class="v" id="h-balance">0</span><span class="unit mono">IGN</span></div>
+          <p class="line-text bal-line" id="h-balance-line"></p>
+        </div>
+        <p class="money-line" id="h-money"></p>
+        <div class="addr-big mono"><span id="home-address">not set</span><button class="btn small" data-copy="home-address">Copy</button></div>
+        <div class="row wrap actions">
+          <button class="btn primary big" id="go-send">Send</button>
+          <button class="btn big" id="go-receive">Receive</button>
+          <span class="note" id="backup-note" hidden>Your words are not written down yet. <a href="#" id="backup-link">Back up now</a>.</span>
+        </div>
+      </div>
+
+      <div class="card node-card" id="node-card">
+        <button class="disclose" id="node-toggle" aria-expanded="false" aria-controls="node-details">
+          <span class="node-line"><i class="dot" id="node-dot"></i><span id="node-line-text">Node starting</span></span>
+          <span class="disclose-right"><span class="dim" id="node-sub"></span><span class="chev" aria-hidden="true"></span></span>
+        </button>
+        <div class="details" id="node-details" hidden>
+          <div class="kv" id="node-kv"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Recent</h3><button class="btn small ghost" id="recent-all">All history</button></div>
+        <div class="hist" id="recent"></div>
+      </div>
+    </section>
+
+    <!-- Send -->
+    <section class="page" id="page-send" data-page="send" hidden>
+      <div class="card">
+        <div class="card-head"><h3>Send IGN</h3><span class="eyebrow" id="send-eyebrow"></span></div>
+        <div class="send-form" id="send-form">
+          <label class="field"><span class="k">To</span><input type="text" id="send-to" class="mono" placeholder="0x" spellcheck="false" autocomplete="off"></label>
+          <label class="field"><span class="k">Amount</span><div class="row"><input type="text" id="send-amount" class="mono" placeholder="0.0" inputmode="decimal" autocomplete="off"><span class="unit-word mono">IGN</span><span class="note" id="send-balance"></span></div></label>
+          <div class="fee-row">
+            <span class="k mono">fee</span>
+            <span class="line-text" id="fee-line">shown when you review</span>
+            <button class="btn tiny ghost" id="fee-toggle" aria-expanded="false" aria-controls="fee-details" hidden>Details</button>
+          </div>
+          <p class="help" id="fee-details" hidden></p>
+          <div class="err" id="send-err"></div>
+          <div class="cta" id="send-cta"><button class="btn primary big" id="send-quote">Review</button></div>
+        </div>
+        <div class="ask inline" id="ask-send" hidden>
+          <span class="ask-text" id="ask-send-text"></span>
+          <button class="btn small primary" id="send-go"><svg class="fp-ico" width="16" height="16" hidden><use href="#i-fp"></use></svg><span id="send-go-text">Send now</span></button>
+          <button class="btn small ghost" id="ask-send-no">Cancel</button>
+          <span class="ask-foot" id="send-bio-line"></span>
+          <span class="ask-foot err" id="confirm-send-err"></span>
+        </div>
+        <div class="sent" id="send-done" hidden>
+          <div class="hrow sent-row" id="sent-row"></div>
+          <div class="box mono"><span id="sent-hash"></span><button class="btn tiny" data-copy="sent-hash">Copy</button></div>
+          <div class="cta"><button class="btn small" id="sent-view">View in History</button><button class="btn small ghost" id="sent-again">Send another</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Receive -->
+    <section class="page" id="page-receive" data-page="receive" hidden>
+      <div class="card">
+        <div class="card-head"><h3>Your address</h3></div>
+        <div class="addr-big mono"><span id="receive-address">not set</span><button class="btn small" data-copy="receive-address">Copy</button></div>
+        <div class="qr-row">
+          <div class="qr" id="qr"></div>
+          <p class="help">Only IGN on the Igneum network. Rewards from the miner app land here when it pays this address. The code is drawn on this machine.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- History -->
+    <section class="page" id="page-history" data-page="history" hidden>
+      <div class="card">
+        <div class="card-head"><h3>History</h3><span class="eyebrow" id="hist-eyebrow"></span></div>
+        <div class="hist" id="history"></div>
+      </div>
+    </section>
+
+    <!-- Settings -->
+    <section class="page" id="page-settings" data-page="settings" hidden>
+      <div class="card">
+        <div class="card-head"><h3>Security</h3></div>
+        <div class="srow" id="bio-row">
+          <div class="sw-text"><b id="bio-title">Touch ID</b> <span class="dim" id="bio-sentence"></span></div>
+          <div class="row"><button class="btn small" id="bio-toggle-btn">Turn on</button></div>
+        </div>
+        <div class="details indent" id="bio-enrol" hidden>
+          <div class="row wrap"><input type="password" class="addr-input" id="bio-pw" placeholder="Your password" autocomplete="current-password"><button class="btn small primary fp" id="bio-enrol-go"><svg width="16" height="16"><use href="#i-fp"></use></svg><span id="bio-enrol-text">Turn on Touch ID</span></button><button class="btn small ghost" id="bio-enrol-cancel">Cancel</button></div>
+        </div>
+        <p class="note indent" id="bio-off-note" hidden></p>
+        <div class="err indent" id="bio-err"></div>
+        <label class="switch" id="ask-on-open-row"><input type="checkbox" id="ask-on-open"><span class="track"></span><span class="sw-text"><b id="ask-on-open-text">Ask for Touch ID when the wallet opens</b> <span class="dim">Once, when you open the app. Never after an idle lock.</span></span></label>
+        <div class="srow" id="idle-row">
+          <div class="sw-text"><b>Lock when idle</b> <span class="dim" id="idle-lock-note"></span></div>
+          <select class="select" id="idle-lock" aria-label="Lock when idle">
+            <option value="1">after 1 minute</option>
+            <option value="5">after 5 minutes</option>
+            <option value="15">after 15 minutes</option>
+            <option value="60">after 1 hour</option>
+            <option value="0">never</option>
+          </select>
+        </div>
+        <button class="disclose" id="pw-toggle" aria-expanded="false" aria-controls="pw-details"><span>Change password</span><span class="chev" aria-hidden="true"></span></button>
+        <div class="details" id="pw-details" hidden>
+          <div class="row wrap"><input type="password" class="addr-input" id="pw-old" placeholder="Current" autocomplete="current-password"><input type="password" class="addr-input" id="pw-new" placeholder="New, 8 or more" autocomplete="new-password"><button class="btn small" id="pw-change">Change</button></div>
+          <p class="help">Touch ID is turned off by a password change; turn it on again above.</p>
+          <div class="err" id="pw-err"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Websites</h3><span class="eyebrow" id="sites-eyebrow">page bridge</span></div>
+        <label class="switch" id="bridge-on-row"><input type="checkbox" id="bridge-on"><span class="track"></span><span class="sw-text"><b>Let websites connect</b> <span class="dim" id="bridge-status"></span></span></label>
+        <div class="sites" id="sites"></div>
+        <p class="note" id="sites-note">A site asks once; you answer in this window. Each site sees your address and can ask you to sign or send; every request is shown here first. Disconnect a site any time.</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Backup</h3><span class="eyebrow" id="backup-eyebrow"></span></div>
+        <button class="disclose" id="backup-toggle" aria-expanded="false" aria-controls="backup-details"><span>Show my words</span><span class="chev" aria-hidden="true"></span></button>
+        <div class="details" id="backup-details" hidden>
+          <div class="ask inline" id="ask-backup">
+            <span class="ask-text">Show the 24 words and the key on screen? Anyone who sees them has your IGN.</span>
+            <button class="btn small primary fp" id="backup-touch" hidden><svg width="16" height="16"><use href="#i-fp"></use></svg><span>Show with Touch ID</span></button>
+            <button class="btn small" id="backup-use-pw">Use password</button>
+            <button class="btn small ghost" id="backup-cancel">Cancel</button>
+          </div>
+          <div class="row wrap" id="backup-pw-row" hidden><input type="password" class="addr-input" id="backup-pw" placeholder="Your password" autocomplete="current-password"><button class="btn small primary" id="backup-show">Show</button></div>
+          <div class="err" id="backup-err"></div>
+          <div id="backup-out" hidden>
+            <ol class="words small" id="backup-words"></ol>
+            <div class="field"><div class="k">private key</div><div class="box mono key"><span id="backup-key"></span><button class="btn tiny" data-copy="backup-key">Copy</button><button class="btn tiny ghost" id="backup-hide">Hide</button></div></div>
+          </div>
+        </div>
+
+        <button class="disclose" id="export-toggle" aria-expanded="false" aria-controls="export-details"><span>Export the key for MetaMask</span><span class="chev" aria-hidden="true"></span></button>
+        <div class="details" id="export-details" hidden>
+          <p class="help">A copied key can be stolen from the clipboard, a screenshot or a notes app. Paste it straight into MetaMask and clear the clipboard.</p>
+          <div class="ask inline" id="ask-export">
+            <span class="ask-text">Show the private key on screen? Anyone who sees it has your IGN.</span>
+            <button class="btn small primary fp" id="export-touch" hidden><svg width="16" height="16"><use href="#i-fp"></use></svg><span>Show with Touch ID</span></button>
+            <button class="btn small" id="export-use-pw">Use password</button>
+            <button class="btn small ghost" id="export-cancel">Cancel</button>
+          </div>
+          <div class="row wrap" id="export-pw-row" hidden><input type="password" class="addr-input" id="export-pw" placeholder="Your password" autocomplete="current-password"><button class="btn small primary" id="export-show">Show</button></div>
+          <div class="err" id="export-err"></div>
+          <div class="box mono key" id="export-out" hidden><span id="export-key"></span><button class="btn tiny" data-copy="export-key">Copy</button><button class="btn tiny ghost" id="export-hide">Hide</button></div>
+        </div>
+
+        <div class="srow top-gap">
+          <div class="sw-text"><b>MetaMask network</b> <span class="dim mono" id="net-line"></span></div>
+          <div class="row"><button class="btn small" id="net-add">Add to MetaMask</button><button class="btn small ghost" id="net-copy">Copy settings</button></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>This machine</h3></div>
+        <label class="switch"><input type="checkbox" id="start-login"><span class="track"></span><span class="sw-text"><b>Start at login</b> <span class="dim">Opens when you sign in. The wallet locks itself when idle.</span></span></label>
+        <div class="field">
+          <div class="k">appearance</div>
+          <div class="seg" id="theme-seg" role="radiogroup" aria-label="Appearance">
+            <button class="seg-b" data-theme="system" role="radio" aria-checked="true">System</button>
+            <button class="seg-b" data-theme="light" role="radio" aria-checked="false">Light</button>
+            <button class="seg-b" data-theme="dark" role="radio" aria-checked="false">Dark</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="lead-row">
+          <div class="lead-text">
+            <h3 id="s-version">Igneum Wallet</h3>
+            <p class="help" id="s-update-note">Not checked yet.</p>
+          </div>
+          <div class="row">
+            <button class="btn small primary" id="s-install" hidden>Install now</button>
+            <button class="btn small" id="s-update">Check</button>
+          </div>
+        </div>
+        <label class="switch"><input type="checkbox" id="auto-update"><span class="track"></span><span class="sw-text"><b>Install updates by itself</b> <span class="dim">Downloads in the background and installs when nothing is being sent.</span></span></label>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Node</h3><span class="eyebrow" id="node-eyebrow"></span></div>
+        <div class="field">
+          <div class="k">endpoint in use</div>
+          <div class="box mono"><span id="node-endpoint">none yet</span><button class="btn tiny" data-copy="node-endpoint">Copy</button></div>
+        </div>
+        <p class="line-text" id="node-source-line"></p>
+        <p class="help">The wallet picks the miner's node when it runs on this machine, else its own bundled node, else the public RPC. Finality is verified only with a node here.</p>
+        <p class="note mono small" id="node-ids"></p>
+      </div>
+
+      <details class="card adv" id="s-advanced">
+        <summary><h3>Advanced</h3><span class="eyebrow">this machine</span></summary>
+        <p class="note mono small" id="s-mid"></p>
+        <p class="note mono small" id="s-dirs"></p>
+        <p class="note" id="s-miner-file"></p>
+        <div class="row wrap top-gap"><button class="btn small danger" id="remove-start">Remove this wallet from this machine</button></div>
+        <div class="ask inline" id="ask-remove" hidden>
+          <span class="ask-text">Remove this wallet from this machine? The vault file is deleted. Only your 24 words or the key bring it back.</span>
+          <input type="password" class="addr-input short-pw" id="remove-pw" placeholder="Your password" autocomplete="current-password" aria-label="Password">
+          <button class="btn small primary" id="remove-go">Remove</button>
+          <button class="btn small ghost" id="ask-remove-no">Cancel</button>
+          <span class="ask-foot err" id="remove-err"></span>
+        </div>
+      </details>
+    </section>
+  </section>
+</main>
+
+<!-- the update card (update-card.js, app.js renderUpdateCard): one update, centred; Later, Escape or the backdrop
+     leaves the strip above -->
+<!-- the page bridge (0.1.6): a website's request, answered here and nowhere else -->
+<div class="upd-wrap bridge-wrap" id="bridge" hidden>
+  <div class="upd-card bridge-card" id="bridge-card" role="dialog" aria-modal="true" aria-labelledby="bridge-title" tabindex="-1">
+    <div class="eyebrow ember" id="bridge-eyebrow">a website asks</div>
+    <h2 class="upd-name" id="bridge-title"></h2>
+    <p class="bridge-amount mono" id="bridge-amount" hidden></p>
+    <pre class="bridge-message mono" id="bridge-message" hidden></pre>
+    <ul class="upd-notes" id="bridge-lines"></ul>
+    <p class="upd-meta mono" id="bridge-origin"></p>
+    <div class="upd-actions" id="bridge-actions">
+      <button class="btn primary big" id="bridge-yes"><svg class="fp-ico" width="16" height="16" hidden><use href="#i-fp"></use></svg><span id="bridge-yes-text">Connect</span></button>
+      <button class="btn ghost" id="bridge-no">Decline</button>
+    </div>
+    <p class="ask-foot" id="bridge-bio-line"></p>
+    <p class="err" id="bridge-err"></p>
+    <div class="bridge-done" id="bridge-done" hidden>
+      <p class="upd-line" id="bridge-done-line"></p>
+      <div class="box mono" id="bridge-hash-box" hidden><span id="bridge-hash"></span><button class="btn tiny" data-copy="bridge-hash">Copy</button></div>
+      <div class="kv" id="bridge-final"></div>
+      <div class="upd-actions"><button class="btn ghost" id="bridge-close">Done</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="upd-wrap" id="upd" hidden>
+  <div class="upd-card" id="upd-card" role="dialog" aria-modal="true" aria-labelledby="upd-name" aria-describedby="upd-line" tabindex="-1">
+    <div class="upd-mark" id="upd-mark">
+      <svg class="upd-ring" viewBox="0 0 96 96" aria-hidden="true"><circle class="track" cx="48" cy="48" r="44"></circle><circle class="arc" id="upd-arc" cx="48" cy="48" r="44"></circle></svg>
+      <img src="mark.svg" width="40" height="40" alt="">
+      <span class="upd-pct mono" id="upd-pct" hidden></span>
+    </div>
+    <div class="eyebrow ember">update</div>
+    <h2 class="upd-name" id="upd-name"></h2>
+    <p class="upd-line" id="upd-line"></p>
+    <p class="upd-cause mono" id="upd-cause" hidden></p>
+    <ul class="upd-notes" id="upd-notes"></ul>
+    <button class="upd-more" id="upd-more" type="button" aria-expanded="false" hidden>What changed</button>
+    <ul class="upd-all" id="upd-all" hidden></ul>
+    <p class="upd-meta mono" id="upd-meta"></p>
+    <div class="upd-actions" id="upd-actions"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+<script src="update-card.js"></script>
+<script src="lock-screen.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

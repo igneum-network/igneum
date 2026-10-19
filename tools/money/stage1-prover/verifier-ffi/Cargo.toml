@@ -1,0 +1,18 @@
+# The node-side verifier: a C-ABI static library over the pinned Miden verifier, linked into geth by cgo
+# (node/consensus/igneum/pool/miden). Links the verifier and the assembler (for the program hashes), never
+# the prover.
+[package]
+name = "money-verifier-ffi"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+name = "money_verifier"
+crate-type = ["staticlib"]
+path = "src/lib.rs"
+
+[dependencies]
+miden-verifier = "=0.36.1"
+miden-assembly = "=0.36.1"
+miden-core = "=0.36.1"

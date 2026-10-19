@@ -1,0 +1,85 @@
+{
+ "contract": "IgneumFund",
+ "form": "the three-signer opening (GOVERNANCE 8; the amended mandate section 2)",
+ "address": "0x51a79b50e939918ddd3a104e9d76bad3e153e3b4",
+ "chain_id": 7319,
+ "genesis": "0xeae5e6083195fe58658b1f13771362b19a38a0bffb5c8808d458993ee9f54ea1",
+ "commit": "ff2da7d4",
+ "deploy_tx": "0xe7a225309eb0176d5339002e4384ad32bd3449fd23b39b1fdd355fe98e94d168",
+ "deploy_block": 1391,
+ "size": 3,
+ "quorums": {
+  "spend": 2,
+  "freeze": 1,
+  "change": 2,
+  "migrate": 3,
+  "replace": 3,
+  "max_company_connected": 1
+ },
+ "chain_fund_address": "0x0000000000000000000000000000000000007319",
+ "signers": [
+  {
+   "address": "0x58bF7fB0C39c039DBc2116CE4372f4887ffDD0fb",
+   "company_connected": true
+  },
+  {
+   "address": "0x35b6CAAFaC576e21677156969F3200867634E2BF",
+   "company_connected": false
+  },
+  {
+   "address": "0x9bb4Fcc764e66FA0Af891eF98f9aa16b070ac9DE",
+   "company_connected": false
+  }
+ ],
+ "signer_set": "placeholder: three keys made on the builder for the exercise; the founder's three replace them in the named deployment; the fund spends nothing until the set is published with acceptances",
+ "deployer": "0x72d1f19224f092F6B2ea1c5dc09Fa1B7492A3B56",
+ "stray_instance": {
+  "address": "0x123751b892bbf28e4040520bc934995d609902cb",
+  "deploy_tx": "0x2f061108b0a4b5b4126b539aa512128a481bef541fac643ce91d48c014728791",
+  "deploy_block": 1352,
+  "note": "the same form deployed a second time by the contracts team's re-run of the deploy script to read its cut-off output (12 October 2026, 10:2x UK); read by no row; the lesson: a deploy script is never re-run to read its output"
+ },
+ "instance_of_record": {
+  "address": "0x51a79b50e939918ddd3a104e9d76bad3e153e3b4",
+  "deploy_tx": "0xe7a225309eb0176d5339002e4384ad32bd3449fd23b39b1fdd355fe98e94d168",
+  "deploy_block": 1391,
+  "commit": "ff2da7d4",
+  "quorums": {
+   "spend": 2,
+   "freeze": 1,
+   "change": 2,
+   "migrate": 3,
+   "replace": 3,
+   "max_company_connected": 1
+  },
+  "explorer": "verified by the contracts team's submission",
+  "note": "the form after the security review's reading and the project's ruling of 12 October 2026 (both halves): Migrate and Replace need every signer below five, the table's change quorum from five; Add stays at the change quorum; the same three placeholder keys"
+ },
+ "earlier_instances": [
+  {
+   "address": "0xc6df8d5cfb640a1df0ba486fab279df9d1a028f2",
+   "deploy_tx": "0xf03e6b04224923a8b0cda30dfa38560326fa931d5033e020961d396c5149988a",
+   "deploy_block": 1348,
+   "commit": "22d2e815",
+   "note": "the first sized form, before the security review's reading; read MET by economics (DATA-35)"
+  },
+  {
+   "address": "0x7c992dc99353239596a0fe7913488165e3338b4a",
+   "deploy_tx": "0x62d21eec6c47ba0c1f77d3f00f8d1ce611b4ef7ead4d9eeffad58a7062b95062",
+   "deploy_block": 1386,
+   "commit": "d0997b52",
+   "note": "the migrate quorum alone (the first half); superseded by the instance of record the same hour"
+  }
+ ],
+ "form_note": "the top-level address, commit, quorums and deploy fields are the instance of record's (ff2da7d4 at 0x51a79b50, block 1,391); the first and the intermediate forms are under earlier_instances; the stray under stray_instance",
+ "chain_fund_address_note": "the address the protocol pays one percent of every block to on devnet9 (IgneumIssuance.FundAddress; node/params/config_igneum.go: the dev chain's visible stand-in is the chain id as an address, as devnet7's 0x...7317 is asserted in config_igneum_issuance_test.go); NOT the governance contract, which the launch chain's parameter names (chain 7320's consensus-side item); the chain's credit accrues at this address with no spend path, so its balance must equal igneum_supply's fund column to the wei (the feed's chain_fund block reads both); set by fund-ops on the project's order of 16:3x UK, 12 October 2026, CONFIRMED from the chain at 16:26 UK on 12 October 2026 (head 2178, read from the exercise's bonded stand-in node during the Labs-outage hold): igneum_supply.fundIssued 173091888427734374274 wei and eth_getBalance of this address 173091888427734374274 wei, equal to the wei over 2,178 blocks with no transaction to it (the block carries no payee field; the equality of the balance to the fund column is the confirmation), the governance contract's balance 0",
+ "chain_fund_confirmation": {
+  "utc": "2026-10-12T15:26:37Z",
+  "head": 2178,
+  "fund_issued_wei": "173091888427734374274",
+  "balance_wei": "173091888427734374274",
+  "equal": true,
+  "contract_balance_wei": "0",
+  "read_by": "fund-ops over the exercise's stand-in node (the public RPC and the mesh sealer held)"
+ }
+}

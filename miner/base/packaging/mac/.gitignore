@@ -1,0 +1,3 @@
+# built outputs: the app with its binaries, and the DMG
+build/
+dist/

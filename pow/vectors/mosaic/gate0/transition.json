@@ -1,0 +1,14 @@
+{"class": "transition", "text": "GATE0-VECTORS.md revision 1", "window": 1000, "menu": [
+{"ratified": 0, "activation": 0, "doc": [2375, 2375, 2375, 2375, 500], "valid": true},
+{"ratified": 1000, "activation": 3000, "doc": [2500, 2500, 2500, 2500, 0], "valid": false},
+{"ratified": 1000, "activation": 3000, "doc": [2400, 2400, 2400, 2400, 400], "valid": true},
+{"ratified": 1500, "activation": 3000, "doc": [2000, 2000, 2000, 2000, 2000], "valid": false},
+{"ratified": 2000, "activation": 3500, "doc": [2000, 2000, 2000, 2000, 2000], "valid": false},
+{"ratified": 3000, "activation": 4000, "doc": [2000, 2000, 2000, 2000, 2000], "valid": false},
+{"ratified": 2000, "activation": 4000, "doc": [2000, 2000, 2000, 2000, 2000], "valid": true},
+{"ratified": 1000, "activation": 3000, "doc": [2500, 2500, 2500, 2500, 0], "valid": false},
+{"ratified": 0, "activation": 2000, "doc": [2600, 2600, 2600, 2100, 100], "valid": false},
+{"ratified": 3000, "activation": 6000, "doc": [2600, 2600, 2600, 2100, 101], "valid": false},
+{"ratified": 3000, "activation": 6000, "doc": [2600, 2600, 2600, 2100, 100], "valid": true},
+{"ratified": 4000, "activation": 6000, "doc": [3000, 3000, 2000, 1000, 1000], "valid": false}
+], "active": [{"h": 0, "entry": 0}, {"h": 1, "entry": 0}, {"h": 999, "entry": 0}, {"h": 1000, "entry": 0}, {"h": 2000, "entry": 0}, {"h": 2999, "entry": 0}, {"h": 3000, "entry": 2}, {"h": 3001, "entry": 2}, {"h": 3500, "entry": 2}, {"h": 3999, "entry": 2}, {"h": 4000, "entry": 6}, {"h": 4001, "entry": 6}, {"h": 4999, "entry": 6}, {"h": 5000, "entry": 6}, {"h": 5999, "entry": 6}, {"h": 6000, "entry": 10}, {"h": 6001, "entry": 10}, {"h": 7000, "entry": 10}, {"h": 9999, "entry": 10}, {"h": 10000, "entry": 10}, {"h": 100000, "entry": 10}, {"h": 123456, "entry": 10}, {"h": 1000000, "entry": 10}, {"h": 18446744073709551615, "entry": 10}]}

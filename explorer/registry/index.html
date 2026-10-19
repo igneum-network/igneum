@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>The registry on the research chain</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<meta name="description" content="What the research chain's registry holds, read from the chain as it runs: the landings, the pay shares and the breadth lanes by height, each with its transaction.">
+<style>
+  :root { --bg: #0e0d0c; --fg: #f3ede6; --dim: #a39b92; --line: #2a2724; --ember: #ff7a3d; --ok: #7fc47a; --bad: #ff5a4d; --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  @media (prefers-color-scheme: light) { :root { --bg: #faf7f3; --fg: #1b1816; --dim: #6b6460; --line: #e3ddd6; --ember: #d4551a; --ok: #2f7f2a; --bad: #c2271b; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.55 -apple-system, "Segoe UI", Inter, Helvetica, Arial, sans-serif; text-wrap: pretty; }
+  main { max-width: 64rem; margin: 0 auto; padding: 3rem 1rem 4rem; }
+  h1 { font-size: 2rem; line-height: 1.15; margin: 0 0 .75rem; letter-spacing: -.01em; text-wrap: balance; }
+  p { margin: 0 0 1rem; }
+  .lede { font-size: 1.15rem; max-width: 44rem; }
+  .label { color: var(--dim); font-size: .9rem; margin: 0 0 2rem; }
+  h2 { font-size: 1rem; margin: 2.25rem 0 .6rem; color: var(--dim); font-weight: 600; letter-spacing: .02em; text-transform: uppercase; }
+  .now { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: .75rem; margin: 0 0 1rem; }
+  .tile { border: 1px solid var(--line); border-radius: 8px; padding: .7rem .85rem; }
+  .tile .k { color: var(--dim); font-size: .8rem; letter-spacing: .02em; text-transform: uppercase; }
+  .tile .v { font-size: 1.25rem; margin-top: .15rem; word-break: break-word; }
+  .tile .v small { font-size: .85rem; color: var(--dim); }
+  .stale .v { color: var(--bad); }
+  .state { color: var(--dim); font-size: .9rem; }
+  .state.bad { color: var(--bad); }
+  table { border-collapse: collapse; width: 100%; font-size: .93rem; margin: 0 0 .75rem; }
+  th, td { text-align: left; vertical-align: top; padding: .45rem .6rem .45rem 0; border-bottom: 1px solid var(--line); }
+  th { color: var(--dim); font-weight: 600; font-size: .8rem; letter-spacing: .02em; text-transform: uppercase; }
+  td.n, th.n { text-align: right; padding-right: .9rem; white-space: nowrap; }
+  code, .hash { font: 13.5px var(--mono); }
+  .hash { word-break: break-all; }
+  .wrap { overflow-x: auto; }
+  .ok { color: var(--ok); }
+  .bad { color: var(--bad); }
+  .share { display: inline-block; border: 1px solid var(--line); border-radius: 999px; padding: 0 .55rem; margin: .1rem .25rem .1rem 0; white-space: nowrap; font-size: .88rem; }
+  .share b { color: var(--ember); font-weight: 600; }
+  pre { border: 1px solid var(--line); border-left: 3px solid var(--ember); border-radius: 6px; padding: .9rem 1rem; overflow-x: auto; font: 14px/1.5 var(--mono); margin: 0 0 .75rem; }
+  a { color: var(--fg); text-decoration-color: var(--ember); text-underline-offset: 3px; }
+  a:hover { color: var(--ember); }
+  .foot { border-top: 1px solid var(--line); margin-top: 2.5rem; padding-top: 1rem; color: var(--dim); font-size: .9rem; }
+  @media (max-width: 700px) {
+    table.stack, table.stack tbody, table.stack tr, table.stack td { display: block; width: 100%; }
+    table.stack thead { display: none; }
+    table.stack tr { border-bottom: 1px solid var(--line); padding: .6rem 0; }
+    table.stack td { border: 0; padding: .15rem 0; text-align: left; }
+    table.stack td::before { content: attr(data-k); display: block; color: var(--dim); font-size: .72rem; letter-spacing: .02em; text-transform: uppercase; }
+    table.stack td.n { text-align: left; white-space: normal; }
+  }
+  @media (max-width: 600px) { body { font-size: 16px; } h1 { font-size: 1.6rem; } table { font-size: .86rem; } code, .hash { font-size: 12.5px; } }
+</style>
+<main>
+  <h1>The registry on the research chain</h1>
+  <p class="lede">The research chain holds its own registry: which workloads it runs, which of them earn a share of each block, and which lanes its breadth rule balances. Every change is a transaction from the registry key to the registry address, in force from the height its document names. This page reads the chain and nothing else.</p>
+  <p class="label">The research chain: research tokens with no monetary value. Times are UTC.</p>
+
+  <h2>Now</h2>
+  <div class="now" id="now"></div>
+  <p class="state" id="state">Reading the chain.</p>
+
+  <h2>Landings</h2>
+  <p>Each row is one registry transaction as the chain holds it: the block it landed in, its hash, and what its document added to the document before it. The chain appends; a landing never rewinds an earlier entry.</p>
+  <div class="wrap"><table id="landings" class="stack"><thead><tr><th class="n">Block</th><th>Time</th><th>Transaction</th><th>What it added</th></tr></thead><tbody></tbody></table></div>
+
+  <h2>Pay shares by height</h2>
+  <p>From each height, the share of every block paid to each workload (a workload at zero earns nothing). The check reads the registry back from the chain at the height and at the height before: the chain serves this row from its height and the row above it up to then.</p>
+  <div class="wrap"><table id="pay" class="stack"><thead><tr><th class="n">From block</th><th>Shares in force</th><th>Checked</th></tr></thead><tbody></tbody></table></div>
+
+  <h2>Breadth lanes by height</h2>
+  <p>From each height, the workloads the breadth rule balances against each other; the same check as above.</p>
+  <div class="wrap"><table id="lanes" class="stack"><thead><tr><th class="n">From block</th><th>Lanes in force</th><th>Checked</th></tr></thead><tbody></tbody></table></div>
+
+  <h2>Workloads</h2>
+  <p>Every workload the registry has held, by its index. A retired workload names the one that replaced it.</p>
+  <div class="wrap"><table id="coords" class="stack"><thead><tr><th class="n">Index</th><th>Name</th><th>Algorithm</th><th class="n">Active from</th><th class="n">Retired from</th><th>Successor</th><th class="n">Pay share</th><th>Parameters digest</th></tr></thead><tbody></tbody></table></div>
+
+  <h2>Read it yourself</h2>
+  <p>Against any node of the research chain (replace the host; the registry answers at a height or at <code>latest</code>, and each landing's document is the transaction's input after the four-byte selector):</p>
+  <pre>curl -s http://HOST:PORT -H 'content-type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"igneum_vectorRegistry","params":["latest"]}'
+curl -s http://HOST:PORT -H 'content-type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"eth_getTransactionByHash","params":["TX_HASH"]}'</pre>
+  <p>The file this page renders is <a href="registry.json">registry.json</a>, rewritten from the chain every thirty seconds by <a href="registry-feed.py">the reader</a> whose source sits beside this page.</p>
+  <p class="foot" id="foot">Igneum Labs LLC. Research tokens have no monetary value.</p>
+</main>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var utc = function (ts) { var d = new Date(ts * 1000); return d.toISOString().replace('T', ' ').slice(0, 19) + 'Z'; };
+  var short = function (h) { return h.slice(0, 10) + '…' + h.slice(-6); };
+  var data = null;
+
+  function shares(list, names, zeroWord) {
+    var out = [];
+    for (var i = 0; i < list.length; i++) if (list[i]) out.push('<span class="share">' + esc(names[i] || ('#' + i)) + ' <b>' + list[i] + '</b></span>');
+    return out.length ? out.join('') : '<span class="share">' + zeroWord + '</span>';
+  }
+  function laneNames(list, names) {
+    return list.map(function (i) { return '<span class="share">' + esc(names[i] || ('#' + i)) + '</span>'; }).join('');
+  }
+  function checked(r) {
+    if (r.checked === true) return '<span class="ok">the chain serves it from this block</span>';
+    if (r.checked === false) return '<span class="bad">differs from what the chain serves</span>';
+    if (r.height === 0 || r.origin.indexOf('top-level') >= 0) return '<span class="state">the document’s opening value</span>';
+    return '<span class="state">not checked</span>';
+  }
+  function added(l, names) {
+    if (!l.document) return '<span class="bad">' + esc(l.documentError || 'no document') + '</span>';
+    if (!l.added) return 'The whole document: ' + l.document.coordinates + ' workloads, the pay list and the lanes with their change heights, the registry key. The identity landing: the document the nodes had read from a file, held by the chain from this block.';
+    var a = l.added, parts = [];
+    a.payChanges.forEach(function (c) { parts.push('Pay from block ' + c.height + ': ' + shares(c.payShares, names, 'nothing paid')); });
+    a.balancedLanesChanges.forEach(function (c) { parts.push('Lanes from block ' + c.height + ': ' + laneNames(c.lanes, names)); });
+    a.coordinates.forEach(function (c) { parts.push('Workload ' + esc(c.name) + ': ' + esc(c.change)); });
+    return parts.length ? parts.join('<br>') : 'Nothing beyond the document before it (the bytes differ, the entries do not).';
+  }
+  function render(d) {
+    var names = d.names || {};
+    var age = Math.max(0, Math.round(Date.now() / 1000 - d.headTimestamp));
+    var stale = (Date.now() / 1000 - Date.parse(d.generated) / 1000) > 120;
+    var tiles = [
+      ['Chain id', d.chainId],
+      ['Head', d.head + ' <small>' + utc(d.headTimestamp) + '</small>'],
+      ['Head age', age + ' s'],
+      ['Registry held', d.registry.chainHeld ? 'on the chain' : 'in a file'],
+      ['Notice', d.registry.noticeBlocks + ' blocks <small>window ' + d.registry.window + '</small>'],
+      ['Landings', d.landings.length],
+      ['Registry key', '<span class="hash">' + esc(d.registry.registryKey) + '</span>'],
+      ['Registry address', '<span class="hash">' + esc(d.registry.registryAddress) + '</span> <small>selector ' + esc(d.registry.selector) + '</small>'],
+      ['Pay in force', shares(d.registry.payShares, names, 'nothing paid')],
+      ['Lanes in force', laneNames(d.registry.balancedLanes, names)]
+    ];
+    $('now').innerHTML = tiles.map(function (t) { return '<div class="tile' + (stale && (t[0] === 'Head' || t[0] === 'Head age') ? ' stale' : '') + '"><div class="k">' + t[0] + '</div><div class="v">' + t[1] + '</div></div>'; }).join('');
+    $('state').className = 'state' + (stale ? ' bad' : '');
+    $('state').textContent = (stale ? 'Stale: the reader last wrote at ' : 'Read from the chain at ') + d.generated.replace('T', ' ') + ' in ' + d.readSeconds + ' s; the page re-reads every twenty seconds.';
+
+    $('landings').tBodies[0].innerHTML = d.landings.map(function (l) {
+      var st = l.status === 1 ? '<span class="ok">included, status 1</span>' : '<span class="bad">status ' + l.status + '</span>';
+      var bh = l.blockHashMatches ? '' : ' <span class="bad">(the registry’s block hash differs from the chain’s)</span>';
+      return '<tr><td class="n" data-k="Block">' + l.height + '</td><td data-k="Time">' + utc(l.timestamp) + '</td>' +
+        '<td data-k="Transaction"><span class="hash" title="' + esc(l.txHash) + '">' + esc(l.txHash) + '</span><br><span class="state">block <span class="hash">' + esc(short(l.blockHash)) + '</span>' + bh + '; from the registry key, nonce ' + l.nonce + ', ' + l.documentBytes + ' bytes, gas ' + l.gasUsed + '; ' + st + '</span></td>' +
+        '<td data-k="What it added">' + added(l, names) + '</td></tr>';
+    }).join('');
+
+    $('pay').tBodies[0].innerHTML = d.payByHeight.map(function (r) {
+      return '<tr><td class="n" data-k="From block">' + r.height + '</td><td data-k="Shares in force">' + shares(r.payShares, names, 'nothing paid') + '</td><td data-k="Checked">' + checked(r) + '</td></tr>';
+    }).join('');
+    $('lanes').tBodies[0].innerHTML = d.lanesByHeight.map(function (r) {
+      return '<tr><td class="n" data-k="From block">' + r.height + '</td><td data-k="Lanes in force">' + laneNames(r.lanes, names) + '</td><td data-k="Checked">' + checked(r) + '</td></tr>';
+    }).join('');
+    $('coords').tBodies[0].innerHTML = d.coordinates.map(function (c) {
+      return '<tr' + (c.active ? '' : ' style="color:var(--dim)"') + '><td class="n" data-k="Index">' + c.index + '</td><td data-k="Name">' + esc(c.name) + '</td><td data-k="Algorithm">' + esc(c.algorithm) + '</td><td class="n" data-k="Active from">' + c.activation + '</td><td class="n" data-k="Retired from">' + (c.retiredFrom || '') + '</td><td data-k="Successor">' + (c.successor === null || c.successor === undefined ? '' : esc(names[c.successor] || c.successor)) + '</td><td class="n" data-k="Pay share">' + c.weight + '</td><td data-k="Parameters digest"><span class="hash">' + esc(short(c.paramsDigest)) + '</span></td></tr>';
+    }).join('');
+    $('foot').textContent = 'Read from one node of the research chain by ' + d.source.method + '; ' + d.source.rule + '. Igneum Labs LLC. Research tokens have no monetary value.';
+  }
+  function tick() {
+    fetch('registry.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(function (d) { data = d; render(d); }).catch(function (e) {
+      $('state').className = 'state bad';
+      $('state').textContent = 'The reader’s file did not answer (' + e.message + '); the figures shown are the last read.';
+    });
+  }
+  tick(); setInterval(tick, 20000);
+})();
+</script>
+</html>

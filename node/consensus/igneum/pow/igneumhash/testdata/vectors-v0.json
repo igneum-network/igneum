@@ -1,0 +1,72 @@
+{
+  "chainId": 7310,
+  "params": {
+    "Version": 1,
+    "DatasetBytes": 1073741824,
+    "ScratchBytes": 0,
+    "Rounds": 64,
+    "Lanes": 8,
+    "EpochLength": 4096,
+    "ItemChain": 1,
+    "CacheBytes": 33554432,
+    "Parents": 256
+  },
+  "vectors": [
+    {
+      "name": "genesis-zero",
+      "headerHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "height": 0,
+      "nonce": 0,
+      "mixDigest": "0x120b42c73e467aa488e3e835085918079aae809bf5b46cf7b56d1fb5dfe3fa0c",
+      "result": "0xeb1dd0213be077198049655aeccd69b04b7d6aba1b49209451cc0471d7135eaa"
+    },
+    {
+      "name": "genesis-nonce-max",
+      "headerHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "height": 0,
+      "nonce": 18446744073709551615,
+      "mixDigest": "0xa59b034fcada72fd0754067f2faa6e8e0d55bc661865b39b178bc10a94c889ef",
+      "result": "0x76b680b73c1c821c61e482a72137363ce838bedf914051726bc7a618666f5e79"
+    },
+    {
+      "name": "epoch0-last",
+      "headerHash": "0x0000000000000000000000000000000000000000000000000000000000000001",
+      "height": 4095,
+      "nonce": 1,
+      "mixDigest": "0x52c0ac1b14cebebea5fa19b7e7e2b8f7d2b8b885cfe855e51af72736ae4f54aa",
+      "result": "0xa551b6392d10a2ca7cc0b308c234b21d2c102b10e7cafce724ecd4bfba91cc95"
+    },
+    {
+      "name": "epoch1-first",
+      "headerHash": "0x0000000000000000000000000000000000000000000000000000000000000001",
+      "height": 4096,
+      "nonce": 1,
+      "mixDigest": "0x8d6b524c07783f32ccd9b8b9c7ca35465d1656ec356af2ee6b06e830c753ea5e",
+      "result": "0x1cb73f35f63c7b1af3f078484861bc0b74d71bc5292395d4c702e2043313f677"
+    },
+    {
+      "name": "lo32-rollover-before",
+      "headerHash": "0x0000000000000000000000000000000000000000000000000000000000000002",
+      "height": 7,
+      "nonce": 8589934591,
+      "mixDigest": "0x404104b48bd82b7e3394889e6c2668fe24e615cb32683b29aba05eae762fd86f",
+      "result": "0x753cb7d0e25830e89e6372fdabfcee21dcd4c25be72e29ac4e0a1aea63930218"
+    },
+    {
+      "name": "lo32-rollover-after",
+      "headerHash": "0x0000000000000000000000000000000000000000000000000000000000000002",
+      "height": 7,
+      "nonce": 8589934592,
+      "mixDigest": "0x68e2964e9f6669955e154b472db2757a8ec0ff4f1ba7707f914c40d29a8bfddb",
+      "result": "0xe9c48b4aec9387f13752961d9d3f5eaa466464b7e98276e12e4a5ada2b7afbdf"
+    },
+    {
+      "name": "all-ones-header",
+      "headerHash": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "height": 123456,
+      "nonce": 16045690984503111693,
+      "mixDigest": "0x1f30f3649892b2f722c1bcb337577d9422774e3e759eea10d977e4d0494daddd",
+      "result": "0x7fab8fd6601646584d2da68bcb1a909b372a643dce9f79d3735ef4575212b896"
+    }
+  ]
+}

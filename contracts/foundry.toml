@@ -1,0 +1,46 @@
+# Igneum contracts (product engineer B). Built and tested on the assigned box only, never on the coordinating Mac.
+#   forge build && forge test -vvv
+# evm_version follows decision D-B01 (docs/product-b/DESIGN.md, section 7). the protocol team's proposed rule set "Igneum
+# EVM-1" (docs/protocol-a/DESIGN.md) is Shanghai plus EIP-1153, 5656 and 6780, with no blob opcodes. OpenZeppelin
+# v5.7.0 emits MCOPY (EIP-5656) in Bytes, Arrays and SignatureChecker, so the target is cancun, which EVM-1 runs
+# except for the two blob builtins (blobhash, blobbasefee) that do not exist on Igneum: tools/no-blob-builtins.sh is
+# the gate that keeps them out of src/. Measured on builder seven, 9 October 2026: shanghai fails to compile OZ 5.7.0.
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+test = "test"
+solc_version = "0.8.28"
+evm_version = "cancun"
+optimizer = true
+optimizer_runs = 10000
+via_ir = false
+bytecode_hash = "none"
+cbor_metadata = false
+deny = "warnings"
+fs_permissions = []
+
+# The linter runs on build (deny = "warnings" makes a lint warning fail the build). Four heuristic lints are excluded
+# here with their reasons; every other lint is answered inline with a disable-next-line and a reason.
+#   reentrancy-events: every function that moves funds is nonReentrant; the credit path emits after a failed call by design.
+#   block-timestamp: expiries, deadlines and periods are timestamp comparisons by definition; a producer's drift of a
+#     few seconds is within every window these contracts use.
+#   arbitrary-send-eth / arbitrary-send-erc20: paying a payee the payer named, pulling from a payer by the payer's own
+#     authorisation, and a multisig's execute are the products; each is guarded by state-first updates and nonReentrant.
+#   environment-read-across-mutation: tests warp time on purpose.
+[lint]
+lint_on_build = true
+exclude_lints = ["reentrancy-events", "block-timestamp", "arbitrary-send-eth", "arbitrary-send-erc20", "environment-read-across-mutation"]
+
+[fuzz]
+runs = 512
+
+[invariant]
+runs = 64
+depth = 32
+fail_on_revert = false
+
+[fmt]
+line_length = 120
+tab_width = 4
+bracket_spacing = false

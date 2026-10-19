@@ -1,0 +1,30 @@
+{
+ "DevFaucet": {
+  "address": "0x93482fa8a07bba7d3cc33058dd4f51a8a30a66b4",
+  "deploy_tx": "0x2a2f799b300e4b705a17a4ffb977f755281d71235eae70136da0c1c53cd1216a",
+  "block": 4822,
+  "args": "25000000000000000000 86400 5000000000000000000000"
+ },
+ "BondFaucet": {
+  "address": "0xf7649aaa2999402d69444470c5b56d136b1365cb",
+  "deploy_tx": "0x662ca3e16144a881a8f37d3492e1f2fb2d0fff8fca763fb9e1e4d94066f7c4bf",
+  "block": 4823,
+  "args": "87000000000000000000 1740000000000000000000"
+ },
+ "commit": "5364724b",
+ "deployer": "0x72d1f19224f092F6B2ea1c5dc09Fa1B7492A3B56",
+ "chain_id": 7320,
+ "relayer": "0x13c4b67a57bf69ce7dfac20c7b3fb5022d9d183c",
+ "relayer_balance_ign": "0.000000000000000000",
+ "chain": "the old public test network (chain 7320)",
+ "genesis": "0xd45af8c64c56cf102aee3deb763d327394eb49fbe5b2f55b1bbd461e457f1468",
+ "network_id": 7392,
+ "funding": {
+  "from": "0x8EfB30577370A071D77c63f3BaB7Da0A7af96bE0",
+  "deployer_50_ign": "0x2418ad74feb91949a8bdaa422254e8c697aa84994ab7573ae57ce23f49e61a6e",
+  "dev_faucet_175000_ign": "0x7d57b57b0401fc05c4bbca649f20f2a99ef5165e8935724d6bbb41152d4b136d",
+  "bond_faucet_2000_ign": "0x2b084e811ee4b47cea6c414f5331cdbc899d1f3804bff78242d406d64000e0b8",
+  "relayer_1000_ign": "0x2e136a4663f316b746c247a3ca85774f37f65a85eeeb757e3c825f9f5025b430",
+  "at_utc": "2026-10-14T01:01Z"
+ }
+}

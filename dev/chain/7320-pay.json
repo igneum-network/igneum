@@ -1,0 +1,26 @@
+{
+ "IgneumPay": {
+  "address": "0x750EaaBdf51eeEe522713c12aDe95fE4bAe6d59A",
+  "deploy_tx": "0x0ffdb58defdff47885a23a052a53bd3204106955895dd92d1f7c36a0a4edf2b0",
+  "block": 6034,
+  "verified": "Contract successfully verified (the first run's submission failed during the 6033 stall; verified 08:22Z)"
+ },
+ "IgneumRecurring": {
+  "address": "0xa02f16323063c792d128f24853e81eb47201e658",
+  "deploy_tx": "0xff16c36486c342db5f94a1b1fa1d0f8a5c76d3a4402c707761c092bd0f5dc20d",
+  "block": 6049,
+  "verified": "Contract successfully verified"
+ },
+ "IgneumEscrow": {
+  "address": "0x1c1e109cdb582000b8b2e168599d096c573cf69b",
+  "deploy_tx": "0x8c373d9beee719763978cc0654524439cd9feff1e6f92f1a68795f56cf0cc859",
+  "block": 6050,
+  "verified": "Contract successfully verified"
+ },
+ "commit": "22d2e815",
+ "deployer": "0x72d1f19224f092F6B2ea1c5dc09Fa1B7492A3B56",
+ "chain_id": 7320,
+ "chain": "the old public test network (chain 7320)",
+ "genesis": "0xd45af8c64c56cf102aee3deb763d327394eb49fbe5b2f55b1bbd461e457f1468",
+ "note": "the Pay set of record on chain 7320 at the Pay commit 22d2e815 (F-12's form): IgneumPay sent at nonce 2 during the chain's stall at 6033 and sealed in block 6034 beside the fund contract; the other two at nonces 4 and 5 after it; each verified on the explorer by the team's submission; the devnet9 set stays the exercise set"
+}

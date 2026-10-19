@@ -1,0 +1,457 @@
+{
+  "candidate": "pi",
+  "class": "pi",
+  "generator": "pi-vectors (igneum-pi 0.1.0, risc0 3.0.6)",
+  "system": 2,
+  "image_id": "006bf405038926b456e1c6056f4564358e0fb1cab70f5d5d7f3257cb8a83787c",
+  "pi_max_bytes": 294912,
+  "pi_claim_max_bytes": 2048,
+  "kind": "composite-1 (domain 0); groth16 (domain 1)",
+  "params": {
+    "blocks": 16,
+    "cache_mib": 32,
+    "chain_id": 7310,
+    "dataset_mib": 2048,
+    "epoch_blocks": 4096,
+    "features": 1056,
+    "item_bytes": 128,
+    "item_chain": 1,
+    "keyed_rounds": 2,
+    "lanes": 8,
+    "parents": 256,
+    "registers": 16,
+    "rounds": 64,
+    "scratch_kib": 0,
+    "version": 8
+  },
+  "source": "v8-d2048-s0-r64-k32-p256-w128-b16-x16-f1056-k2",
+  "rows": [
+    {
+      "name": "valid",
+      "vector": 0,
+      "domain": 0,
+      "k": 2,
+      "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307",
+      "nonce": "4312426439069536300",
+      "pk": "9e5f6270f0506ea38c26cf765b3775cf1a6c989eb3b1ac0583a09f6dfacd5e6e",
+      "m": [
+        "465d6e62f9957f7a37dd5cc5c706ddcc0d230462c9afb2cb0e6f69beee1e86d3",
+        "c471032c2986c0b9c471032c2986c0b939bc12082d893bfd39bc12082d893bfd"
+      ],
+      "shares": [
+        "3e610d436a2d34f83848e7088b72886c42e625184ef0c1e75e74d3d479534279",
+        "674d6eae11f29dade6270a422bf54e999a053519c3fc6d90c10eb0972e47597a"
+      ],
+      "receipt": "receipts/valid-0.bin",
+      "receipt_bytes": 221541,
+      "receipt_sha256": "4609ae7b96c5a1cc903d1678f20ebe225aae927f077bf3df11c558e2eb82248c",
+      "expect": "ok",
+      "reason": "the sealer's proof under the set's test secret"
+    },
+    {
+      "name": "wrong_sk",
+      "vector": 0,
+      "domain": 0,
+      "k": 2,
+      "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307",
+      "nonce": "4312426439069536300",
+      "pk": "9e5f6270f0506ea38c26cf765b3775cf1a6c989eb3b1ac0583a09f6dfacd5e6e",
+      "m": [
+        "465d6e62f9957f7a37dd5cc5c706ddcc0d230462c9afb2cb0e6f69beee1e86d3",
+        "c471032c2986c0b9c471032c2986c0b939bc12082d893bfd39bc12082d893bfd"
+      ],
+      "shares": [
+        "3e610d436a2d34f83848e7088b72886c42e625184ef0c1e75e74d3d479534279",
+        "674d6eae11f29dade6270a422bf54e999a053519c3fc6d90c10eb0972e47597a"
+      ],
+      "receipt": "receipts/wrong_sk-0.bin",
+      "receipt_bytes": 221541,
+      "receipt_sha256": "dde532c00c30628c198c7aa51be1a2ccd18291b7484dec6dcc6490571894e98e",
+      "expect": "fail",
+      "reason": "proof under another secret: its pk and shares are not the block's"
+    },
+    {
+      "name": "wrong_share",
+      "vector": 0,
+      "domain": 0,
+      "k": 2,
+      "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307",
+      "nonce": "4312426439069536300",
+      "pk": "9e5f6270f0506ea38c26cf765b3775cf1a6c989eb3b1ac0583a09f6dfacd5e6e",
+      "m": [
+        "465d6e62f9957f7a37dd5cc5c706ddcc0d230462c9afb2cb0e6f69beee1e86d3",
+        "c471032c2986c0b9c471032c2986c0b939bc12082d893bfd39bc12082d893bfd"
+      ],
+      "shares": [
+        "3f610d436a2d34f83848e7088b72886c42e625184ef0c1e75e74d3d479534279",
+        "674d6eae11f29dade6270a422bf54e999a053519c3fc6d90c10eb0972e47597a"
+      ],
+      "receipt": "receipts/valid-0.bin",
+      "receipt_bytes": 221541,
+      "receipt_sha256": "4609ae7b96c5a1cc903d1678f20ebe225aae927f077bf3df11c558e2eb82248c",
+      "expect": "fail",
+      "reason": "a carried share differs from the proof's"
+    },
+    {
+      "name": "wrong_pk",
+      "vector": 0,
+      "domain": 0,
+      "k": 2,
+      "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307",
+      "nonce": "4312426439069536300",
+      "pk": "9f5f6270f0506ea38c26cf765b3775cf1a6c989eb3b1ac0583a09f6dfacd5e6e",
+      "m": [
+        "465d6e62f9957f7a37dd5cc5c706ddcc0d230462c9afb2cb0e6f69beee1e86d3",
+        "c471032c2986c0b9c471032c2986c0b939bc12082d893bfd39bc12082d893bfd"
+      ],
+      "shares": [
+        "3e610d436a2d34f83848e7088b72886c42e625184ef0c1e75e74d3d479534279",
+        "674d6eae11f29dade6270a422bf54e999a053519c3fc6d90c10eb0972e47597a"
+      ],
+      "receipt": "receipts/valid-0.bin",
+      "receipt_bytes": 221541,
+      "receipt_sha256": "4609ae7b96c5a1cc903d1678f20ebe225aae927f077bf3df11c558e2eb82248c",
+      "expect": "fail",
+      "reason": "the header's BondKey is not the proof's pk"
+    },
+    {
+      "name": "bad_receipt",
+      "vector": 0,
+      "domain": 0,
+      "k": 2,
+      "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307",
+      "nonce": "4312426439069536300",
+      "pk": "9e5f6270f0506ea38c26cf765b3775cf1a6c989eb3b1ac0583a09f6dfacd5e6e",
+      "m": [
+        "465d6e62f9957f7a37dd5cc5c706ddcc0d230462c9afb2cb0e6f69beee1e86d3",
+        "c471032c2986c0b9c471032c2986c0b939bc12082d893bfd39bc12082d893bfd"
+      ],
+      "shares": [
+        "3e610d436a2d34f83848e7088b72886c42e625184ef0c1e75e74d3d479534279",
+        "674d6eae11f29dade6270a422bf54e999a053519c3fc6d90c10eb0972e47597a"
+      ],
+      "receipt": "receipts/bad_receipt-0.bin",
+      "receipt_bytes": 221541,
+      "receipt_sha256": "7a52aaafaaefe85a4d16ab61e83ddc284f816345cc3a8718e8b0286709747d26",
+      "expect": "fail",
+      "reason": "one byte of the receipt flipped"
+    },
+    {
+      "name": "oversize",
+      "vector": 0,
+      "domain": 0,
+      "k": 2,
+      "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307",
+      "nonce": "4312426439069536300",
+      "pk": "9e5f6270f0506ea38c26cf765b3775cf1a6c989eb3b1ac0583a09f6dfacd5e6e",
+      "m": [
+        "465d6e62f9957f7a37dd5cc5c706ddcc0d230462c9afb2cb0e6f69beee1e86d3",
+        "c471032c2986c0b9c471032c2986c0b939bc12082d893bfd39bc12082d893bfd"
+      ],
+      "shares": [
+        "3e610d436a2d34f83848e7088b72886c42e625184ef0c1e75e74d3d479534279",
+        "674d6eae11f29dade6270a422bf54e999a053519c3fc6d90c10eb0972e47597a"
+      ],
+      "receipt": "",
+      "receipt_bytes": 0,
+      "receipt_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expect": "fail",
+      "reason": "a pi of PI_MAX_BYTES + 1 bytes, refused before parsing (synthesised at check)"
+    },
+    {
+      "name": "valid",
+      "vector": 1,
+      "domain": 0,
+      "k": 2,
+      "header": "d3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe9f",
+      "nonce": "16694384672230919977",
+      "pk": "e1e2e0728f20fbf9a3b6b5733ddb970d13a1afc085c0d59913b6388ffdc0055c",
+      "m": [
+        "35d8a413d8fd17d885acc61cc158c7860edd9463e38a20700c8f3af67c32a322",
+        "7fb45c4c9d7201ab7fb45c4c9d7201ab94094aa6e612653c94094aa6e612653c"
+      ],
+      "shares": [
+        "6ff5f808ee735a6d65ff7b0f80f8e19a48809e980ab98b4e79e23e2150c7d4cf",
+        "7b392930afdcdf5db0d9e5e842a48dd4d09b3170758cc0728d3e2da95313621e"
+      ],
+      "receipt": "receipts/valid-1.bin",
+      "receipt_bytes": 221541,
+      "receipt_sha256": "12a44f58b41875e7d2f003cef81a5619ae00d8c2a8835435a91ebaae43663910",
+      "expect": "ok",
+      "reason": "the sealer's proof under the set's test secret"
+    },
+    {
+      "name": "wrong_sk",
+      "vector": 1,
+      "domain": 0,
+      "k": 2,
+      "header": "d3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe9f",
+      "nonce": "16694384672230919977",
+      "pk": "e1e2e0728f20fbf9a3b6b5733ddb970d13a1afc085c0d59913b6388ffdc0055c",
+      "m": [
+        "35d8a413d8fd17d885acc61cc158c7860edd9463e38a20700c8f3af67c32a322",
+        "7fb45c4c9d7201ab7fb45c4c9d7201ab94094aa6e612653c94094aa6e612653c"
+      ],
+      "shares": [
+        "6ff5f808ee735a6d65ff7b0f80f8e19a48809e980ab98b4e79e23e2150c7d4cf",
+        "7b392930afdcdf5db0d9e5e842a48dd4d09b3170758cc0728d3e2da95313621e"
+      ],
+      "receipt": "receipts/wrong_sk-1.bin",
+      "receipt_bytes": 221541,
+      "receipt_sha256": "02bd96baa7f3a54bdc4a66463f16249fd8663a47114a0a0f219feafdc603593f",
+      "expect": "fail",
+      "reason": "proof under another secret: its pk and shares are not the block's"
+    },
+    {
+      "name": "wrong_share",
+      "vector": 1,
+      "domain": 0,
+      "k": 2,
+      "header": "d3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe9f",
+      "nonce": "16694384672230919977",
+      "pk": "e1e2e0728f20fbf9a3b6b5733ddb970d13a1afc085c0d59913b6388ffdc0055c",
+      "m": [
+        "35d8a413d8fd17d885acc61cc158c7860edd9463e38a20700c8f3af67c32a322",
+        "7fb45c4c9d7201ab7fb45c4c9d7201ab94094aa6e612653c94094aa6e612653c"
+      ],
+      "shares": [
+        "6ef5f808ee735a6d65ff7b0f80f8e19a48809e980ab98b4e79e23e2150c7d4cf",
+        "7b392930afdcdf5db0d9e5e842a48dd4d09b3170758cc0728d3e2da95313621e"
+      ],
+      "receipt": "receipts/valid-1.bin",
+      "receipt_bytes": 221541,
+      "receipt_sha256": "12a44f58b41875e7d2f003cef81a5619ae00d8c2a8835435a91ebaae43663910",
+      "expect": "fail",
+      "reason": "a carried share differs from the proof's"
+    },
+    {
+      "name": "wrong_pk",
+      "vector": 1,
+      "domain": 0,
+      "k": 2,
+      "header": "d3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe9f",
+      "nonce": "16694384672230919977",
+      "pk": "e0e2e0728f20fbf9a3b6b5733ddb970d13a1afc085c0d59913b6388ffdc0055c",
+      "m": [
+        "35d8a413d8fd17d885acc61cc158c7860edd9463e38a20700c8f3af67c32a322",
+        "7fb45c4c9d7201ab7fb45c4c9d7201ab94094aa6e612653c94094aa6e612653c"
+      ],
+      "shares": [
+        "6ff5f808ee735a6d65ff7b0f80f8e19a48809e980ab98b4e79e23e2150c7d4cf",
+        "7b392930afdcdf5db0d9e5e842a48dd4d09b3170758cc0728d3e2da95313621e"
+      ],
+      "receipt": "receipts/valid-1.bin",
+      "receipt_bytes": 221541,
+      "receipt_sha256": "12a44f58b41875e7d2f003cef81a5619ae00d8c2a8835435a91ebaae43663910",
+      "expect": "fail",
+      "reason": "the header's BondKey is not the proof's pk"
+    },
+    {
+      "name": "bad_receipt",
+      "vector": 1,
+      "domain": 0,
+      "k": 2,
+      "header": "d3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe9f",
+      "nonce": "16694384672230919977",
+      "pk": "e1e2e0728f20fbf9a3b6b5733ddb970d13a1afc085c0d59913b6388ffdc0055c",
+      "m": [
+        "35d8a413d8fd17d885acc61cc158c7860edd9463e38a20700c8f3af67c32a322",
+        "7fb45c4c9d7201ab7fb45c4c9d7201ab94094aa6e612653c94094aa6e612653c"
+      ],
+      "shares": [
+        "6ff5f808ee735a6d65ff7b0f80f8e19a48809e980ab98b4e79e23e2150c7d4cf",
+        "7b392930afdcdf5db0d9e5e842a48dd4d09b3170758cc0728d3e2da95313621e"
+      ],
+      "receipt": "receipts/bad_receipt-1.bin",
+      "receipt_bytes": 221541,
+      "receipt_sha256": "66b97c4e9b63c76f34a70438418118962e8b1166eb9a5c9b89de5572663cc9ca",
+      "expect": "fail",
+      "reason": "one byte of the receipt flipped"
+    },
+    {
+      "name": "oversize",
+      "vector": 1,
+      "domain": 0,
+      "k": 2,
+      "header": "d3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe9f",
+      "nonce": "16694384672230919977",
+      "pk": "e1e2e0728f20fbf9a3b6b5733ddb970d13a1afc085c0d59913b6388ffdc0055c",
+      "m": [
+        "35d8a413d8fd17d885acc61cc158c7860edd9463e38a20700c8f3af67c32a322",
+        "7fb45c4c9d7201ab7fb45c4c9d7201ab94094aa6e612653c94094aa6e612653c"
+      ],
+      "shares": [
+        "6ff5f808ee735a6d65ff7b0f80f8e19a48809e980ab98b4e79e23e2150c7d4cf",
+        "7b392930afdcdf5db0d9e5e842a48dd4d09b3170758cc0728d3e2da95313621e"
+      ],
+      "receipt": "",
+      "receipt_bytes": 0,
+      "receipt_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expect": "fail",
+      "reason": "a pi of PI_MAX_BYTES + 1 bytes, refused before parsing (synthesised at check)"
+    },
+    {
+      "name": "replayed",
+      "vector": 0,
+      "domain": 0,
+      "k": 2,
+      "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307",
+      "nonce": "4312426439069536300",
+      "pk": "9e5f6270f0506ea38c26cf765b3775cf1a6c989eb3b1ac0583a09f6dfacd5e6e",
+      "m": [
+        "465d6e62f9957f7a37dd5cc5c706ddcc0d230462c9afb2cb0e6f69beee1e86d3",
+        "c471032c2986c0b9c471032c2986c0b939bc12082d893bfd39bc12082d893bfd"
+      ],
+      "shares": [
+        "3e610d436a2d34f83848e7088b72886c42e625184ef0c1e75e74d3d479534279",
+        "674d6eae11f29dade6270a422bf54e999a053519c3fc6d90c10eb0972e47597a"
+      ],
+      "receipt": "receipts/valid-1.bin",
+      "receipt_bytes": 221541,
+      "receipt_sha256": "12a44f58b41875e7d2f003cef81a5619ae00d8c2a8835435a91ebaae43663910",
+      "expect": "fail",
+      "reason": "another block's proof: m_0 is that block's seed"
+    },
+    {
+      "name": "replayed",
+      "vector": 1,
+      "domain": 0,
+      "k": 2,
+      "header": "d3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe9f",
+      "nonce": "16694384672230919977",
+      "pk": "e1e2e0728f20fbf9a3b6b5733ddb970d13a1afc085c0d59913b6388ffdc0055c",
+      "m": [
+        "35d8a413d8fd17d885acc61cc158c7860edd9463e38a20700c8f3af67c32a322",
+        "7fb45c4c9d7201ab7fb45c4c9d7201ab94094aa6e612653c94094aa6e612653c"
+      ],
+      "shares": [
+        "6ff5f808ee735a6d65ff7b0f80f8e19a48809e980ab98b4e79e23e2150c7d4cf",
+        "7b392930afdcdf5db0d9e5e842a48dd4d09b3170758cc0728d3e2da95313621e"
+      ],
+      "receipt": "receipts/valid-0.bin",
+      "receipt_bytes": 221541,
+      "receipt_sha256": "4609ae7b96c5a1cc903d1678f20ebe225aae927f077bf3df11c558e2eb82248c",
+      "expect": "fail",
+      "reason": "another block's proof: m_0 is that block's seed"
+    },
+    {
+      "name": "claim",
+      "vector": 0,
+      "domain": 1,
+      "k": 1,
+      "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307",
+      "nonce": "4312426439069536300",
+      "pk": "9e5f6270f0506ea38c26cf765b3775cf1a6c989eb3b1ac0583a09f6dfacd5e6e",
+      "m": [
+        "104df86e993da0d68e11b06dd230eaaa63bb19760aff408058357cb194a34613"
+      ],
+      "shares": [
+        "c63ed6cb0b60124d44bd2248b329f2b07a1fa44010404ec7dfff70902534b4af"
+      ],
+      "receipt": "receipts/claim-0.bin",
+      "receipt_bytes": 700,
+      "receipt_sha256": "2556d27266680191a71774b90487a7e28251020837490b54f667fe5bdb21333f",
+      "expect": "ok",
+      "reason": "the hostile claim or release: domain 1, K 1, the Groth16 wrap; m_0 = BLAKE3(tag(hostile) || u64be(7315) || pk || LE64(0) || to), to = 0x11 x 20"
+    },
+    {
+      "name": "claim_as_block",
+      "vector": 0,
+      "domain": 0,
+      "k": 1,
+      "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307",
+      "nonce": "4312426439069536300",
+      "pk": "9e5f6270f0506ea38c26cf765b3775cf1a6c989eb3b1ac0583a09f6dfacd5e6e",
+      "m": [
+        "104df86e993da0d68e11b06dd230eaaa63bb19760aff408058357cb194a34613"
+      ],
+      "shares": [
+        "c63ed6cb0b60124d44bd2248b329f2b07a1fa44010404ec7dfff70902534b4af"
+      ],
+      "receipt": "receipts/claim-0.bin",
+      "receipt_bytes": 700,
+      "receipt_sha256": "2556d27266680191a71774b90487a7e28251020837490b54f667fe5bdb21333f",
+      "expect": "fail",
+      "reason": "the claim's proof checked under domain 0 (the kind and the journal both refuse it)"
+    },
+    {
+      "name": "claim_wrong_to",
+      "vector": 0,
+      "domain": 1,
+      "k": 1,
+      "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307",
+      "nonce": "4312426439069536300",
+      "pk": "9e5f6270f0506ea38c26cf765b3775cf1a6c989eb3b1ac0583a09f6dfacd5e6e",
+      "m": [
+        "c7112065aa7405367783e90f44be25d6f295375a009c618b3cf4b08fe1c14277"
+      ],
+      "shares": [
+        "c63ed6cb0b60124d44bd2248b329f2b07a1fa44010404ec7dfff70902534b4af"
+      ],
+      "receipt": "receipts/claim-0.bin",
+      "receipt_bytes": 700,
+      "receipt_sha256": "2556d27266680191a71774b90487a7e28251020837490b54f667fe5bdb21333f",
+      "expect": "fail",
+      "reason": "the claim's proof presented for another claimant address (the journal's m_0 differs)"
+    },
+    {
+      "name": "claim_composite",
+      "vector": 0,
+      "domain": 1,
+      "k": 1,
+      "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307",
+      "nonce": "4312426439069536300",
+      "pk": "9e5f6270f0506ea38c26cf765b3775cf1a6c989eb3b1ac0583a09f6dfacd5e6e",
+      "m": [
+        "104df86e993da0d68e11b06dd230eaaa63bb19760aff408058357cb194a34613"
+      ],
+      "shares": [
+        "c63ed6cb0b60124d44bd2248b329f2b07a1fa44010404ec7dfff70902534b4af"
+      ],
+      "receipt": "receipts/claim_composite-0.bin",
+      "receipt_bytes": 221413,
+      "receipt_sha256": "87d568656f354683d8c1326aa98a99d436b289599a8e8f09dac9efe2f39f6ac6",
+      "expect": "fail",
+      "reason": "a claim carrying the block's composite receipt: over the claim's 2 KiB bound and the wrong kind"
+    }
+  ],
+  "bench": [
+    {
+      "host": "builder-b",
+      "threads": 96,
+      "kind": "composite-1 (domain 0)",
+      "k": 2,
+      "prove_ms": [
+        1990.863072,
+        2005.9020319999997
+      ],
+      "verify_ms": [
+        18.002789,
+        24.917374
+      ],
+      "receipt_bytes": [
+        221541,
+        221541
+      ],
+      "user_cycles": 23243,
+      "total_cycles": 65536
+    },
+    {
+      "host": "builder-b",
+      "threads": 96,
+      "kind": "groth16 (domain 1)",
+      "k": 1,
+      "prove_ms": [
+        23093.171483
+      ],
+      "verify_ms": [
+        3.8210610000000003
+      ],
+      "receipt_bytes": [
+        700
+      ],
+      "user_cycles": 16878,
+      "total_cycles": 65536
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+ "_comment": "BeamHash III control pin (founder's decision-6, 10 Oct 2026): the published reference implementation from Beam's own repository, pinned by release tag and blob sha before any code is used. It is a measured architectural control (nonce-dependent intermediate memory, compact 104-byte solutions), never a candidate and never relabelled.",
+ "upstream": {
+  "repository": "https://github.com/BeamMW/beam",
+  "release_tag": "beam-7.5.14493",
+  "release_commit": "9c4366aae08e7fbde7bc8d65f828a0deace68bfc",
+  "licence": "Apache License, Version 2.0 (upstream LICENSE copied beside the sources)",
+  "fetched_utc": "2026-10-10T11:22:47Z",
+  "fetched_by": "raw.githubusercontent.com at the tag; blob shas from the GitHub contents API at the tag"
+ },
+ "algorithm": {
+  "name": "BeamHash III",
+  "scheme_class": "BeamHash_III (3rdparty/crypto/beamHashIII.h), selected past fork 2 by pow/beamHash.cpp getCurrentPoW",
+  "work_bits": 150,
+  "k": 5,
+  "indices": 32,
+  "bits_per_index": 26,
+  "solution_bytes": 104,
+  "nonce_bytes": 8,
+  "base_state": "blake2b personalised by InitialiseState, then H(input || nonce) where input is the block's hash-for-PoW (32 bytes)",
+  "primitives": "blake2b (3rdparty/crypto/blake), SipHash-2-4 inside beamHashIII_impl.cpp"
+ },
+ "upstream_blob_sha1": {
+  "3rdparty/crypto/beamHashIII.h": "5303c0fe6ee8e8fd12725aa58af6b0f9e98aac6e",
+  "3rdparty/crypto/beamHashIII_impl.cpp": "63ea2d0f2144b69a13ea466fe1bb02ffe7ada8fd",
+  "3rdparty/crypto/equihashR.h": "657dce0eb65079c44f0de31420d189f5d1bf5bf5",
+  "3rdparty/crypto/equihashR_impl.cpp": "d839965f5b1ee22674cc5f3909d925779d4b613a",
+  "3rdparty/crypto/powScheme.h": "8051ddc8549e1308cb2ef42cd0395ab7c5f36a6f",
+  "3rdparty/crypto/common.h": "55fb54d26b0f817cc282619e5893288e08bd0601",
+  "pow/beamHash.cpp": "3e237e726a314ef38379fee2012d9d5c91c9ef35",
+  "pow/stratum.h": "3ec57aee64bee1e4eb2c926988df9e62d33f8898",
+  "pow/stratum.cpp": "643974313ef974da37aefe0671521d2eb0aabda3",
+  "pow/external_pow.h": "83c7d8e21157e7855ced4678fa653341cb6a1d28",
+  "pow/unittests/equihash_test.cpp": "b4534c68ea6587c13d66981933fa52b2a841a5a0",
+  "core/block_crypt.cpp": "292e12c526fbfc5c7ffe95775edc4d09a724ac01",
+  "core/block_crypt.h": "3a9b6b8af068ea678717420b6415d1683b5ad805",
+  "3rdparty/crypto/blake/CMakeLists.txt": "a4a2120c51f8b9657bd662ed175874e7e70e867a",
+  "3rdparty/crypto/blake/ref/blake2-impl.h": "c1df82e0c95dc8e57ee98342f5328ca57407816d",
+  "3rdparty/crypto/blake/ref/blake2.h": "0b3296a9cc32ca202932e9ef07f84052dcca772c",
+  "3rdparty/crypto/blake/ref/blake2b-ref.c": "cd38b1ba0083c4d8125b2f27e03498376946dc37",
+  "3rdparty/crypto/blake/sse/blake2-config.h": "ef6fd6b4c275d87ef19b9fb105241b8c08e64a87",
+  "3rdparty/crypto/blake/sse/blake2-impl.h": "16219dbcb7b48f5d8ff067d460dc3f7ac7280c0a",
+  "3rdparty/crypto/blake/sse/blake2-round.h": "400ed203404c9fcd10873dbc2eb25014970939b3",
+  "3rdparty/crypto/blake/sse/blake2.h": "397fef422fa18929df1d33f443daa189f0e242cc",
+  "3rdparty/crypto/blake/sse/blake2b-load-sse2.h": "1ba153c87d7352bd7b2d60c55f06dc6b72cf2ab7",
+  "3rdparty/crypto/blake/sse/blake2b-load-sse41.h": "f6c1bc8393f167df6974a57143802b01e7b9e981",
+  "3rdparty/crypto/blake/sse/blake2b-round.h": "aeb3bb134da628464d49d0d4847015e3042633a7",
+  "3rdparty/crypto/blake/sse/blake2b.cpp": "1ff374b8fd3dab4c9b28a77cec560db835558493"
+ },
+ "known_answer": {
+  "status": "PENDING: the upstream tree carries no BeamHash III known-answer vector (pow/unittests/equihash_test.cpp is a solve-then-verify round trip); a mainnet block past fork 2 (hash-for-PoW, nonce, 104 solution bytes, difficulty) is the upstream known answer once an explorer answers; until then only the round trip of the pinned solver through the pinned verifier stands, and the row says so"
+ },
+ "gpu_solver": {
+  "status": "NONE OPEN: Beam's opencl-miner implements BeamHash I and II only; every BeamHash III GPU solver is a closed binary (lolMiner, gminer, miniZ). Nothing closed is used without main's word; the pinned CPU OptimisedSolve is the measured implementation until then"
+ },
+ "vendored": "no: fetched on the build box by pow/third_party/fetch.sh beamhash3-7.5.14493 into src/ and verified by blob sha1 against FETCH; only FETCH, LICENSE and this lock live in the tree"
+}

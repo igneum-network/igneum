@@ -1,0 +1,1 @@
+{"version": 18, "rounds": 256, "target_log2": 14, "dataset_mib": 1024, "cache_mib": 64, "parents": 256, "item_bytes": 256, "epoch_blocks": 4096, "period_blocks": 300, "chain_id": 7310, "program_anchor": "0000000000000000000000000000000000000000000000000000000000000000"}

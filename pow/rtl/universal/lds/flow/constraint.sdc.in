@@ -1,0 +1,7 @@
+current_design gather_table
+set clk_name clk
+set clk_period @PERIOD@
+set clk_port [get_ports clk]
+create_clock -name $clk_name -period $clk_period $clk_port
+set_input_delay -clock $clk_name [expr $clk_period * 0.2] [delete_from_list [all_inputs] $clk_port]
+set_output_delay -clock $clk_name [expr $clk_period * 0.2] [all_outputs]

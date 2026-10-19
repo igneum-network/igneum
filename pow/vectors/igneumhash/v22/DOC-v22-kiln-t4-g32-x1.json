@@ -1,0 +1,1 @@
+{"version": 22, "rounds": 4, "program_ops": 32, "batch_log2": 12, "target_log2": 5, "lanes": 8, "dataset_mib": 1024, "cache_mib": 64, "parents": 256, "item_bytes": 256, "epoch_blocks": 4096, "chain_id": 7310, "tiles": 1, "spread": 15}

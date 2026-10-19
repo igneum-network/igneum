@@ -1,0 +1,1175 @@
+/* Ember's dashboard (miner-ui-3). The site's tokens (site/index.html): obsidian, graphite, ember, molten, bone,
+   ash; Unbounded for the page title, the big button and the hero numbers; IBM Plex Sans for words; IBM Plex Mono for
+   labels, units and small numbers. Fonts ship in the binary. One type scale (--t-*), one spacing scale (--s-*), one
+   accent (ember). Dark by default, light under prefers-color-scheme or [data-theme=light]. Layout: a rail on the left
+   (four sections), a thin top bar, the status strip under it, the page in the middle, the log drawer at the bottom.
+   The window lays out from 900 x 600 (the hosts' minimum); under 720 px the rail becomes a bottom tab bar.
+   Nothing here is newer than 2022 CSS (the WebView2 host). */
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/IBMPlexMono-400.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/IBMPlexMono-500.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/IBMPlexSans-400.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/IBMPlexSans-500.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/IBMPlexSans-600.woff2) format('woff2')}
+@font-face{font-family:'Unbounded';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/Unbounded-500.woff2) format('woff2')}
+@font-face{font-family:'Unbounded';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/Unbounded-700.woff2) format('woff2')}
+@font-face{font-family:'Unbounded';font-style:normal;font-weight:900;font-display:swap;src:url(fonts/Unbounded-900.woff2) format('woff2')}
+
+/* scene-tokens:start (scene/tokens.css, written by tools/scene/sync.mjs; edit the source, never this block) */
+:root{--obsidian:#0C0C0E;--graphite:#16161A;--row:#111114;--line:#2A2A30;--line-2:#3A3A42;--ember:#F2541B;--ember-hi:#FF6A2B;--molten:#FFB35C;--bone:#F4F1EC;--ink-2:#C9C7C2;--ash:#9A9A9E;--included:#3B7DD8;--excluded:#B0362B;--ember-ink:#0C0C0E}
+:root[data-theme="light"]{--obsidian:#F4F1EC;--graphite:#FFFFFF;--row:#FAF8F5;--line:#E2DED8;--line-2:#CFCAC2;--ember:#D0420D;--ember-hi:#E04A14;--molten:#B8731F;--bone:#16161A;--ink-2:#3C3C42;--ash:#6B6B70;--included:#2A62B8;--excluded:#B0362B;--ember-ink:#FFFFFF}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--obsidian:#F4F1EC;--graphite:#FFFFFF;--row:#FAF8F5;--line:#E2DED8;--line-2:#CFCAC2;--ember:#D0420D;--ember-hi:#E04A14;--molten:#B8731F;--bone:#16161A;--ink-2:#3C3C42;--ash:#6B6B70;--included:#2A62B8;--excluded:#B0362B;--ember-ink:#FFFFFF}}
+/* scene-tokens:end */
+:root{
+  /* colour, dark */
+  
+  --ember-12:rgba(242,84,27,.12);--ember-40:rgba(242,84,27,.4);--molten-10:rgba(255,179,92,.1);--molten-40:rgba(255,179,92,.4);--nvidia:#8BE37A;--intel:#7CC4FF;--rail-bg:#111114;--hover:rgba(255,255,255,.04);--top-bg:rgba(12,12,14,.86);--shadow:rgba(0,0,0,.6);--scrim:rgba(12,12,14,.72);--ok:#FFB35C;
+  /* type scale */
+  --t-xs:11px;--t-sm:12px;--t-base:13px;--t-md:14px;--t-lg:15px;--t-xl:17px;--t-num:24px;--t-hero:34px;--t-h2:28px;--t-h1:44px;
+  /* spacing scale */
+  --s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-5:24px;--s-6:32px;
+  --gutter:var(--s-6);--card-pad:var(--s-5);--card-r:16px;--row-r:12px;--gap:var(--s-4);
+  --sans:'IBM Plex Sans',system-ui,-apple-system,sans-serif;--mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--head:'Unbounded',sans-serif;
+  /* the family's header token (main's order of 16:5x UK, 12 October 2026, the founder's "top left and right of the app need
+     scaling a bit, wallet and miner"; agreed with product B: the same names and numbers in both apps) */
+  --brand-mark:36px;--brand-word:28px;--brand-product:16px;--pill-text:14px;--pill-pad:8px 14px;--pill-dot:9px;
+  --top:84px;--bottom:0px;--drawer-h:260px;--rail:calc(var(--brand-mark) + 12px + 4.3 * var(--brand-word) + 20px + 24px);
+  /* the chain scene's inclusion colours (EMBER 02 live-dag.js reads them from :root) */
+  }
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  
+  --ember-12:rgba(224,74,20,.1);--ember-40:rgba(224,74,20,.4);--molten-10:rgba(184,115,31,.1);--molten-40:rgba(184,115,31,.4);--nvidia:#3C9B2C;--intel:#1C6FD6;--rail-bg:#EFEBE4;--hover:rgba(0,0,0,.04);--top-bg:rgba(244,241,236,.88);--shadow:rgba(0,0,0,.18);--scrim:rgba(244,241,236,.72);--ok:#B8731F;}}
+:root[data-theme="light"]{
+  
+  --ember-12:rgba(224,74,20,.1);--ember-40:rgba(224,74,20,.4);--molten-10:rgba(184,115,31,.1);--molten-40:rgba(184,115,31,.4);--nvidia:#3C9B2C;--intel:#1C6FD6;--rail-bg:#EFEBE4;--hover:rgba(0,0,0,.04);--top-bg:rgba(244,241,236,.88);--shadow:rgba(0,0,0,.18);--scrim:rgba(244,241,236,.72);--ok:#B8731F;}
+/* the night's names on the kept skin's tokens (0.2.3: the old skin on the new engine, 12 October 2026) */
+:root{--running:var(--molten);--met:var(--ember);--bad:#E5484D;--display:var(--head);--t-num-lg:var(--t-num);--t-label:var(--t-xs);--hot:rgba(255,255,255,.04)}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--obsidian);color:var(--bone);font-family:var(--sans);font-size:var(--t-md);line-height:1.5;-webkit-font-smoothing:antialiased;overflow:hidden;user-select:none;-webkit-user-select:none;font-variant-numeric:tabular-nums}
+.mono,code,pre{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.dim{color:var(--ash)}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.1;text-wrap:balance}
+h1{font-weight:900;font-size:var(--t-h1);letter-spacing:-.01em}
+h2{font-weight:700;font-size:var(--t-h2)}
+h3{font-weight:700;font-size:var(--t-xl)}
+p{margin:0}
+a{color:inherit}
+button{font:inherit;color:inherit}
+input,textarea{font-variant-numeric:tabular-nums}
+.eyebrow{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.16em;text-transform:uppercase;color:var(--ash);display:inline-flex;align-items:center;gap:var(--s-2);white-space:nowrap}
+.eyebrow.ember{color:var(--ember)}
+.eyebrow.addr{text-transform:none;letter-spacing:0}
+[hidden]{display:none !important}
+::selection{background:rgba(242,84,27,.45)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);min-height:40px;padding:8px 18px;border-radius:10px;font-weight:600;font-size:var(--t-md);border:1px solid var(--line-2);color:var(--bone);background:transparent;cursor:pointer;transition:transform .15s ease,background .15s ease,border-color .15s ease,opacity .15s ease,color .15s ease;white-space:nowrap}
+.btn:hover{transform:translateY(-1px);border-color:var(--ash)}
+.btn:active{transform:none}
+.btn:disabled{opacity:.4;cursor:default;transform:none}
+.btn.primary{background:var(--ember);color:var(--ember-ink);border-color:var(--ember)}
+.btn.primary:hover{background:var(--ember-hi);border-color:var(--ember-hi)}
+.btn.big{min-height:52px;padding:12px 28px;font-size:var(--t-xl)}
+.btn.small{min-height:34px;padding:6px 14px;font-size:var(--t-base);border-radius:8px}
+.btn.tiny{min-height:26px;padding:2px 10px;font-size:var(--t-sm);border-radius:7px;font-family:var(--mono);font-weight:500}
+.btn.ghost{border-color:transparent;color:var(--ink-2)}
+.btn.ghost:hover{border-color:var(--line-2);color:var(--bone)}
+.btn.ghost.on{color:var(--molten);border-color:var(--molten-40)}
+.btn.danger:hover{color:var(--ember);border-color:var(--ember)}
+:focus-visible{outline:2px solid var(--ember);outline-offset:3px;border-radius:6px}
+@media (prefers-reduced-motion:reduce){.btn{transition:none}}
+
+/* the rail */
+.rail{position:fixed;top:0;left:0;bottom:0;width:var(--rail);background:var(--rail-bg);border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:22;padding:14px 12px 14px;-webkit-app-region:drag}
+.rail button{-webkit-app-region:no-drag}
+.rail-brand{display:flex;align-items:center;gap:12px;padding:6px 10px 18px;min-width:0}
+.rail-brand img{width:var(--brand-mark);height:var(--brand-mark)}
+body.mac .rail-brand{padding-top:30px}
+.rail-brand .words,.brand .words{display:flex;flex-direction:column;gap:1px;min-width:0}
+.rail-brand .word,.brand .word{font-family:var(--head);font-weight:900;font-size:var(--brand-word);letter-spacing:.01em;line-height:1;white-space:nowrap}
+.rail-brand .by,.brand .by{font-family:var(--mono);font-size:var(--brand-product);letter-spacing:.16em;color:var(--ash);white-space:nowrap;text-transform:uppercase} /* the family header token (product B, the founder's read of 0.0.7, 21:1x UK, 12 October 2026): the product line 16 px at .16em, the header band 84 px with the row centred */
+/* the founder's photo of 12 October 2026 (the PC's Cards page): the brand word ran past the rail into the page title; the rail clips, and the top bar's title column starts after the rail with its own gutter */
+.rail{overflow:hidden}
+body.has-rail .top{padding-left:var(--gutter)}
+.rail-nav{display:flex;flex-direction:column;gap:3px}
+.nav{position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:42px;padding:8px 12px;border:1px solid transparent;border-radius:11px;background:transparent;color:var(--ink-2);font-weight:500;font-size:var(--t-md);text-align:left;cursor:pointer;transition:background .15s ease,color .15s ease,border-color .15s ease}
+.nav svg{width:19px;height:19px;flex:0 0 19px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;color:var(--ash);transition:color .15s ease}
+.nav:hover{background:var(--hover);color:var(--bone)}
+.nav:hover svg{color:var(--ink-2)}
+.nav.on{background:var(--hover);border-color:var(--line);color:var(--bone);font-weight:600}
+.nav.on svg{color:var(--ember)}
+.nav.on::before{content:"";position:absolute;left:-13px;top:10px;bottom:10px;width:3px;border-radius:0 3px 3px 0;background:var(--ember)}
+.nav.small{min-height:36px;font-size:var(--t-base);color:var(--ash)}
+.nav.small svg{width:16px;height:16px;flex-basis:16px}
+.nav.danger:hover{color:var(--ember)}
+.nav.danger:hover svg{color:var(--ember)}
+.nav.on.logs{color:var(--molten)}
+.nav-dot{position:absolute;right:12px;top:50%;width:7px;height:7px;margin-top:-3px;border-radius:50%;background:var(--molten);box-shadow:0 0 8px rgba(255,179,92,.7)}
+.rail-foot{margin-top:auto;display:flex;flex-direction:column;gap:2px;padding-top:12px;border-top:1px solid var(--line)}
+.rail-status{font-size:var(--t-xs);color:var(--ash);padding:0 12px 10px;line-height:1.55;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rail-status b{color:var(--ink-2);font-weight:500}
+.rail-version{font-size:var(--t-xs);color:var(--ash);padding:8px 12px 0;letter-spacing:.06em}
+
+/* top bar */
+.top{position:fixed;top:0;left:0;right:0;height:var(--top);display:flex;align-items:center;justify-content:space-between;gap:var(--s-4);padding:0 var(--gutter);background:var(--top-bg);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line);z-index:20;-webkit-app-region:drag}
+.top button,.top .pill{-webkit-app-region:no-drag}
+body.mac:not(.has-rail) .top{padding-left:92px}
+body.has-rail .top{left:var(--rail)}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand img{width:var(--brand-mark);height:var(--brand-mark)}
+.brand .word{font-family:var(--head);font-weight:900;font-size:var(--brand-word);letter-spacing:.06em}
+
+body.has-rail .top{align-items:center;padding-top:0}
+.page-title{display:flex;align-items:baseline;gap:12px;min-width:0}
+.page-title h1{font-size:19px;font-weight:700;letter-spacing:0;white-space:nowrap}
+.page-sub{font-size:var(--t-base);color:var(--ash);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.top-right{display:flex;align-items:center;gap:var(--s-3);flex:0 0 auto;min-width:0}
+.pill{display:inline-flex;align-items:baseline;gap:var(--s-2);font-family:var(--mono);font-size:var(--pill-text);font-weight:600;letter-spacing:.04em;color:var(--ash);border:1px solid var(--line);border-radius:999px;padding:var(--pill-pad);background:var(--graphite);white-space:nowrap;font-variant-numeric:tabular-nums;justify-content:center;line-height:1.3}
+.pill .dot{position:relative;top:-1px;width:var(--pill-dot);height:var(--pill-dot);flex:0 0 var(--pill-dot)}
+/* the design system's meaning (the old base, step 4): mining is ember, a fault is bad (red) with its word; molten is
+   for close and provisional readings only, never for the live state */
+.pill.on{color:var(--ember);border-color:var(--ember-40)}
+.pill.running{color:var(--running);border-color:currentColor}
+.pill.warn{color:var(--bad);border-color:currentColor}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ash);display:inline-block;flex:0 0 8px}
+.on .dot,.dot.live{background:var(--ember);animation:pulse 2s ease-in-out infinite}
+.running .dot{background:var(--running);animation:pulse 1.8s ease-in-out infinite}
+.warn .dot,.dot.bad{background:var(--bad);animation:none}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,179,92,.5)}50%{box-shadow:0 0 0 7px rgba(255,179,92,0)}}
+@media (prefers-reduced-motion:reduce){.on .dot,.dot.live{animation:none}}
+
+/* the status strip under the top bar (app.js, Notices): one notice at a time. It takes no room while empty; main's
+   top moves once per change with a 150 ms transition (layoutStrip), never per poll. */
+.notices{position:fixed;top:var(--top);left:0;right:0;z-index:19}
+body.has-rail .notices{left:var(--rail)}
+.notice{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s-2) var(--s-3);padding:9px calc(var(--gutter) - 6px) 9px var(--gutter);background:var(--row);border-bottom:1px solid var(--line);box-shadow:inset 0 1px 0 var(--ember);font-size:var(--t-base);line-height:1.4;color:var(--ash)}
+.notice-dot{width:7px;height:7px;border-radius:50%;background:var(--ember);flex:0 0 7px;display:inline-block}
+.notice.bad .notice-text,.notice.update-urgent .notice-text{color:var(--bone)}
+.notice.update-urgent .notice-text{font-weight:600}
+.notice .notice-text b{color:var(--bone);font-weight:600}
+.notice-text{flex:1 1 320px;min-width:0}
+.notice-actions{display:flex;align-items:center;gap:var(--s-2);flex:0 0 auto}
+.notice-actions:empty{display:none}
+.notice-close{flex:0 0 auto;width:30px;height:30px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--ash);font-size:20px;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0}
+.notice-close:hover{color:var(--bone);border-color:var(--line-2)}
+.notice-more{flex:0 0 auto;width:30px;height:30px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--ash);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0}
+.notice-more:hover{color:var(--bone);border-color:var(--line-2)}
+.notice-more .chev{width:8px;height:8px;transform:rotate(45deg) translateY(-2px)}
+.notice-more.open .chev{transform:rotate(225deg) translateY(-2px)}
+.notice-detail{flex-basis:100%;font-family:var(--mono);font-size:var(--t-sm);color:var(--ink-2);white-space:normal;word-break:break-word;margin-top:-2px;user-select:text;-webkit-user-select:text}
+.notice .prog{flex-basis:100%;height:2px;background:var(--line);border-radius:2px;overflow:hidden;margin-top:-3px}
+.notice .prog i{display:block;height:100%;width:0;background:var(--ember);transition:width .5s linear}
+
+/* a question in place of a dialog: the quit strip over the page, the inline asks inside a card */
+.ask-wrap{position:fixed;left:0;right:0;bottom:0;z-index:36;display:flex;justify-content:center;padding:0 var(--s-4) var(--s-4);pointer-events:none}
+body.has-rail .ask-wrap{left:var(--rail)}
+.ask{display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap;background:var(--row);border:1px solid var(--line);border-radius:14px;padding:12px 16px;box-shadow:inset 0 1px 0 var(--ember),0 14px 40px var(--shadow);pointer-events:auto;max-width:720px;animation:rise .2s ease}
+.ask-text{flex:1 1 260px;font-size:var(--t-md);min-width:0}
+.ask.inline{box-shadow:inset 0 1px 0 var(--ember);background:var(--row);margin-top:var(--s-3);animation:none}
+
+/* screens and pages */
+main{position:absolute;top:var(--top);bottom:var(--bottom);left:0;right:0;overflow:auto;padding:0 var(--gutter);overscroll-behavior:contain;transition:top .15s ease}
+@media (prefers-reduced-motion:reduce){main{transition:none}}
+body.has-rail main{left:var(--rail)}
+body.drawer-open main{bottom:var(--drawer-h)}
+.screen{display:none;max-width:1080px;margin:0 auto;animation:rise .45s ease}
+body[data-phase="welcome"] #screen-welcome,body[data-phase="cards"] #screen-cards,body[data-phase="region"] #screen-region,body[data-phase="network"] #screen-network,body[data-phase="address"] #screen-address,body[data-phase="dashboard"] #screen-dashboard{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.screen,.page{animation:none}}
+body.settle .screen,body.settle .page,body.settle .sheet,body.settle .upd-wrap,body.settle .upd-card,body.settle .restart-cover{animation:none}
+#screen-dashboard{padding:22px 0 32px}
+.page{display:flex;flex-direction:column;gap:var(--gap);animation:rise .3s ease}
+
+/* welcome */
+.hero{min-height:calc(100vh - var(--top));display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:var(--s-4);padding:var(--s-6) 0 48px}
+.mark-wrap{position:relative;width:120px;height:120px;border-radius:26px;background:#0C0C0E;display:flex;align-items:center;justify-content:center;margin-bottom:6px;box-shadow:0 20px 50px rgba(242,84,27,.25)}
+.mark-wrap::before{content:"";position:absolute;inset:-40px;border-radius:50%;background:radial-gradient(circle,rgba(242,84,27,.28) 0,rgba(242,84,27,0) 65%);animation:breathe 4s ease-in-out infinite;z-index:-1}
+@keyframes breathe{0%,100%{opacity:.7;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+@media (prefers-reduced-motion:reduce){.mark-wrap::before{animation:none}}
+.lead{font-size:var(--t-xl);color:var(--ink-2);max-width:54ch}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-3);width:100%;max-width:860px;margin-top:10px;text-align:left}
+.tile{background:var(--graphite);border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.tile .k{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.14em;color:var(--ember)}
+.tile .t{font-family:var(--head);font-weight:700;font-size:var(--t-lg);line-height:1.25}
+.tile .s{font-size:var(--t-base);color:var(--ash);line-height:1.45}
+.cta{display:flex;flex-wrap:wrap;gap:var(--s-3);align-items:center;justify-content:center;margin-top:10px}
+.seedline{font-size:var(--t-sm);color:var(--ash);letter-spacing:.04em}
+
+/* steps */
+.step{max-width:720px;margin:0 auto;padding:56px 0 48px;display:flex;flex-direction:column;gap:var(--s-4)}
+.step .sub{font-size:var(--t-xl);color:var(--ink-2);max-width:60ch}
+.step .cta{justify-content:flex-start;margin-top:var(--s-2)}
+.note{font-size:var(--t-base);color:var(--ash);line-height:1.5}
+.note.small{font-size:var(--t-sm);word-break:break-all}
+.help{font-size:var(--t-base);color:var(--ash);line-height:1.5;max-width:64ch}
+.line-text{font-size:var(--t-md);color:var(--ink-2);line-height:1.5}
+.line-text.ok{color:var(--molten)}
+.line-text.bad{color:var(--ember)}
+.cards{display:flex;flex-direction:column;gap:var(--s-3);margin-top:var(--s-2)}
+.card{background:var(--graphite);border:1px solid var(--line);border-radius:var(--card-r);padding:var(--card-pad);min-width:0}
+.card.detecting{display:flex;align-items:center;gap:18px}
+.card.detecting .t{font-family:var(--head);font-weight:700;font-size:var(--t-xl)}
+.card.detecting .s{font-size:var(--t-sm);color:var(--ash);margin-top:var(--s-1)}
+.spinner{width:28px;height:28px;border-radius:50%;border:3px solid var(--line-2);border-top-color:var(--ember);animation:spin 1s linear infinite;flex:0 0 28px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.top-gap{margin-top:var(--s-4)}
+.indent{margin-left:52px}
+
+/* GPU rows (first run) */
+.gpu-row{display:flex;align-items:center;gap:var(--s-4);background:var(--graphite);border:1px solid var(--line);border-radius:var(--card-r);padding:16px 20px;min-width:0;flex-wrap:wrap}
+.gpu-row.off>.badge,.gpu-row.off>.switch,.gpu-row.off .info>:not(.driver){opacity:.72}
+.gpu-row .info{flex:1;min-width:180px;display:flex;flex-direction:column;gap:var(--s-1)}
+.gpu-row .name{font-family:var(--head);font-weight:700;font-size:var(--t-xl);line-height:1.2;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.kind{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;border-radius:999px;padding:2px 8px;border:1px solid var(--line-2);color:var(--ash);font-weight:500;white-space:nowrap}
+.kind.discrete,.kind.apple{color:var(--molten);border-color:var(--molten-40)}
+.kind.external{color:var(--bone)}
+.gpu-row .meta{font-family:var(--mono);font-size:var(--t-sm);color:var(--ash);display:flex;flex-wrap:wrap;gap:4px 14px}
+.gpu-row .reason{font-size:var(--t-sm);color:var(--ash)}
+.gpu-row .msg{font-size:var(--t-sm);color:var(--ember)}
+.gpu-row .switch{padding:0;flex:0 0 auto;margin-left:auto}
+.gpu-row.removed,.gpu-line.removed{opacity:.5}
+.gpu-row.unusable .name,.gpu-line.unusable .name{color:var(--ember)}
+
+/* the Mine page: the big button and the live total */
+.hero-row{display:grid;grid-template-columns:minmax(220px,1fr) 2fr;gap:var(--s-3)}
+.toggle-big{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;min-height:112px;padding:18px 20px;border-radius:14px;border:1px solid var(--ember);background:var(--ember);color:var(--ember-ink);cursor:pointer;text-align:left;transition:background .15s ease,border-color .15s ease,transform .15s ease,color .15s ease;min-width:0}
+.toggle-big:hover{background:var(--ember-hi);border-color:var(--ember-hi);transform:translateY(-1px)}
+.toggle-big:disabled{opacity:.45;cursor:default;transform:none}
+.toggle-big .ring{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(12,12,14,.18);margin-bottom:6px}
+.toggle-big .ring svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.toggle-big .tl{font-family:var(--head);font-weight:700;font-size:18px;line-height:1.15;white-space:nowrap}
+.toggle-big .ts{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.06em;opacity:.8;white-space:normal;overflow:visible;line-height:1.4;max-width:100%}
+.toggle-big.stop{background:var(--graphite);border-color:var(--line-2);color:var(--bone)}
+.toggle-big.stop:hover{border-color:var(--ash);background:var(--row)}
+.toggle-big.stop .ring{background:var(--obsidian);border:1px solid var(--line-2);color:var(--ember)}
+.toggle-big.stop .ts{color:var(--molten);opacity:1}
+/* F-E63: the spinner beside the word while the engine starts or stops the cards (reduced motion: a still ring) */
+.toggle-big .spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.35);border-top-color:currentColor;animation:spin .9s linear infinite;flex:0 0 16px;margin-left:8px;vertical-align:middle;display:inline-block}
+.toggle-big .spin[hidden]{display:none}
+.toggle-big.busy:disabled{opacity:.85}
+@media (prefers-reduced-motion:reduce){.toggle-big .spin{animation:none}}
+.totals{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--s-3);align-items:start;background:var(--graphite);border:1px solid var(--line);border-radius:14px;padding:18px 20px;min-width:0}
+.tot{display:flex;flex-direction:column;min-width:0;padding-left:var(--s-4);border-left:1px solid var(--line)}
+.tot:first-child{padding-left:0;border-left:0}
+/* the design system's number treatment (tokens.css ig-num, the old base step 4): the display face at 900, tabular
+   figures, the tracking of a display number; ember for the live rate, molten for an estimate until the chain's own
+   figure reads, bad for a loss */
+.tot .v{font-family:var(--display);font-weight:900;font-size:var(--t-num-lg);line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:var(--track-num);font-variant-numeric:tabular-nums}
+.tot .v.ember{color:var(--ember)}
+.tot .v.is-estimate{color:var(--molten)}
+.tot .v.is-met{color:var(--met)}
+.tot .v.is-ash{color:var(--ash)}
+.tot .v.bad{color:var(--bad)}
+.tot .v.ask-price{font-family:var(--sans);font-size:var(--t-md);font-weight:600;color:var(--molten);text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:9px 0 8px}
+.tot .k{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.06em;color:var(--ash);margin-top:4px} /* a unit label, never uppercased (A8) */
+/* the stat strip of 15 October 2026: the label in caps above the figure; the figure tabular with a fixed width in
+   characters so the placeholder dash and the number share one shape; the dash dim until a figure lands */
+.tot .l{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.12em;text-transform:uppercase;color:var(--ash);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tot .v.fig{font-variant-numeric:tabular-nums;min-width:4.2ch}
+.tot .v.ph{color:var(--ash);opacity:.55}
+.tot .v.words{font-family:var(--sans);font-weight:700;font-size:var(--t-lg);line-height:1.2;white-space:normal;overflow:visible;min-height:calc(var(--t-num-lg) * 1)}
+.tot .v.words.good{color:var(--met)}
+.tot .v.words.bad{color:var(--bad)}
+.tot .v.is-warm{color:var(--molten)}
+.tot .v.is-hot{color:var(--bad)}
+@media (max-width:720px){.totals{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:var(--s-4)}.tot{padding-left:0;border-left:0}.tot:nth-child(odd){padding-right:var(--s-3)}.tot:nth-child(even){padding-left:var(--s-3);border-left:1px solid var(--line)}#t-chain-cell{grid-column:1 / -1;padding-left:0;border-left:0;padding-top:var(--s-3);border-top:1px solid var(--line)}}
+.tot .s{font-size:var(--t-sm);color:var(--ash);white-space:pre-line;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.35;margin-top:2px;min-width:0} /* ONE line each, never wrapping (the founder's word of 10:5x UK, 14 October 2026; the IGN line reads "26 shares · paid at block 6,251") */ /* main's read of the three-card test machine's 0.2.4 capture, 20:1x UK, 12 October 2026: the line wraps to a second, never truncates (the rule: no clipped text) */ /* main's ruling of 18:2x UK, 12 October 2026: ONE short line under each figure, never a run-on */
+.totals-foot{grid-column:1 / -1;font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.04em;color:var(--ash);margin-top:var(--s-2);padding-top:var(--s-2);border-top:1px solid var(--line)}
+.share-held{margin-top:4px}
+.card-head{display:flex;justify-content:space-between;align-items:center;gap:var(--s-3);margin-bottom:var(--s-3);flex-wrap:wrap}
+.head-right{display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap;min-width:0}
+.stats{font-size:var(--t-sm);color:var(--ash)}
+#dag{display:block;width:100%;height:110px;border-radius:10px;background:var(--obsidian);margin-bottom:var(--s-3)}
+/* the network scene's slot in The chain, live card (0.2.3: chain.js draws this miner's shares landing in blocks) */
+#scene{display:block;width:100%;min-height:200px;border-radius:10px;background:var(--obsidian);margin-bottom:var(--s-3)}
+@media (max-width:720px){#scene{min-height:150px}}
+.empty{color:var(--ash);font-size:var(--t-base);padding:10px 0}
+.empty.err{color:var(--ember)}
+.kv{display:flex;flex-direction:column}
+.kv>div{display:grid;grid-template-columns:120px auto 1fr;align-items:baseline;gap:var(--s-3);padding:7px 0;border-bottom:1px solid var(--line)}
+.kv>div:last-child{border-bottom:0}
+.kv .k{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.1em;text-transform:uppercase;color:var(--ash);white-space:nowrap}
+.kv .v{font-size:var(--t-md);font-variant-numeric:tabular-nums;color:var(--bone);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kv .v.ok{color:var(--molten)}
+.kv .v.warn{color:var(--ember)}
+.kv .v.dim{color:var(--ash)}
+.kv .m{font-size:var(--t-sm);color:var(--ash);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card .note{margin-top:10px}
+.card .help+.help{margin-top:6px}
+.feed{display:flex;flex-direction:column;font-family:var(--mono);font-size:var(--t-sm);color:var(--ink-2)}
+.feed>div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);padding:7px 0;align-items:baseline}
+.feed>div:last-child{border-bottom:0}
+.feed>div>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.feed .t{color:var(--ash);flex:0 0 auto;font-size:var(--t-xs)}
+.feed .k{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--molten);margin-right:10px;position:relative;top:-1px}
+.feed .k.error,.feed .k.warn,.feed .k.block{background:var(--ember)}
+.feed .k.build,.feed .k.info{background:var(--line-2)}
+.feed .k.proving{background:var(--nvidia)}
+
+/* the card rows on Mine (the hero object): badge, name and state, the numbers, Tune, the switch, the chevron;
+   the tune line under; the details under that */
+.gpu-list{display:flex;flex-direction:column;gap:var(--s-2)}
+.gpu-line{border:1px solid var(--line);border-radius:var(--row-r);background:var(--row);min-width:0}
+.gpu-line.off .gl-main,.gpu-line.off .gl-tune,.gpu-line.off .gl-details{opacity:.62}
+.gpu-line.open{border-color:var(--line-2)}
+.gl-main{display:grid;grid-template-columns:44px minmax(150px,1.2fr) auto auto;align-items:center;gap:var(--s-4);padding:12px 14px}
+.gpu-line .who{min-width:0;display:flex;flex-direction:column;gap:3px}
+.gpu-line .name{font-family:var(--head);font-weight:700;font-size:var(--t-md);line-height:1.25;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.gpu-line .st{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:var(--t-sm);color:var(--ash);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+/* the design system's meaning on a card's state word (the old base, step 4): mining ember, tuning and starting
+   blue (running), a fault red; molten is never the live state */
+.gpu-line .st.on{color:var(--ember)}
+.gpu-line .st.running{color:var(--running)}
+.gpu-line .st.bad{color:var(--bad)}
+.gpu-line .st i{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block;flex:0 0 7px}
+.gpu-line .msg{font-size:var(--t-sm);color:var(--ember);line-height:1.4}
+.gpu-line .msg.dim{color:var(--ash)}
+.nums{display:flex;gap:var(--s-5);justify-content:flex-end;align-items:flex-start;min-width:0;flex-wrap:wrap}
+.num{display:flex;flex-direction:column;gap:1px;min-width:56px;align-items:flex-end;text-align:right}
+.num .v{font-family:var(--head);font-weight:700;font-size:20px;line-height:1.15;white-space:nowrap;display:flex;align-items:baseline;gap:4px}
+.num .v .unit{font-family:var(--mono);font-size:10px;color:var(--ash);font-weight:500;letter-spacing:.08em}
+.num .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ash);white-space:nowrap}
+.num .v.hot{color:var(--ember)}
+.num .v.warm{color:var(--molten)}
+.gpu-line.on .num.hash .v{color:var(--ember)}
+.acts{display:flex;align-items:center;gap:var(--s-3);justify-self:end}
+.acts .switch{padding:0}
+.chev-btn{width:30px;height:30px;border-radius:8px;border:1px solid transparent;background:transparent;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--ash)}
+.chev-btn:hover{border-color:var(--line-2);color:var(--bone)}
+.chev{width:9px;height:9px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .15s ease;display:inline-block}
+.open .chev,.chev-btn.open .chev{transform:rotate(225deg) translateY(-2px)}
+.gl-tune{display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap;padding:8px 14px 10px 72px;font-family:var(--mono);font-size:var(--t-sm);color:var(--ink-2);border-top:1px solid var(--line)}
+.gl-tune .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.gl-tune .n{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gl-driver{display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap;padding:8px 14px 10px 72px;font-size:var(--t-base);color:var(--ink-2);border-top:1px solid var(--line)}
+.gl-driver .t{flex:1 1 320px;min-width:0;color:var(--bone)}
+.gl-driver .n{flex-basis:100%;font-size:var(--t-sm);line-height:1.4}
+.gl-driver.offer .t,.gl-driver.reboot .t{font-weight:600}
+.gl-driver.error .t{color:var(--ember)}
+.gl-driver.note{color:var(--ash)}
+.gl-driver.note .t{color:var(--ink-2);font-weight:400}
+.gl-driver .bar{flex-basis:100%;height:4px;border-radius:2px;background:var(--line-2);overflow:hidden;display:block}
+.gl-driver .bar b{display:block;height:100%;background:var(--ember);transition:width .4s}
+.gpu-row .driver{margin-top:6px;font-size:var(--t-base);color:var(--bone);display:flex;align-items:center;gap:var(--s-2);flex-wrap:wrap}
+.gpu-row .driver .n{flex-basis:100%;font-size:var(--t-sm);color:var(--ash);line-height:1.4}
+.gpu-row .driver.error .t{color:var(--ember)}
+.gpu-row .driver.note{color:var(--ink-2);font-weight:400}
+.gpu-row .driver .bar{flex-basis:100%;height:4px;border-radius:2px;background:var(--line-2);overflow:hidden;display:block}
+.gpu-row .driver .bar b{display:block;height:100%;background:var(--ember)}
+.gl-tune.running{color:var(--running)}
+.gl-tune.stopped,.gl-tune.paused{color:var(--ember)}
+.gl-tune .bar{flex-basis:100%;height:3px;border-radius:2px;background:var(--line);overflow:hidden;display:block}
+.gl-tune .bar b{display:block;height:100%;background:var(--molten);transition:width .5s linear}
+.gl-details{padding:12px 14px 14px 72px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px;user-select:text;-webkit-user-select:text}
+.gl-details .ctl{display:grid;grid-template-columns:120px 1fr auto;align-items:center;gap:var(--s-3)}
+.gl-details .ctl .k{font-size:var(--t-md);color:var(--bone);font-weight:500}
+.gl-details .ctl .pv{font-size:var(--t-sm);color:var(--ink-2);min-width:100px;text-align:right;white-space:nowrap}
+.gl-details input[type=range]{width:100%;accent-color:var(--ember);margin:0}
+.gl-details .ctl .help{grid-column:1 / -1;margin-top:-4px}
+.gl-details .ctl .help:first-of-type{grid-column:2}
+.gl-details .line{font-family:var(--mono);font-size:var(--t-sm);color:var(--ash);display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}
+.gl-details .line b{color:var(--ink-2);font-weight:500}
+.gl-details .line.ok{color:var(--molten)}
+.gl-details .line.hot{color:var(--ember)}
+.gl-details .line .pin{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.08em;text-transform:uppercase;color:var(--ash);border:1px solid var(--line-2);border-radius:6px;padding:1px 6px}
+.curve{font-size:var(--t-sm);font-family:var(--mono);border-collapse:collapse;width:100%}
+.curve th{text-align:left;font-weight:500;color:var(--ash);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px 3px 0}
+.curve td{padding:3px 8px 3px 0;border-top:1px solid var(--line);color:var(--ink-2)}
+.curve tr.marked td{color:var(--ash);text-decoration:line-through}
+.ids{display:flex;align-items:center;gap:6px;flex:0 0 auto;justify-self:end}
+.ids button{width:30px;height:30px;border-radius:8px;border:1px solid var(--line-2);background:transparent;color:var(--bone);cursor:pointer;font-size:16px;line-height:1}
+.ids button:hover{border-color:var(--ash)}
+.ids input{width:44px;text-align:center;background:var(--obsidian);border:1px solid var(--line-2);border-radius:8px;padding:5px 4px;color:var(--bone);font-family:var(--mono);font-size:var(--t-base);user-select:text;-webkit-user-select:text}
+.ids input:focus{outline:none;border-color:var(--ember)}
+.ids input::-webkit-inner-spin-button,.ids input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+
+/* the tuning card: the goal, its consequence, the schedule, Power control when it is the fix */
+.goal-row{display:flex;align-items:center;gap:var(--s-4);flex-wrap:wrap;margin-bottom:var(--s-3)}
+.seg{display:inline-flex;background:var(--obsidian);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+.seg-b{border:0;background:transparent;color:var(--ash);font-size:var(--t-base);font-weight:500;padding:6px 14px;border-radius:8px;cursor:pointer;transition:background .15s ease,color .15s ease;white-space:nowrap}
+.seg-b:hover{color:var(--bone)}
+.seg-b.on{background:var(--graphite);color:var(--bone);box-shadow:0 1px 3px rgba(0,0,0,.25);font-weight:600}
+.goal-line{font-size:var(--t-base);color:var(--ink-2);min-width:0}
+
+/* the node line and the disclosures */
+.disclose{display:flex;align-items:center;justify-content:space-between;gap:var(--s-3);width:100%;border:0;background:transparent;padding:0;cursor:pointer;text-align:left;color:var(--bone);font-size:var(--t-md);font-weight:500;min-height:32px}
+.disclose:hover{color:var(--bone)}
+.disclose .chev{color:var(--ash);flex:0 0 auto;margin-right:4px}
+.disclose-right{display:flex;align-items:center;gap:var(--s-3);min-width:0}
+.disclose-right .dim{font-size:var(--t-sm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;max-width:52ch}
+.node-line{display:inline-flex;align-items:center;gap:10px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.node-card.bad .node-line{color:var(--ember)}
+.card .disclose+.disclose,.card .details+.disclose,.card .help+.disclose,.card .addr-big+.help+.disclose{margin-top:var(--s-3);padding-top:var(--s-3);border-top:1px solid var(--line)}
+.details{padding-top:var(--s-3);display:flex;flex-direction:column;gap:var(--s-3)}
+.switch-list{display:flex;flex-direction:column;gap:3px;font-size:var(--t-sm);color:var(--ash);margin-top:8px}
+.switch-list span{display:flex;justify-content:space-between;gap:12px}
+.switch-list span.past{opacity:.55}
+.switch-list span.next{color:var(--molten)}
+.lead-row{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s-4)}
+.lead-text{min-width:0;display:flex;flex-direction:column;gap:6px}
+.lead-text h3{font-size:var(--t-xl)}
+.addr-big{display:flex;align-items:center;gap:12px;background:var(--obsidian);border:1px solid var(--line-2);border-radius:12px;padding:14px 16px;font-size:var(--t-lg);word-break:break-all;user-select:text;-webkit-user-select:text;margin-bottom:10px}
+.addr-big span{flex:1;min-width:0;color:var(--molten)}
+.card.adv{padding:0}
+.card.adv summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:var(--card-pad)}
+.card.adv summary::-webkit-details-marker{display:none}
+.card.adv summary::after{content:"+";font-family:var(--mono);color:var(--ash);font-size:18px;margin-left:auto}
+.card.adv[open] summary::after{content:"\2212"}
+.card.adv summary .eyebrow{margin-left:0}
+.card.adv>:not(summary){margin-left:var(--card-pad);margin-right:var(--card-pad)}
+.card.adv>:last-child{margin-bottom:var(--card-pad)}
+table{border-collapse:collapse;width:100%;font-size:var(--t-base)}
+#s-jobs-history th{text-align:left;font-weight:500;color:var(--ash);font-size:var(--t-xs);padding:4px 6px 4px 0;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase}
+#s-jobs-history td{padding:6px 6px 6px 0;border-top:1px solid var(--line);vertical-align:top}
+#s-jobs-history tr.failed td,#s-jobs-history tr.timeout td,#s-jobs-history tr.aborted td{color:var(--ember)}
+#s-jobs-history tr.running td{color:var(--molten)}
+.clock-card{border:1px solid var(--line);background:var(--row);box-shadow:inset 0 1px 0 var(--ember);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:var(--s-2)}
+.clock-card.warn{box-shadow:inset 0 1px 0 var(--molten)}
+.clock-msg{font-size:var(--t-md);color:var(--bone);line-height:1.45}
+.clock-card .note{margin-top:0}
+
+/* earnings (earnings-tidy, 7 October 2026): the day rate first in ember with its reason line, the run line, then a quiet
+   row of three (weight, electricity, lifetime) in the totals' idiom, the dev-fee switch last */
+.earn{display:flex;flex-direction:column;margin-bottom:var(--s-3)}
+.earn-head{display:flex;flex-direction:column;gap:4px;padding-bottom:var(--s-3);border-bottom:1px solid var(--line)}
+.earn-head .eyebrow{margin-bottom:2px}
+/* the design system's number treatment on the Earnings figures (the old base, step 4): the display face at 900 with
+   the display tracking and tabular figures; ember for the live earning, met (green) only for a figure read from the
+   chain's own blocks, molten for an estimate */
+.earn-head .v{font-family:var(--display);font-weight:900;font-size:var(--t-num-lg);line-height:1;letter-spacing:var(--track-num);font-variant-numeric:tabular-nums;color:var(--ember);text-wrap:balance}
+.earn-head .v.is-met,.earn-cell .v.is-met{color:var(--met)}
+.earn-head .v.is-estimate,.earn-cell .v.is-estimate{color:var(--molten)}
+.earn-head .s,.earn-earned .s{font-size:var(--t-base);color:var(--ash);line-height:1.45;min-width:0}
+/* main's ruling of 18:2x UK, 12 October 2026, every page's top block: one short line under each figure */
+.earn-cell .s{white-space:normal;overflow:visible;min-width:0;display:block;max-width:34ch}
+.earn-earned{display:flex;align-items:baseline;gap:var(--s-3);flex-wrap:wrap;padding:var(--s-3) 0;border-bottom:1px solid var(--line)}
+.earn-head .v.paused{color:var(--ash)}
+.earn-earned .v{font-family:var(--head);font-weight:700;font-size:var(--t-num);line-height:1.15;white-space:nowrap}
+.earn-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-4);padding-top:var(--s-3)}
+.earn-three.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.earn-cell{display:flex;flex-direction:column;gap:3px;min-width:0;padding-left:var(--s-4);border-left:1px solid var(--line)}
+.earn-cell:first-child{padding-left:0;border-left:0}
+.earn-cell .k{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.14em;text-transform:uppercase;color:var(--ash)}
+.earn-cell .v{font-family:var(--display);font-weight:900;font-size:var(--t-num-lg);line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:var(--track-num);font-variant-numeric:tabular-nums}
+.earn-cell .s{font-size:var(--t-sm);color:var(--ash);line-height:1.4}
+@media (max-width:720px){.earn-head .v{font-size:var(--t-h2)}.earn-three{grid-template-columns:1fr;gap:var(--s-2)}.earn-cell{padding-left:0;border-left:0;border-top:1px solid var(--line);padding-top:var(--s-2)}.earn-cell:first-child{border-top:0;padding-top:0}}
+
+/* prove */
+.tier-list{list-style:none;margin:var(--s-3) 0 0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:var(--t-md);color:var(--ink-2)}
+.tier-list li{display:flex;gap:10px;align-items:baseline}
+.tier-list li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ember);flex:0 0 6px;position:relative;top:-2px}
+#pv-line{margin-top:var(--s-3)}
+
+/* address options */
+.options{display:flex;flex-direction:column;gap:var(--s-3);margin-top:6px}
+.option{display:flex;gap:var(--s-4);align-items:flex-start;background:var(--graphite);border:1px solid var(--line);border-radius:var(--card-r);padding:20px 22px;cursor:pointer;transition:border-color .15s ease,background .15s ease}
+.option:hover{border-color:var(--line-2)}
+.option.on{border-color:var(--ember);background:var(--row)}
+.option input[type=radio]{position:absolute;opacity:0;width:0;height:0}
+.option .radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--line-2);flex:0 0 20px;margin-top:2px;position:relative}
+.option.on .radio{border-color:var(--ember)}
+.option.on .radio::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--ember)}
+.option .body{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1}
+.option .t{font-family:var(--head);font-weight:700;font-size:var(--t-xl);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.option .s{font-size:var(--t-md);color:var(--ash);line-height:1.5}
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--molten);border:1px solid var(--molten-40);border-radius:999px;padding:2px 8px}
+.addr-input{width:100%;margin-top:var(--s-2);background:var(--obsidian);border:1px solid var(--line-2);border-radius:10px;padding:12px 14px;color:var(--bone);font-size:var(--t-md);letter-spacing:.02em;user-select:text;-webkit-user-select:text}
+.addr-input.short{width:100px;flex:0 0 100px}
+.addr-input:focus{outline:none;border-color:var(--ember)}
+/* Ember Heat (mission item 7): the region list, the restricted line, the heat line on the strip and the rows, the rent row */
+.addr-input.select{appearance:none;-webkit-appearance:none;max-width:360px;padding-right:36px;background-image:linear-gradient(45deg,transparent 50%,var(--ash) 50%),linear-gradient(135deg,var(--ash) 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 14px) 50%;background-size:6px 6px,6px 6px;background-repeat:no-repeat;cursor:pointer}
+.addr-input.select option{background:var(--graphite);color:var(--bone)}
+.restricted{font-size:var(--t-md);line-height:1.5;color:var(--bone);background:var(--ember-12);border:1px solid var(--ember-40);border-left:3px solid var(--ember);border-radius:10px;padding:10px 14px;max-width:64ch;margin:0}
+.heat-line{font-family:var(--mono);font-size:var(--t-sm)}
+.heat-line.heat,.line-text.ok{color:var(--molten)}
+.heat-line.rest,.line-text.rest{color:var(--ash)}
+.field.grow{flex:1 1 260px;min-width:0}
+.gl-tune .n.heat{color:var(--molten)}
+.option:not(.on) .addr-input{display:none}
+.err{font-size:var(--t-base);color:var(--ember)}
+
+/* the update card (app.js, UpdateCard; the wallet carries the same block) */
+.upd-wrap{position:fixed;inset:0;z-index:35;background:var(--scrim);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fade .25s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.restart-cover{position:fixed;inset:0;z-index:38;background:var(--scrim);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fade .25s ease}
+.restart-cover[hidden]{display:none}
+.rc-card{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;background:var(--graphite);border:1px solid var(--line-2);border-radius:22px;padding:30px 32px 26px;max-width:380px;width:100%}
+.rc-card h2{margin:0;font-size:var(--t-lg);font-weight:600}
+.rc-mark{animation:rc-pulse 1.6s ease-in-out infinite}
+@keyframes rc-pulse{0%,100%{opacity:.55}50%{opacity:1}}
+.upd-card{position:relative;width:100%;max-width:500px;max-height:calc(100vh - 48px);overflow:auto;background:var(--graphite);border:1px solid var(--line-2);border-radius:22px;padding:34px 32px 28px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:var(--s-2);box-shadow:0 30px 80px var(--shadow),0 0 0 1px rgba(242,84,27,.08);animation:rise .3s ease;outline:none}
+.upd-card::before{content:"";position:absolute;left:50%;top:-80px;width:360px;height:260px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(242,84,27,.22) 0,rgba(242,84,27,0) 62%);pointer-events:none}
+.upd-mark{position:relative;width:96px;height:96px;display:flex;align-items:center;justify-content:center;margin-bottom:var(--s-3)}
+.upd-mark img{position:relative;display:block;filter:drop-shadow(0 6px 18px rgba(242,84,27,.35))}
+.upd-ring{position:absolute;inset:0;transform:rotate(-90deg)}
+.upd-ring .track{fill:none;stroke:var(--line-2);stroke-width:3}
+.upd-ring .arc{fill:none;stroke:var(--ember);stroke-width:3;stroke-linecap:round;stroke-dasharray:276.5;stroke-dashoffset:276.5;transition:stroke-dashoffset .4s linear,stroke .3s ease}
+.upd-mark.none .track{stroke:var(--line)}
+.upd-mark.full .arc{stroke:var(--molten);stroke-dashoffset:0}
+.upd-mark.busy .arc{stroke-dasharray:69 207.5;stroke-dashoffset:0;animation:spin 1.1s linear infinite;transform-origin:50% 50%}
+.upd-mark.failed .arc{stroke:var(--ember);stroke-dashoffset:0;opacity:.55}
+.upd-pct{position:absolute;left:50%;bottom:-11px;transform:translateX(-50%);font-size:var(--t-xs);font-weight:500;letter-spacing:.06em;color:var(--molten);background:var(--obsidian);border:1px solid var(--line-2);border-radius:999px;padding:2px 8px;font-variant-numeric:tabular-nums}
+.upd-name{font-size:24px;font-weight:700;letter-spacing:-.01em;position:relative}
+.upd-line{font-size:var(--t-xl);color:var(--ink-2);line-height:1.4;position:relative}
+.upd-cause{font-size:var(--t-sm);color:var(--ember);line-height:1.5;max-width:40ch;word-break:break-word}
+.upd-notes{list-style:none;margin:var(--s-2) auto 0;padding:0;width:max-content;max-width:100%;display:flex;flex-direction:column;gap:6px;align-items:flex-start;font-size:var(--t-md);color:var(--bone);line-height:1.4}
+.upd-notes:empty{display:none}
+.upd-notes li{display:flex;align-items:baseline;gap:10px;text-align:left}
+.upd-notes li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ember);flex:0 0 6px;position:relative;top:-2px}
+.upd-more{font:inherit;font-size:var(--t-sm);font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ash);background:transparent;border:0;padding:4px 8px;cursor:pointer;border-radius:6px;margin-top:2px}
+.upd-more:hover{color:var(--bone)}
+.upd-all{list-style:none;margin:0;padding:10px 14px;width:100%;max-height:150px;overflow:auto;text-align:left;font-size:var(--t-base);color:var(--ink-2);line-height:1.5;background:var(--obsidian);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;gap:4px;user-select:text;-webkit-user-select:text}
+.upd-meta{font-size:var(--t-sm);color:var(--ash);letter-spacing:.04em;margin-top:var(--s-2);min-height:18px;line-height:1.5;max-width:44ch}
+.upd-meta:empty{display:none}
+.upd-actions{display:flex;gap:var(--s-3);align-items:center;justify-content:center;flex-wrap:wrap;margin-top:var(--s-4);position:relative}
+.upd-actions:empty{display:none}
+.upd-actions .btn.primary{min-width:160px}
+@media (prefers-reduced-motion:reduce){.upd-wrap,.upd-card{animation:none}.upd-ring .arc{transition:none}.upd-mark.busy .arc{animation:none;stroke-dasharray:207.5 69}}
+@media (max-height:620px){.upd-card{padding:24px 24px 20px}.upd-mark{width:72px;height:72px;margin-bottom:var(--s-2)}.upd-mark img{width:32px;height:32px}.upd-name{font-size:20px}}
+
+/* sheet (the key) */
+.sheet-wrap{position:fixed;inset:0;z-index:30;background:var(--scrim);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:24px}
+.sheet{background:var(--graphite);border:1px solid var(--line-2);border-radius:22px;padding:32px;max-width:640px;width:100%;max-height:calc(100vh - 48px);overflow:auto;display:flex;flex-direction:column;gap:14px;box-shadow:0 30px 80px var(--shadow);animation:rise .3s ease}
+.sheet .sub{font-size:var(--t-lg);color:var(--ink-2)}
+.field{display:flex;flex-direction:column;gap:var(--s-2);margin-top:6px}
+.field .k{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.12em;text-transform:uppercase;color:var(--ash)}
+.box{display:flex;align-items:center;gap:10px;background:var(--obsidian);border:1px solid var(--line-2);border-radius:10px;padding:10px 12px;font-size:var(--t-base);word-break:break-all;user-select:text;-webkit-user-select:text}
+.box span{flex:1;min-width:0}
+.box.key{color:var(--molten)}
+.check{display:flex;align-items:center;gap:10px;font-size:var(--t-md);cursor:pointer;margin-top:var(--s-1)}
+.check.small{font-size:var(--t-sm);color:var(--ash);margin-top:0}
+.check input{width:18px;height:18px;accent-color:var(--ember);margin:0}
+.check.small input{width:15px;height:15px}
+.sheet .cta{justify-content:flex-start}
+@media (prefers-reduced-motion:reduce){.sheet{animation:none}}
+
+/* rows, switches */
+.row{display:flex;gap:10px;align-items:center;min-width:0}
+.row.wrap{flex-wrap:wrap}
+.row .addr-input{margin-top:0;min-width:0}
+/* the custom switch (Prove page fix, 7 October 2026): the label is the positioned ancestor, the native input is hidden
+   the accessible way (1 px, clipped, still focusable, the label association kept), the knob lives inside the track at
+   both states; the size class is the switch's own (big), never the DAG legend's swatch class */
+.switch{display:flex;align-items:flex-start;gap:var(--s-3);font-size:var(--t-md);cursor:pointer;padding:9px 0;line-height:1.4;position:relative}
+.switch+.switch{border-top:1px solid var(--line)}
+.switch input{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+.switch .track{width:40px;height:22px;border-radius:999px;background:var(--line-2);position:relative;flex:0 0 40px;transition:background .15s ease;margin-top:1px}
+.switch .track::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#F4F1EC;transition:transform .15s ease}
+.switch input:checked+.track{background:var(--ember)}
+.switch input:checked+.track::after{transform:translateX(18px)}
+.switch input:focus-visible+.track{outline:2px solid var(--ember);outline-offset:3px}
+.switch input:disabled+.track{opacity:.4}
+.switch.big .track{width:52px;height:30px;flex-basis:52px}
+.switch.big .track::after{width:24px;height:24px}
+.switch.big input:checked+.track::after{transform:translateX(22px)}
+.sw-text{min-width:0}
+.sw-text b{font-weight:600}
+.sw-text .dim{font-size:var(--t-base)}
+
+/* log drawer */
+.drawer{position:fixed;left:0;right:0;bottom:0;height:0;overflow:hidden;background:var(--obsidian);border-top:1px solid var(--line);z-index:21;transition:height .2s ease;display:flex;flex-direction:column;box-shadow:0 -12px 30px var(--shadow)}
+body.has-rail .drawer{left:var(--rail)}
+body.drawer-open .drawer{height:var(--drawer-h)}
+body.drawer-drag .drawer{transition:none}
+body.drawer-drag{cursor:row-resize}
+body.drawer-drag main{pointer-events:none}
+@media (prefers-reduced-motion:reduce){.drawer{transition:none}}
+.drawer-grip{height:10px;flex:0 0 10px;cursor:row-resize;display:flex;align-items:center;justify-content:center;touch-action:none}
+.drawer-grip i{width:44px;height:3px;border-radius:2px;background:var(--line-2);transition:background .15s ease}
+.drawer-grip:hover i,body.drawer-drag .drawer-grip i{background:var(--ash)}
+.drawer-head{display:flex;align-items:center;gap:var(--s-3);padding:2px var(--gutter) 8px;border-bottom:1px solid var(--line);flex:0 0 auto;flex-wrap:wrap;row-gap:6px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:4px 10px;background:transparent;color:var(--ash);cursor:pointer;white-space:nowrap;line-height:1.3;transition:color .15s ease,border-color .15s ease}
+.chip:hover{color:var(--ink-2);border-color:var(--line-2)}
+.chip.on{color:var(--molten);border-color:var(--molten-40)}
+.chip:disabled{opacity:.4;cursor:default}
+.log-search{display:flex;align-items:center;gap:6px;background:var(--graphite);border:1px solid var(--line);border-radius:999px;padding:3px 10px 3px 10px;color:var(--ash);flex:1 1 160px;min-width:140px;max-width:300px}
+.log-search:focus-within{border-color:var(--molten-40);color:var(--ink-2)}
+.log-search input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--bone);font-family:var(--mono);font-size:var(--t-sm);padding:2px 0;user-select:text;-webkit-user-select:text}
+.log-search input::-webkit-search-cancel-button{-webkit-appearance:none}
+.log-search input::placeholder{color:var(--ash)}
+.log-search .count{font-size:var(--t-xs);color:var(--ash);white-space:nowrap;font-variant-numeric:tabular-nums}
+.log-nav{display:flex;align-items:center;gap:6px}
+.log-nav input{width:84px;background:var(--graphite);border:1px solid var(--line);border-radius:999px;padding:4px 10px;color:var(--bone);font-size:var(--t-xs);letter-spacing:.06em;outline:0;user-select:text;-webkit-user-select:text;text-align:center}
+.log-nav input:focus{border-color:var(--molten-40)}
+.log-nav input::placeholder{color:var(--ash);letter-spacing:.04em}
+.log-tools{display:flex;align-items:center;gap:var(--s-2);margin-left:auto}
+.log-tools .at{font-size:var(--t-xs);min-width:64px;text-align:right}
+.log-ruler{position:relative;height:16px;flex:0 0 16px;background:var(--graphite);border-bottom:1px solid var(--line);cursor:pointer;overflow:hidden}
+.log-ruler.empty{cursor:default}
+.log-ruler.empty>*{display:none}
+.log-ruler .t0,.log-ruler .t1{position:absolute;top:0;z-index:2;font-size:9px;line-height:16px;color:var(--ash);padding:0 6px;margin:0 var(--gutter);pointer-events:none;letter-spacing:.04em;background:var(--graphite);border-radius:0 0 6px 0}
+.log-ruler .t1{right:0;border-radius:0 0 0 6px}
+.log-ruler .mk{position:absolute;top:4px;bottom:4px;width:2px;margin-left:-1px;background:var(--ember);opacity:.9;pointer-events:none}
+.log-ruler .mk.swap{background:var(--molten)}
+.log-ruler .win{position:absolute;top:0;bottom:0;background:rgba(127,127,127,.14);border-left:1px solid rgba(127,127,127,.35);border-right:1px solid rgba(127,127,127,.35);min-width:3px;pointer-events:none}
+.log-ruler:hover .win{background:rgba(127,127,127,.2)}
+.log-view{position:relative;flex:1;overflow:auto;overscroll-behavior:contain;user-select:text;-webkit-user-select:text;contain:strict}
+.log-pad{position:relative;min-height:100%}
+.log{margin:0;position:absolute;top:0;left:0;right:0;padding:6px var(--gutter);font-size:var(--t-sm);line-height:19px;color:var(--ink-2);white-space:pre;will-change:transform}
+.log .ln{height:19px;overflow:hidden;text-overflow:ellipsis;white-space:pre}
+.log-view.wrap .log{position:relative;padding-bottom:12px}
+.log-view.wrap .log .ln{height:auto;white-space:pre-wrap;word-break:break-all;overflow:visible}
+.log .src{color:var(--ash)}
+.log .src.node{color:#7FA7C9}
+.log .src.miner1,.log .src.miner2,.log .src.miner3,.log .src.miner4,.log .src.miner5,.log .src.miner6,.log .src.miner7,.log .src.miner8{color:var(--molten)}
+.log .src.app{color:var(--ember)}
+.log .src.watch{color:var(--ash)}
+.log .e,.log .e .src{color:var(--ember)}
+.log .ln.hit{background:var(--hover);box-shadow:inset 3px 0 0 var(--molten);margin:0 calc(-1 * var(--gutter));padding:0 var(--gutter)}
+.log mark{background:transparent;color:var(--bone);text-decoration:underline;text-decoration-color:var(--ember);text-underline-offset:2px}
+.log-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--ash);font-size:var(--t-sm);padding:0 var(--gutter);text-align:center}
+.log-jump{position:absolute;right:calc(var(--gutter) + 14px);bottom:14px;background:var(--graphite);border-color:var(--molten-40);color:var(--molten);box-shadow:0 8px 24px var(--shadow);z-index:2;gap:6px;padding:6px 12px}
+.log-jump:hover{border-color:var(--molten)}
+
+.toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--graphite);border:1px solid var(--line-2);border-radius:10px;padding:10px 16px;font-size:var(--t-base);z-index:40;box-shadow:0 10px 30px var(--shadow);max-width:min(90vw,520px);text-align:center}
+body.has-rail .toast{left:calc(50% + var(--rail) / 2)}
+body.drawer-open .toast{bottom:calc(var(--drawer-h) + 16px)}
+
+/* narrow windows: 1180 the hero wraps; 1000 the rail folds to icons; 900 the row's cells wrap; 720 a bottom tab bar */
+@media (max-width:1180px){
+  .hero-row{grid-template-columns:1fr}
+  .totals{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .nums{gap:var(--s-4)}
+}
+@media (max-width:1000px){
+  :root{--rail:76px;--gutter:var(--s-5)}
+  .rail{padding:12px 8px}
+  .rail-brand{justify-content:center;padding:6px 0 14px}
+  .rail-brand .words{display:none}
+  .rail-version .name,.rail-version .chain{display:none}
+  /* main's ruling of 18:2x UK, 12 October 2026: the collapsed rail's labels at a readable size, never six-point capitals */
+  .nav{flex-direction:column;gap:5px;padding:8px 2px;font-size:11px;letter-spacing:0;text-transform:none;font-family:var(--sans);font-weight:600;text-align:center;min-height:54px;justify-content:center}
+  .nav.on{font-weight:500}
+  .nav.on::before{left:-9px}
+  .nav.small{min-height:44px}
+  .nav-dot{right:8px;top:8px;margin:0}
+  .rail-status{display:none}
+  .rail-version{text-align:center;padding:8px 0 0;font-size:10px;white-space:nowrap}
+  .rail-version .chain{display:none}
+  .page-sub{display:none}
+  /* the founder's photo of 12 October 2026: the figures under the name read as the next card's at this width; every card's
+     rate, watts, degrees and switch stay on that card's own row, the figures tighter */
+  .gl-main{grid-template-columns:44px minmax(120px,1fr) auto auto;gap:var(--s-3)}
+  .nums{gap:var(--s-3)}
+  .num{min-width:48px}
+  .num .v{font-size:17px}
+  .gl-tune,.gl-details{padding-left:14px}
+  .kv>div{grid-template-columns:110px auto 1fr}
+}
+@media (max-width:860px){
+  .three{grid-template-columns:1fr}
+  h1{font-size:40px}
+  .totals{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:var(--s-3)}
+  .tot:nth-child(3){padding-left:0;border-left:0}
+}
+@media (max-width:720px){
+  :root{--rail:0px;--gutter:var(--s-4);--bottom:64px}
+  body.has-rail .rail{top:auto;bottom:0;left:0;right:0;width:auto;height:64px;flex-direction:row;align-items:center;border-right:0;border-top:1px solid var(--line);padding:0 var(--s-2)}
+  .rail-brand{display:none}
+  .rail-nav{flex-direction:row;flex:1;gap:0;justify-content:space-around}
+  .nav{min-height:56px;padding:6px 0;font-size:11px;letter-spacing:0;text-transform:none;font-family:var(--sans);font-weight:600;border-radius:10px;flex:1 1 0;min-width:0;max-width:120px}
+  .nav.on::before{display:none}
+  .rail-foot{margin-top:0;padding-top:0;border-top:0;flex-direction:row;gap:0}
+  /* the seven items share the bar's width at 390 (the site lead's finding of 16:00 UK, 12 October 2026: Quit stood past the edge) */
+  .rail-foot{display:none}
+  .rail-version{display:none}
+  body.has-rail .top,body.has-rail .notices,body.has-rail main,body.has-rail .drawer,body.has-rail .ask-wrap{left:0}
+  body.has-rail main{bottom:var(--bottom)}
+  body.has-rail .toast{left:50%;bottom:calc(var(--bottom) + 12px)}
+  body.drawer-open .drawer{bottom:var(--bottom)}
+  .ask-wrap{bottom:var(--bottom)}
+  .top{padding:0 var(--s-4)}
+  .page-title h1{font-size:17px}
+  .pill{min-width:0}
+  .hero-row{grid-template-columns:1fr}
+  .toggle-big{min-height:88px}
+  .gl-main{grid-template-columns:44px 1fr;gap:var(--s-3);padding:12px}
+  .nums{grid-column:1 / -1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-2) var(--s-3);justify-items:start}
+  .acts{grid-column:1 / -1;grid-row:auto;justify-self:end}
+  .gpu-line .name{font-size:var(--t-base)}
+  .num{align-items:flex-start;text-align:left}
+  .acts{gap:var(--s-2)}
+  .gl-tune,.gl-details{padding-left:12px;padding-right:12px}
+  .gl-details .ctl{grid-template-columns:1fr;gap:6px}
+  .gl-details .ctl .help:first-of-type{grid-column:1}
+  .ids{justify-self:start}
+  .kv>div{grid-template-columns:96px 1fr;gap:4px var(--s-3)}
+  .kv .m{grid-column:1 / -1;white-space:normal}
+  .goal-row{align-items:flex-start;flex-direction:column}
+  .seg{width:100%}
+  .seg-b{flex:1;padding:6px 8px}
+  .indent{margin-left:0}
+  .disclose-right .dim{display:none}
+  .lead-row{flex-direction:column}
+  .step{padding:32px 0}
+  .drawer-head{padding-left:var(--s-4);padding-right:var(--s-4)}
+  .notice{padding-left:var(--s-4);padding-right:var(--s-2);gap:var(--s-2)}
+  .notice-text{flex-basis:160px}
+  .log,.log-ruler .t0,.log-ruler .t1{padding-left:var(--s-4);padding-right:var(--s-4)}
+}
+/* short windows (the 600 px floor): tighter paddings, a smaller canvas, so the drawer always has room */
+@media (max-height:700px){
+  :root{--card-pad:18px;--gap:var(--s-3)}
+  #screen-dashboard{padding:16px 0 20px}
+  #dag{height:90px}
+  .hero{gap:var(--s-3);padding:var(--s-5) 0 var(--s-6)}
+  .mark-wrap{width:88px;height:88px}
+  h1{font-size:40px}
+  .lead{font-size:var(--t-lg)}
+  .step{padding:32px 0 32px}
+  .drawer-head{padding-bottom:6px}
+  .toggle-big{min-height:96px}
+}
+
+/* miner-ui-4 (6 October 2026): Overview and Cards. The Overview hero (the founder's pick, C): the fleet rate at 84 px on a
+   graphite-to-obsidian fade with W, £ a day and blocks beside it, Start/Stop as the full-width bar under it. */
+.hero-row{grid-template-columns:1fr}
+.totals{order:1;grid-template-columns:repeat(5,minmax(0,1fr));align-items:start;padding:28px 28px 24px;border-color:transparent;background:linear-gradient(180deg,var(--graphite),var(--obsidian))} /* the IGN column wide enough for its one line ("927 shares, last paid in block 2,372" at 900 px on the three-card test machine, 18:4x UK, 12 October 2026) */
+/* the columns take their width from the figures: the two-figure block is two columns, each sized to its figure, the figures on one baseline and the captions on one baseline */
+/* the founder's read of the desktop capture (00:2x UK, 14 October 2026): two EQUAL columns, the rate and the balance in the
+   same form: the mark at 1.2 of the figure's cap height, centred on the figure, the figure at one size for both (the
+   rate no longer giant), the unit and the note under each on one baseline */
+.totals.two{grid-template-columns:repeat(5,minmax(0,1fr))}
+.tot{border-left:0;padding-left:0}
+.tot .v{font-size:var(--t-hero)}
+.tot .k{font-size:var(--t-sm);margin-top:8px}
+.tot .s{font-size:var(--t-md)}
+.tot .v.fig{display:inline-flex;align-items:center;gap:0}
+.tot .v.fig .ig-glyph{width:.86em;height:.86em;margin-right:.3em;vertical-align:0;align-self:center;position:static}
+.tot .v{font-size:30px}
+.tot .v.ask-price{font-size:var(--t-md);padding:9px 0 8px}
+.toggle-big{order:2;min-height:64px;flex-direction:row;align-items:center;flex-wrap:wrap;gap:14px;padding:12px 20px}
+.toggle-big .ring{margin:0}
+.toggle-big .ts{margin-left:auto;text-align:right;flex:1 1 240px;min-width:0}
+/* the chain scene: the site's live-dag.js in a 220 px box, the legend words under it, the blocks strip as the fallback */
+.dag-wrap{position:relative}
+#dag-live{display:block;width:100%;height:220px;border-radius:10px;background:var(--obsidian);border:1px solid var(--line)}
+#dag{height:120px;margin-bottom:0}
+.dag-tip{position:absolute;left:0;top:0;pointer-events:none;background:var(--graphite);border:1px solid var(--line-2);border-radius:8px;padding:8px 10px;font-size:var(--t-xs);color:var(--ink-2);display:flex;flex-direction:column;gap:2px;max-width:320px;box-shadow:0 8px 24px var(--shadow);z-index:3}
+.dag-tip b{color:var(--bone);font-weight:500;word-break:break-all}
+.dag-chip{position:absolute;right:10px;top:10px;font-size:var(--t-xs);color:var(--ash);background:var(--graphite);border:1px solid var(--line-2);border-radius:999px;padding:3px 10px;pointer-events:none;z-index:2}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:var(--s-3);font-size:var(--t-sm);color:var(--ash);align-items:center}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+/* the DAG legend swatches, scoped to the legend (a bare .lg reached label.switch.lg until 7 October 2026) */
+/* the key's swatches (key-22, 7 October 2026): the entries, order and tokens come from IgneumDag.legend; a swatch takes its
+   colour from --lg (set by renderLegend to the entry's token) and its shape from the class, so no state is coloured here */
+.legend .lg{--lg:var(--ash);width:10px;height:10px;border-radius:3px;display:inline-block;border:1.5px solid var(--lg);background:var(--lg-fill,var(--row));position:relative;flex:none}
+.legend .lg.faded{opacity:.45}
+.legend .lg.circle{border-radius:50%;box-shadow:0 0 0 2px color-mix(in srgb,var(--lg) 40%,transparent)}
+.legend .lg.ringed{box-shadow:0 0 0 2px color-mix(in srgb,var(--lg) 40%,transparent)}
+.legend .lg.tick{border-color:var(--line-2)}
+.legend .lg.tick::after{content:"\2713";position:absolute;left:0;top:-4px;font-size:11px;line-height:1;color:var(--lg)}
+/* Cards: the Tuning strip above the list */
+.tune-strip{padding:var(--s-4) var(--card-pad)}
+.ts-row{display:flex;align-items:center;gap:var(--s-4);flex-wrap:wrap}
+.ts-row .goal-line{flex:0 1 auto}
+.tune-strip .line-text{margin-top:var(--s-2);font-size:var(--t-base);color:var(--ash)}
+.tune-strip .switch{padding-bottom:0}
+/* the Ember layer on a row: the flame mark, the saving, the sparkline, the curve */
+.gl-tune{align-items:center}
+.flame{flex:0 0 16px;display:inline-block}
+.flame .fo{fill:none;stroke:var(--ash);stroke-width:7}
+.flame .ff{fill:var(--ember)}
+.flame.running .ff{fill:var(--molten)}
+.flame.measured .ff{fill:var(--ash)}
+.flame.idle .ff,.flame.paused .ff,.flame.stopped .ff{fill:none}
+.gl-tune.tuned .t{color:var(--ink-2)}
+.gl-tune .save,.gl-details .save{color:var(--molten);white-space:nowrap}
+.num .k.spark{display:inline-flex;align-items:center;gap:6px}
+.spark{display:inline-block;vertical-align:middle}
+.spark path{fill:none;stroke:var(--ash);stroke-width:1.2}
+.spark circle{fill:var(--ember)}
+.curve-wrap{display:flex;flex-direction:column;gap:6px;max-width:420px}
+.curve-svg{width:100%;height:auto;background:var(--obsidian);border:1px solid var(--line);border-radius:10px}
+.curve-svg .ln{fill:none;stroke:var(--ash);stroke-width:1.2}
+.curve-svg circle{fill:var(--ember)}
+.curve-svg circle.chosen{fill:none;stroke:var(--ember);stroke-width:2}
+.curve-svg circle.marked{fill:none;stroke:var(--ash);stroke-width:1.2}
+/* the knee (knob-24): the first clock step whose rate fell past the tolerance; dashed, so it reads apart from the chosen ring and a rejected point */
+.curve-svg circle.knee{fill:none;stroke:var(--molten);stroke-width:1.4;stroke-dasharray:2 2}
+.gl-details .line.lock b{color:var(--bone)}
+.gl-details .line.lock.unlocked b,.gl-details .line.lock.nolever b{color:var(--ink-2);font-weight:400}
+.gl-details .line.lock.searching{color:var(--molten)}
+.curve-svg text{font-family:var(--mono);font-size:9px;fill:var(--ash)}
+.seg.small .seg-b{padding:4px 10px;font-size:var(--t-sm)}
+/* tiers-25 (8 October 2026): the three tier buttons carry the row's rate and watts and the saving before the tap */
+.tiers{display:inline-flex;gap:3px;background:var(--obsidian);border:1px solid var(--line);border-radius:12px;padding:3px;flex-wrap:wrap}
+.tier-b{border:0;background:transparent;color:var(--ash);text-align:left;padding:7px 14px;border-radius:9px;cursor:pointer;display:flex;flex-direction:column;gap:2px;min-width:150px;transition:background .15s ease,color .15s ease}
+.tier-b .n{font-weight:600;font-size:var(--t-base);color:var(--ink-2);line-height:1.2}
+.tier-b .l{font-family:var(--mono);font-size:var(--t-sm);color:var(--bone);white-space:nowrap}
+.tier-b .s{font-family:var(--mono);font-size:var(--t-xs);color:var(--ash);white-space:nowrap}
+.tier-b:hover .n{color:var(--bone)}
+.tier-b.on{background:var(--graphite);box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.tier-b.on .n{color:var(--molten)}
+.tiers.small .tier-b{min-width:128px;padding:5px 11px}
+.gl-details .tiers-ctl{grid-template-columns:120px 1fr}
+.gl-details .tiers-ctl .tier-row{display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap;min-width:0}
+.gl-details .tiers-ctl .tier-row .btn{margin-left:auto}
+.gl-details .tiers-ctl .tiers{justify-self:start}
+.tiers.small .tier-b .s{font-size:10px}
+.gl-details .tiers-ctl .help .mono{color:var(--ink-2)}
+.gl-details .tiers-ctl .help .knee{display:block;margin-top:4px;color:var(--molten)}
+.tune-strip .line-text.dim{color:var(--ash)}
+.gl-details .ctl .seg{justify-self:start}
+@media (max-width:1180px){
+  .totals{grid-template-columns:1fr 1fr 1fr 1fr}
+}
+@media (max-width:860px){
+  .totals{grid-template-columns:1fr 1fr;row-gap:var(--s-4)}
+  .tot:nth-child(3){padding-left:0}
+}
+@media (max-width:720px){
+  .tot .v{font-size:var(--t-h2)}
+  .toggle-big .ts{display:none}
+  #dag-live{height:170px}
+  .legend{gap:6px 12px}
+  .rail-foot .nav.small{padding:6px 4px}
+}
+
+/* ---- miner-ui-5: the miner's first month: the count-up, the block card, the ladder strip, the rungs, the timeline ---- */
+.wait-card{background:var(--row);padding:16px 20px}
+.wait-row{display:flex;align-items:center;gap:var(--s-4)}
+.wait-ring{position:relative;width:52px;height:52px;flex:0 0 52px;display:inline-flex;align-items:center;justify-content:center}
+.wait-ring svg{position:absolute;inset:0;width:52px;height:52px;transform:rotate(-90deg)}
+.wait-ring .track{fill:none;stroke:var(--line);stroke-width:3}
+.wait-ring .arc{fill:none;stroke:var(--molten);stroke-width:3;stroke-linecap:round;stroke-dasharray:97.4;stroke-dashoffset:97.4;transition:stroke-dashoffset .6s ease}
+.wait-ring .pct{font-size:var(--t-xs);color:var(--molten)}
+.wait-text .t{font-size:var(--t-md);color:var(--bone)}
+.wait-text .s{font-size:var(--t-sm);color:var(--ash);margin-top:2px}
+.block-card{position:relative;background:linear-gradient(135deg,var(--graphite),var(--row));border-color:var(--line-2);box-shadow:inset 0 1px 0 var(--ember),0 18px 50px var(--shadow);user-select:text;-webkit-user-select:text}
+.bc-head{display:flex;align-items:center;gap:var(--s-3);margin-bottom:var(--s-2)}
+.bc-when{margin-left:auto;font-size:var(--t-xs);color:var(--ash)}
+.bc-close{position:static;margin-left:4px}
+.bc-title{font-size:var(--t-h1);letter-spacing:-.02em;margin-bottom:var(--s-2)}
+.bc-title.small{font-size:var(--t-h2)}
+.bc-line{font-size:var(--t-lg);color:var(--ink-2);margin:2px 0}
+.bc-line.dim{color:var(--ash);font-size:var(--t-md)}
+.bc-hash{font-size:var(--t-sm);color:var(--ash);margin:8px 0 12px;word-break:break-all}
+.shard-card{box-shadow:inset 0 1px 0 var(--nvidia)}
+.ladder-strip{padding:14px 20px}
+.ls-rungs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.ls-rung{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.04em;color:var(--ash);padding:4px 10px 4px 6px;border:1px solid var(--line);border-radius:999px;white-space:nowrap}
+.ls-rung i{width:8px;height:8px;border-radius:50%;background:var(--line-2);display:inline-block}
+.ls-rung.done{color:var(--molten);border-color:var(--molten-40)}
+.ls-rung.done i{background:var(--molten)}
+.ls-rung.now{color:var(--bone);border-color:var(--ember-40)}
+.ls-rung.now i{background:var(--ember);box-shadow:0 0 0 3px var(--ember-12)}
+.ls-rung.off{opacity:.55}
+.ls-line{display:flex;align-items:baseline;gap:var(--s-3);flex-wrap:wrap}
+.ls-line .t{font-size:var(--t-md);color:var(--bone);font-weight:500}
+.ls-line .s{font-size:var(--t-sm);min-width:0}
+.ls-line .btn{margin-left:auto}
+.rungs{list-style:none;margin:var(--s-3) 0 0;padding:0;display:flex;flex-direction:column}
+.rung{display:grid;grid-template-columns:22px 1fr;gap:var(--s-3);padding:10px 0;border-bottom:1px solid var(--line)}
+.rung:last-child{border-bottom:0}
+.rg-dot{width:12px;height:12px;border-radius:50%;background:var(--line-2);margin-top:5px;border:2px solid transparent;position:relative}
+.rung.done .rg-dot{background:var(--molten)}
+.rung.now .rg-dot{background:var(--ember);box-shadow:0 0 0 4px var(--ember-12)}
+.rung.off .rg-dot{background:transparent;border-color:var(--line-2)}
+.rg-body{display:flex;flex-direction:column;gap:2px;min-width:0}
+.rg-name{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.12em;text-transform:uppercase;color:var(--ash)}
+.rg-line{font-size:var(--t-lg);color:var(--bone)}
+.rung.done .rg-line{color:var(--molten)}
+.rung.next .rg-line,.rung.off .rg-line{color:var(--ash)}
+.rg-sub{font-size:var(--t-sm);color:var(--ash);line-height:1.45}
+.rung .bar{display:block;height:3px;border-radius:2px;background:var(--line);overflow:hidden;margin-top:6px;max-width:320px}
+.rung .bar b{display:block;height:100%;background:var(--ember)}
+.timeline{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.timeline li{display:grid;grid-template-columns:140px auto 1fr;gap:var(--s-3);align-items:baseline;padding:6px 0;border-bottom:1px solid var(--line);color:var(--ash);font-size:var(--t-md)}
+.timeline li:last-child{border-bottom:0}
+.timeline li.done{color:var(--bone)}
+.timeline .tl-at{font-size:var(--t-sm);color:var(--molten);white-space:nowrap}
+.timeline .tl-note{font-size:var(--t-sm);min-width:0}
+.num.ign .v{color:var(--molten)}
+@media (max-width:720px){.bc-title{font-size:var(--t-h2)}.timeline li{grid-template-columns:110px auto 1fr}.ls-line .btn{margin-left:0}}
+
+/* ---- the full chain scene with the block inspector (EMBER 02; the words of the site's /live) ---- */
+.chain-full{margin-top:var(--s-3);border-top:1px solid var(--line);padding-top:var(--s-3)}
+.cf-bar{display:flex;justify-content:space-between;align-items:center;gap:var(--s-3);flex-wrap:wrap;margin-bottom:var(--s-3)}
+.cf-right{display:inline-flex;align-items:center;gap:var(--s-2)}
+.zoom{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.zoom button{background:transparent;border:0;color:var(--ink-2);font:400 13px/1 var(--mono);padding:7px 11px;cursor:pointer}
+.zoom button:hover{background:var(--hover)}
+.zoom span{font-size:var(--t-xs);color:var(--ash);padding:0 6px;min-width:44px;text-align:center}
+.cf-graph{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:var(--s-4)}
+.cf-scene{position:relative;min-width:0}
+.cf-scene canvas{display:block;width:100%;height:420px;border-radius:10px;background:var(--row);border:1px solid var(--line)}
+.cf-foot{margin-top:8px;font-size:var(--t-xs);color:var(--ash)}
+.inspector{min-width:0;font-size:var(--t-base);border-left:1px solid var(--line);padding-left:var(--s-4)}
+.inspector .ih{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.chip{font-family:var(--mono);font-size:var(--t-xs);color:var(--ash);border:1px solid var(--line);border-radius:4px;padding:4px 8px;white-space:nowrap}
+.ititle{font-family:var(--sans);font-weight:500;font-size:20px;line-height:1.2;color:var(--bone);margin:6px 0 4px;letter-spacing:-.01em}
+.ihash{font-size:var(--t-xs);color:var(--ash);overflow-wrap:anywhere;margin-bottom:12px;user-select:text;-webkit-user-select:text}
+.proof-scene{height:180px;border:1px solid var(--line);border-radius:6px;background:var(--row);margin:10px 0;overflow:hidden}
+.proof-scene canvas{display:block;width:100%;height:100%}
+.proof-head{display:flex;justify-content:space-between;align-items:baseline;font-weight:500;color:var(--bone);margin-bottom:8px}
+/* the inspector's shard track, scoped to its element (a bare .track reached every switch's track until 7 October 2026) */
+#i-track{display:flex;gap:3px;height:3px;margin-bottom:10px}
+#i-track i{flex:1 1 0;background:var(--line);border-radius:2px}
+#i-track i.proving{background:var(--ember)}#i-track i.verified{background:var(--bone)}#i-track i.paid{background:var(--molten)}
+.shards{list-style:none;margin:0 0 12px;padding:0;font-size:var(--t-xs);line-height:1.7;max-height:120px;overflow:auto}
+.shards li{display:flex;justify-content:space-between;gap:8px;color:var(--ink-2)}
+.shards li::before{content:"\25CF";font-size:7px;margin-right:6px;color:var(--line-2)}
+.shards li.proving,.shards li.proving::before{color:var(--ember)}.shards li.verified,.shards li.verified::before{color:var(--bone)}.shards li.paid,.shards li.paid::before{color:var(--molten)}
+.shards li.muted{color:var(--ash)}
+.insp{display:grid;grid-template-columns:auto minmax(0,1fr);gap:0 10px;margin:0;border-top:1px solid var(--line);padding-top:6px;font-size:var(--t-xs)}
+.insp dt{color:var(--ash);padding:5px 0}
+.insp dd{margin:0;color:var(--bone);text-align:right;padding:5px 0;overflow-wrap:anywhere;min-width:0}
+.inspector .note{font-size:var(--t-sm);margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.inspector .top-gap{margin-top:8px}
+@media (max-width:900px){.cf-graph{grid-template-columns:1fr}.inspector{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:var(--s-3)}}
+
+/* ---------- vendor marks (gpu-logos, 7 October 2026): a self-contained block, the last thing in the file ----------
+   One simplified monochrome glyph per GPU vendor (View.vendorMark in app.js) in a soft rounded well: the vendor colour
+   at low alpha behind it, a hairline ring in the same colour, the glyph in the full colour. The tokens are the
+   module's own (--mark-*), one set per theme, so the light hex of every vendor reads at 3:1 or better on its well
+   (view.test.mjs computes the ratio and checks the hex here). The ember accent is for state and never tints a brand.
+   Nothing animates: hover and focus-within only deepen the ring. One mark per row, drawn by View.markHtml alone. */
+:root{--mark-nvidia:#8BE37A;--mark-nvidia-well:rgba(139,227,122,.14);--mark-nvidia-ring:rgba(139,227,122,.45);--mark-amd:#FF5A5A;--mark-amd-well:rgba(255,90,90,.14);--mark-amd-ring:rgba(255,90,90,.45);--mark-intel:#7CC4FF;--mark-intel-well:rgba(124,196,255,.14);--mark-intel-ring:rgba(124,196,255,.45);--mark-apple:#E6E3DD;--mark-apple-well:rgba(230,227,221,.14);--mark-apple-ring:rgba(230,227,221,.45);--mark-gpu:#9A9A9E;--mark-gpu-well:rgba(154,154,158,.14);--mark-gpu-ring:rgba(154,154,158,.45)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--mark-nvidia:#2F8A22;--mark-nvidia-well:rgba(47,138,34,.1);--mark-nvidia-ring:rgba(47,138,34,.45);--mark-amd:#C41E2A;--mark-amd-well:rgba(196,30,42,.1);--mark-amd-ring:rgba(196,30,42,.45);--mark-intel:#1C6FD6;--mark-intel-well:rgba(28,111,214,.1);--mark-intel-ring:rgba(28,111,214,.45);--mark-apple:#4A4A50;--mark-apple-well:rgba(74,74,80,.1);--mark-apple-ring:rgba(74,74,80,.45);--mark-gpu:#6B6B70;--mark-gpu-well:rgba(107,107,112,.1);--mark-gpu-ring:rgba(107,107,112,.45)}}
+:root[data-theme="light"]{--mark-nvidia:#2F8A22;--mark-nvidia-well:rgba(47,138,34,.1);--mark-nvidia-ring:rgba(47,138,34,.45);--mark-amd:#C41E2A;--mark-amd-well:rgba(196,30,42,.1);--mark-amd-ring:rgba(196,30,42,.45);--mark-intel:#1C6FD6;--mark-intel-well:rgba(28,111,214,.1);--mark-intel-ring:rgba(28,111,214,.45);--mark-apple:#4A4A50;--mark-apple-well:rgba(74,74,80,.1);--mark-apple-ring:rgba(74,74,80,.45);--mark-gpu:#6B6B70;--mark-gpu-well:rgba(107,107,112,.1);--mark-gpu-ring:rgba(107,107,112,.45)}
+.badge{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:0 0 44px;border:1px solid var(--mark-gpu-ring);color:var(--mark-gpu);background:var(--mark-gpu-well);box-shadow:0 0 0 0 transparent;transition:box-shadow .15s ease,border-color .15s ease}
+.badge svg{width:22px;height:22px;display:block}
+.badge.nvidia{color:var(--mark-nvidia);background:var(--mark-nvidia-well);border-color:var(--mark-nvidia-ring)}
+.badge.amd{color:var(--mark-amd);background:var(--mark-amd-well);border-color:var(--mark-amd-ring)}
+.badge.intel{color:var(--mark-intel);background:var(--mark-intel-well);border-color:var(--mark-intel-ring)}
+.badge.apple{color:var(--mark-apple);background:var(--mark-apple-well);border-color:var(--mark-apple-ring)}
+.badge.gpu{color:var(--mark-gpu);background:var(--mark-gpu-well);border-color:var(--mark-gpu-ring)}
+.gpu-row:hover .badge,.gpu-line:hover .badge,.gpu-row:focus-within .badge,.gpu-line:focus-within .badge{border-color:currentColor;box-shadow:0 0 0 3px var(--mark-gpu-well)}
+.gpu-row:hover .badge.nvidia,.gpu-line:hover .badge.nvidia,.gpu-row:focus-within .badge.nvidia,.gpu-line:focus-within .badge.nvidia{box-shadow:0 0 0 3px var(--mark-nvidia-well)}
+.gpu-row:hover .badge.amd,.gpu-line:hover .badge.amd,.gpu-row:focus-within .badge.amd,.gpu-line:focus-within .badge.amd{box-shadow:0 0 0 3px var(--mark-amd-well)}
+.gpu-row:hover .badge.intel,.gpu-line:hover .badge.intel,.gpu-row:focus-within .badge.intel,.gpu-line:focus-within .badge.intel{box-shadow:0 0 0 3px var(--mark-intel-well)}
+.gpu-row:hover .badge.apple,.gpu-line:hover .badge.apple,.gpu-row:focus-within .badge.apple,.gpu-line:focus-within .badge.apple{box-shadow:0 0 0 3px var(--mark-apple-well)}
+.badge.mini{width:26px;height:26px;border-radius:8px;flex:0 0 26px;display:inline-flex;vertical-align:middle;margin-right:8px}
+.badge.mini svg{width:15px;height:15px}
+@media (prefers-reduced-motion:reduce){.badge{transition:none}}
+/* the series line under the name: mono, small, quiet */
+.gen{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ash);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.gpu-row .gen{margin-top:-2px}
+.gpu-line .who .gen{margin:-1px 0 1px}
+#bc-card{display:flex;align-items:center;min-width:0}
+#bc-card>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.help.ask-cur{color:var(--ember)}
+
+/* the network step (an earlier release): two cards, the chosen one in ember, the one running marked, a closed one dimmed */
+.net-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-3);margin:var(--s-3) 0}
+.net-card{display:flex;flex-direction:column;gap:4px;text-align:left;padding:14px 16px;border-radius:12px;border:1px solid var(--line-2);background:var(--row);color:var(--bone);cursor:pointer;min-width:0}
+.net-card:hover{border-color:var(--ash)}
+.net-card[aria-checked="true"]{border-color:var(--ember);box-shadow:inset 0 0 0 1px var(--ember)}
+.net-card[disabled]{opacity:.55;cursor:default}
+.net-card .nc-name{font-family:var(--head);font-weight:700;font-size:var(--t-md)}
+.net-card .nc-line{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.06em;color:var(--ash)}
+.net-card .nc-sub{font-size:var(--t-sm);color:var(--ash);line-height:1.4}
+.net-card .nc-cur{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--molten)}
+@media (max-width:720px){.net-cards{grid-template-columns:1fr}}
+
+/* scaling-21 (the founder, 7 October 2026: "the miner needs some scaling so more is visible in the initial window"): the
+   Overview's vertical rhythm tightened so the rate band, the big button, the ladder strip, the chain card and the node
+   card's first row sit above the fold at 1280 by 800 (fold.test.mjs measures it on the mirror box at three viewports). Same
+   proportions, no type below 13 px, the live scene and the GPU marks keep their look; only paddings, gaps and the
+   scene's height move. The other pages already fit their first object at 1280 by 800 and stay as they are. */
+#page-mine{gap:var(--s-3)}
+#page-mine .hero-row{gap:var(--s-2)}
+#page-mine .totals{padding:16px 22px 14px}
+#page-mine .tot .k{margin-top:2px}
+#page-mine .toggle-big{min-height:54px;padding:9px 20px}
+#page-mine .ladder-strip{padding:10px 16px}
+#page-mine .ls-rungs{margin-bottom:6px}
+#page-mine .dag-card{padding:16px 18px 14px}
+#page-mine .dag-card .card-head{margin-bottom:8px}
+#page-mine #dag-live{height:184px}
+#page-mine .legend{margin-top:8px}
+#page-mine .wait-card{padding:12px 20px}
+#page-mine .node-card{padding-top:18px}
+/* dash-24 (7 October 2026, main's order after the screenshots: gutters inside the app at its 1440p and 4K opening sizes): the
+   dashboard's cap scales with the window above 1080p (1080 px to 1699, 1280 px at a 1440p-class window from 1700, 1440 px at
+   a 4K-class window from 2500); Settings gains a second column at the wide cap, its cards never past 640 px, their design
+   width; the Overview, Cards, Earnings and Prove rows are lists and read at the full cap. fold.test.mjs measures the width at
+   1920 by 1080 and 1920 by 1200 on the mirror box (known-failed first at 1080); view.test.mjs checks these rules. */
+@media (min-width:1700px){.screen{max-width:1280px}#page-settings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gap);align-items:start}#page-settings>.card{max-width:640px;width:100%}#page-settings>.card.wide,#page-settings>#s-interface-card{grid-column:1/-1;max-width:none}}
+@media (min-width:2500px){.screen{max-width:1440px}}
+
+.card.fee{padding:var(--s-4)}
+.card.fee .help{margin:0}
+
+/* app-ia-26: the Tune page's cards */
+.tune-list{margin-top:var(--s-3)}
+.tune-card .gl-main{grid-template-columns:44px minmax(150px,1fr) auto}
+.tune-card .st{white-space:normal}
+.tc-tiers{padding:0 14px 10px 72px}
+.tc-line{margin:0;padding:0 14px 12px 72px;font-size:var(--t-base);color:var(--ink-2);line-height:1.5}
+.tc-line .knee{display:block;color:var(--molten)}
+.tc-details{border-top:1px solid var(--line)}
+.tc-details>summary{cursor:pointer;list-style:none;padding:10px 14px 10px 72px;font-size:var(--t-sm);color:var(--ash);display:flex;align-items:center;gap:8px}
+.tc-details>summary::-webkit-details-marker{display:none}
+.tc-details>summary::after{content:"";width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .15s ease}
+.tc-details[open]>summary::after{transform:rotate(225deg) translateY(-2px)}
+.tc-details .gl-details{border-top:0;padding-top:0}
+.tc-details .gl-details .ctl .pv{min-width:48px}
+.tune-foot{margin:var(--s-3) 0 0;padding:0 4px}
+#power-note .btn{margin-left:6px}
+
+/* app-ia-26: the Earnings rows, the Standing details and the projection foot */
+.earn-rows{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.earn-row{display:grid;grid-template-columns:132px minmax(0,1fr) auto;grid-template-areas:"k v a" "k s a";align-items:baseline;column-gap:var(--s-4);row-gap:2px;padding:10px 0;border-bottom:1px solid var(--line)}
+.earn-row .k{grid-area:k;font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.14em;text-transform:uppercase;color:var(--ash)}
+.earn-row .v{grid-area:v;font-family:var(--head);font-weight:700;font-size:var(--t-lg);line-height:1.2;min-width:0}
+.earn-row .v.mono{font-family:var(--mono);font-weight:500;font-size:var(--t-md);color:var(--molten)}
+.earn-row .s{grid-area:s;font-size:var(--t-sm);color:var(--ash);line-height:1.4}
+.earn-row .acts{grid-area:a;display:flex;gap:6px;align-self:center}
+.earn-details{border-bottom:1px solid var(--line)}
+.earn-details>summary{cursor:pointer;list-style:none;padding:10px 0;font-size:var(--t-sm);color:var(--ash);display:flex;align-items:center;gap:8px}
+.earn-details>summary::-webkit-details-marker{display:none}
+.earn-details>summary::after{content:"";width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .15s ease}
+.earn-details[open]>summary::after{transform:rotate(225deg) translateY(-2px)}
+.earn-foot{margin:var(--s-3) 0 0}
+.help{text-wrap:pretty}
+
+/* app-ia-26: the node line on Mine, the node facts behind Details on Settings */
+.node-go{display:flex;align-items:center;gap:10px;width:100%;border:1px solid var(--line);background:var(--graphite);border-radius:var(--card-r);padding:14px 18px;cursor:pointer;text-align:left;color:var(--bone);font-size:var(--t-md);font-weight:600}
+.node-go:hover{border-color:var(--line-2)}
+.node-go.bad{color:var(--ember)}
+.node-go .chev{margin-left:auto;color:var(--ash);transform:rotate(-45deg) translateY(2px)}
+.node-details{margin-top:var(--s-3);border-top:1px solid var(--line)}
+.node-details>summary{cursor:pointer;list-style:none;padding:10px 0;font-size:var(--t-sm);color:var(--ash);display:flex;align-items:center;gap:8px}
+.node-details>summary::-webkit-details-marker{display:none}
+.node-details>summary::after{content:"";width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .15s ease}
+.node-details[open]>summary::after{transform:rotate(225deg) translateY(-2px)}
+
+/* 0.2.3, the content audit of 12 October 2026: nothing on a page says what the engine cannot show. The old embedded
+   node's lines, the old relation's tune table and knee search, the solo-block waits and projections, the proving
+   lane and the vote switches are off the page (the ids stay so the script's bindings hold). */
+#first-wait,#block-card,#e-standing-row,#standing-details,#e-projection,#node-details,#shard-card,#s-proving-card,#s-node-dir,#s-advanced,
+#tier-seg,#btn-tune-all,#tune-schedule,#s-sweep-row,#s-climb-row,.tune-card .tc-tiers,.tune-card .acts .btn,.tune-card .knee,.tune-card .ids,
+.chip[data-src="node"],.chip[data-src="miner"],.chip[data-src="watch"],#log-last-swap{display:none !important}
+
+/* 0.2.3: the share row under the rate (the network scene's language: small blocks arriving in a row) */
+.share-row{margin-top:0}
+.share-track{display:flex;gap:4px;align-items:flex-end;height:22px;overflow:hidden}
+.share-track i{display:block;width:14px;height:14px;border-radius:3px;background:var(--ember);box-shadow:0 0 8px var(--ember-40);animation:share-land .45s ease-out;flex:0 0 auto}
+.share-track i.fee{background:var(--molten)}
+.share-track i.dim{background:var(--line-2);box-shadow:none}
+.share-track i.door{width:22px;height:22px;border-radius:5px;background:var(--graphite);border:1px solid var(--molten);box-shadow:0 0 12px var(--molten-40);margin-left:6px}
+.share-track i.door.paid{border-color:var(--ok)}
+@keyframes share-land{from{transform:translateX(18px) scale(.6);opacity:0}to{transform:none;opacity:1}}
+.share-cap{display:flex;justify-content:space-between;gap:var(--s-3);margin-top:var(--s-2);font-size:var(--t-sm)}
+.share-help{margin-top:var(--s-1)}
+@media (prefers-reduced-motion:reduce){.share-track i{animation:none}}
+/* 0.2.3: the expected next block under the chain scene */
+.next-block{display:flex;align-items:center;gap:var(--s-3);margin-top:var(--s-2);font-size:var(--t-sm);color:var(--ash)}
+.nb-bar{flex:1;height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+.nb-bar i{display:block;height:100%;width:0;background:var(--molten);transition:width .9s linear}
+.nb-bar i.any{background:var(--ember);animation:nb-pulse 1.6s ease-in-out infinite}
+@keyframes nb-pulse{0%,100%{opacity:.6}50%{opacity:1}}
+
+/* the Pools page (DESIGN 2.7; main's audit of 21:0x UK, 13 October 2026): one compact card per pool at Mine's density, the
+   name column, four stat tiles (value large, label small) and the action; a pool with no document folds to one line;
+   Solo and Add a pool side by side under the list; everything stacks at phone width */
+.pool-list{display:flex;flex-direction:column;gap:var(--s-2);margin-top:var(--s-3)}
+.pool-row{display:grid;grid-template-columns:minmax(230px,1fr) minmax(0,3fr) auto;gap:var(--s-4);align-items:center;background:var(--row);border:1px solid var(--line);border-radius:12px;padding:var(--s-3) var(--s-4)}
+.pool-row.on{border-color:var(--ember-40);box-shadow:inset 0 1px 0 var(--ember)}
+.pool-main{min-width:0}
+.pool-name{font-family:var(--display);font-weight:700;font-size:var(--t-lg);line-height:1.2;color:var(--bone);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pool-addr{font-size:var(--t-sm);color:var(--ash);margin-top:3px;overflow-wrap:anywhere;line-height:1.4}
+.pool-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.pool-tag{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.08em;text-transform:uppercase;color:var(--molten);border:1px solid var(--line-2);border-radius:999px;padding:2px 8px;white-space:nowrap}
+.pool-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s-3);min-width:0}
+.pool-stats.five{grid-template-columns:repeat(5,minmax(0,1fr))}
+.pool-tile{display:flex;flex-direction:column;gap:3px;min-width:0;padding-left:var(--s-3);border-left:1px solid var(--line)}
+.pool-tile .v{font-family:var(--head);font-weight:700;font-size:var(--t-lg);line-height:1.2;color:var(--bone);overflow-wrap:anywhere}
+.pool-tile .k{font-family:var(--mono);font-size:var(--t-xs);letter-spacing:.1em;text-transform:uppercase;color:var(--ash);line-height:1.35}
+.pool-tile .s{font-size:var(--t-sm);color:var(--ash);line-height:1.4}
+.pool-tile.mid .v{font-size:var(--t-md)}
+.pool-tile .v.lines{line-height:1.35}
+.phone-only{display:none}
+.pool-tile.dim .v{color:var(--ash);font-weight:600}
+.pool-tile.warn .v{color:var(--bad)}
+.pool-fold{font-size:var(--t-base);color:var(--ash);min-width:0}
+.pool-act{display:flex;align-items:center;justify-content:flex-end}
+.pool-state{display:inline-flex;align-items:center;gap:8px;min-height:34px;padding:6px 14px;border-radius:999px;border:1px solid var(--ember-40);color:var(--ember);font-family:var(--mono);font-weight:600;font-size:var(--t-sm);letter-spacing:.04em;white-space:nowrap}
+.pool-state .dot{width:8px;height:8px;border-radius:50%;background:var(--ember);flex:none}
+.pool-loading,.pool-empty{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-5) var(--s-4);color:var(--ash);font-size:var(--t-base);background:var(--row);border:1px dashed var(--line-2);border-radius:12px}
+.pool-empty.err{color:var(--bad);border-style:solid}
+.pool-foot{max-width:none;margin-top:var(--s-3)}
+.pool-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-4)}
+.pool-pair .card{margin-top:0;min-width:0}
+.pool-form .help{max-width:none}
+.pool-form .box{margin-top:var(--s-3)}
+.pool-form .box input{flex:1;min-width:0;background:transparent;border:0;padding:4px 0;color:var(--bone);font-size:var(--t-md);user-select:text;-webkit-user-select:text}
+.pool-form .box input:focus{outline:none}
+.pool-form .box:focus-within{border-color:var(--ember)}
+.pool-form .box .btn{flex:none}
+.pool-form .err-line{color:var(--bad);margin-top:var(--s-2)}
+.pool-warn{display:flex;align-items:flex-start;gap:var(--s-3);background:var(--row);border:1px solid var(--line);border-left:3px solid var(--molten);border-radius:10px;padding:8px 12px;margin:var(--s-3) 0 0;font-size:var(--t-sm);color:var(--ink-2);line-height:1.45}
+.pool-warn .dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--molten);margin-top:6px}
+.help.small{font-size:var(--t-sm)}
+
+/* the brand marks beside figures (main's design and audit, 22:1x UK, 13 October 2026), in the tokens vocabulary: .ig-glyph
+   is one sprite symbol in currentColor (the figure's own colour: ember beside an ember figure, bone beside a bone one).
+   The bolt (.rate) stands 0.55 of the digits' cap height (cap height about 0.72em of the display face, so 0.4em), filled,
+   bottom-aligned to the digits' baseline, 0.3em before the figure; the coin (.coin) is 0.9em on the cap height's
+   middle, 0.3em before the amount. A figure wrapper (.fig) carries tabular numerals; .nomark hides the glyph while the
+   figure is a word ("reading") rather than a number. The unit stays as text after the amount. */
+.ig-glyph{display:inline-block;color:inherit;fill:currentColor;flex:none}
+.ig-glyph.rate{width:.86em;height:.86em;vertical-align:-.12em;margin-right:.3em}
+.ig-glyph.coin{width:.86em;height:.86em;vertical-align:-.12em;margin-right:.3em}
+.fig{font-variant-numeric:tabular-nums;white-space:nowrap}
+.fig.nomark .ig-glyph{display:none}
+.tot .v.fig,.earn-head .v.fig,.earn-cell .v.fig{display:inline-flex;align-items:baseline;overflow:visible}
+.earn-head .v.fig .ig-glyph,.earn-cell .v.fig .ig-glyph{width:.86em;height:.86em;margin-right:.3em;align-self:center;position:static}
+.num .v .ig-glyph.rate{align-self:baseline;margin-right:.25em}
+.earn-row .v .ig-glyph{vertical-align:-.12em}
+/* the sealers' answers (main's audit): the raw reason strings behind a details disclosure, never on the page's face */
+.row-details{margin-top:4px;font-size:var(--t-xs);color:var(--ash)}
+.row-details summary{cursor:pointer;color:var(--ink-2);list-style:none;display:inline-flex;align-items:center;gap:6px}
+.row-details summary::-webkit-details-marker{display:none}
+.row-details summary::after{content:"";width:6px;height:6px;border-right:1px solid currentColor;border-bottom:1px solid currentColor;transform:rotate(45deg);margin-top:-3px}
+.row-details[open] summary::after{transform:rotate(-135deg);margin-top:3px}
+.row-details ul{margin:6px 0 0;padding-left:16px;line-height:1.45;overflow-wrap:anywhere}
+/* the dev-fee row: short lines, one each */
+.earn-row .s .ln{display:block}
+@media (max-width:980px){.pool-stats,.pool-stats.five{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:var(--s-2)}}
+@media (max-width:720px){.pool-row{grid-template-columns:1fr;gap:var(--s-3)}.pool-name{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}.pool-act{justify-content:stretch}.pool-act .btn{width:100%;justify-content:center}.pool-act .pool-state{align-self:flex-start}.pool-tile.t-fee{order:1}.pool-tile.t-share{order:2}.pool-tile.t-payout{order:3}.pool-tile.t-probe{order:4}.pool-tile.t-stated{order:5}.phone-only{display:block}.pool-pair{grid-template-columns:1fr}.pool-form .box{flex-wrap:wrap}.pool-form .box input{flex:1 1 100%}.pool-form .box .btn{flex:1 1 100%}}
+
+/* 0.2.8, the Fleet item: the console in Ember's window, the frame taking the card's width and the window's height */
+/* the console scrolls inside the frame behind a visible edge, the foot under it (main's read of the 0.2.21-2 Fleet sheet,
+   16 October 2026: the last tile cut at the frame's bottom with the caption drawn over it) */
+.fleet-frame { display: block; width: 100%; height: calc(100vh - 300px); min-height: 480px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg, #0b0b0c); overflow: auto; }
+#fleet-foot { position: static; margin-top: var(--s-2); }
+@media (max-width: 719px) { .fleet-frame { height: calc(100vh - 260px); min-height: 420px; } }
+
+/* the founder's audit of 15 October 2026 (nothing clipped): the chain tile's two lines (the chain by the naming rule, the pool's
+   host and port) are never clamped; the tile grows */
+#t-chain-cell .s{display:block;overflow:visible;-webkit-line-clamp:unset;white-space:pre-line}
+/* the chain card's line plain (the founder's "pace line plain"): a sentence in the body face, never caps */
+#dag-state{font-family:var(--sans,inherit);font-size:var(--t-sm);letter-spacing:0;text-transform:none;color:var(--ash)}
+/* the first accepted share marked once per install (the founder's cell): a short ember pulse on the strip's row, nothing after */
+@keyframes first-share{0%{box-shadow:0 0 0 0 var(--ember-40)}50%{box-shadow:0 0 0 10px rgba(255,106,0,0)}100%{box-shadow:0 0 0 0 rgba(255,106,0,0)}}
+.share-row.first{animation:first-share 1.2s ease-out 1}
+@media (prefers-reduced-motion:reduce){.share-row.first{animation:none}}
+/* the founder's audit at 390 (the Earnings page's payouts row one word a line): the rows stack, the actions on their own line */
+@media (max-width:720px){.earn-row{grid-template-columns:minmax(0,1fr);grid-template-areas:"k" "v" "s" "a";row-gap:4px}.earn-row .acts{justify-content:flex-start;margin-top:4px}.earn-row .v{white-space:normal}}
+/* main's cell (the audit): the strip with the power and temperature tiles collapsed reads three even tiles */
+.totals.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:720px){.totals.three{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* F-191 (the first tester's screenshot, 15 October 2026): the Tune card's control rows give the label its own width (the label
+   wrapped in a 120 px column), the details' lines wrap inside the card (the facts line ran off its right edge) */
+.gl-details .ctl{grid-template-columns:minmax(120px,max-content) minmax(0,1fr) auto}
+.gl-details .line,.gl-details .help,.gl-details p{min-width:0;overflow-wrap:anywhere;white-space:normal}
+.gl-details .ids .help,.gl-details .ctl .help{grid-column:1 / -1;margin:0;text-align:left}
+/* the Cards page's lane rows (main's read of 16 October 2026): the card's lanes this session under its line */
+.gpu-line .lanes{display:flex;flex-direction:column;gap:2px;margin-top:4px}
+.gpu-line .lane{display:grid;grid-template-columns:minmax(0,1.6fr) repeat(3,minmax(0,1fr));gap:8px;font-size:var(--t-sm);color:var(--ash);line-height:1.4}
+.gpu-line .lane.now{color:var(--ink-2)}.gpu-line .lane.now .lw{color:var(--ember)}
+.gpu-line .lane .lv{text-align:right;white-space:nowrap}
+/* at phone width each lane is a fixed row: the name on its own line, then the rate, the shares and the time in three columns
+   (main's read of the 0.2.21-2 Cards sheet at 390, 16 October 2026: figures orphaned on their own lines, the time absent) */
+@media (max-width:720px){.gpu-line .lane{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr);row-gap:0;column-gap:6px}.gpu-line .lane .lw{grid-column:1 / -1}.gpu-line .lane .lv{text-align:left;white-space:normal}.gpu-line .lane .lv:nth-child(4){display:block;text-align:right}}
+/* the welcome screen fits 800 px of height (main's read of 16 October 2026: the last line clipped at 1280 by 800) */
+@media (max-height:840px){.hero{min-height:0;justify-content:flex-start;gap:var(--s-3);padding:18px 0 28px}.mark-wrap{width:80px;height:80px;border-radius:18px;margin-bottom:0}.mark-wrap img{width:48px;height:48px}.hero h1{font-size:40px;line-height:1}.lead{font-size:var(--t-lg)}.three{margin-top:4px;gap:var(--s-2)}.tile{padding:12px 14px;gap:4px}.tile .t{font-size:var(--t-base)}.tile .s{font-size:var(--t-sm)}.cta{margin-top:4px}}
+/* 0.2.21 (the mini's 390 capture of 0.2.20, 16 October 2026): the chain card's state line wraps under the heading at narrow
+   widths instead of running off the card's right edge */
+@media (max-width:720px){#page-mine .card-head:has(#dag-state){flex-wrap:wrap;row-gap:4px}#page-mine .card-head:has(#dag-state) .head-right{flex:1 0 100%;min-width:0}#dag-state{display:block;white-space:normal;overflow-wrap:anywhere;text-align:left}}
+/* the Mine tile's lanes each on a line (the founder's M5 Max on the raster lane, 16 October 2026) */
+#t-hash-sub{white-space:pre-line;-webkit-line-clamp:4} /* the cards line and one line a lane (three lanes at most): the first desktop's two-lane frame of 16 October 2026 clipped the second lane's line under the two-line clamp */

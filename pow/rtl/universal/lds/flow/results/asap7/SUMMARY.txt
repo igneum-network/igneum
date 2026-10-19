@@ -1,0 +1,141 @@
+run at UTC 2026-10-12 19:28:11; platform asap7; period 1000; testbench half period 0.5 ns
+WARNING: ./tb/gather_table_tb.v:130: $readmemh(./vectors/ops.hex): Not enough words in the file for the requested range [0:8191].
+WARNING: ./tb/gather_table_tb.v:132: $readmemh(./vectors/expect.hex): Not enough words in the file for the requested range [0:8191].
+gather_table_tb: W 32 AW 12 NB 8 TB 2; 4114 requests
+fill done at 36899000
+isolated: 4114 requests, 131648 words, 0 mismatches, mean passes 3.22
+VCD info: dumpfile gather_table_tb.vcd opened for output.
+streamed: 4114 requests returned in 14520 cycles, 0 mismatches
+RESULT gather_table: 4114 requests x 2 runs, 263296 words, 0 mismatches
+./tb/gather_table_tb.v:212: $finish called at 77035000 (1ps)
+[INFO ODB-0227] LEF file: ORFS/flow/platforms/asap7/lef/asap7sc7p5t_28_R_1x_220121a.lef, created 212 library cells
+[INFO ODB-0227] LEF file: ORFS/flow/platforms/asap7/lef/fakeram7_2048x39.lef, created 1 library cells
+link_design gather_table
+read_sdc out/asap7/orfs/results/asap7/gather_table/base/1_2_yosys.sdc
+source ORFS/flow/platforms/asap7/setRC.tcl
+eliminate_dead_logic
+Removed 0 unused instances and 0 unused nets.
+Design area 112218 um^2 100% utilization.
+write_db out/asap7/orfs/results/asap7/gather_table/base/1_synth.odb
+write_sdc -no_timestamp out/asap7/orfs/results/asap7/gather_table/base/1_synth.sdc
+Elapsed time: 0:01.53[h:]min:sec. CPU time: user 1.42 sys 0.10 (99%). Peak memory: 250984KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+1_synth                .odb          1        2     0.99      245 37c3801a02
+1_synth                .sdc                                       a8062daed4
+[INFO FLW-0012] Placement violations .
+estimate_parasitics -placement
+Report metrics stage 3, detailed place...
+
+==========================================================================
+detailed place report_design_area
+--------------------------------------------------------------------------
+Design area 114174 um^2 31% utilization.
+write_db out/asap7/orfs/results/asap7/gather_table/base/3_5_place_dp.odb
+write_sdc -no_timestamp out/asap7/orfs/results/asap7/gather_table/base/3_place.sdc
+Elapsed time: 0:32.44[h:]min:sec. CPU time: user 38.84 sys 23.23 (191%). Peak memory: 1785200KB.
+Log                    Ext     Elapsed      CPU     CPU/ Peak Mem sha1sum
+                                     s        s  Elapsed       MB [0:10)
+3_5_place_dp           .odb         32       62     1.91     1743 b5da2a3d3c
+cp out/asap7/orfs/results/asap7/gather_table/base/3_5_place_dp.odb out/asap7/orfs/results/asap7/gather_table/base/3_place.odb
+[INFO GPL-0059] Movable instances area:     126054.113 um^2 (+0.00%)
+[INFO GPL-0059] Movable instances area:     126054.113 um^2 (+0.00%)
+[INFO GPL-0059] Movable instances area:     126054.113 um^2 (+0.00%)
+[INFO GPL-0059] Movable instances area:     126054.113 um^2 (+0.00%)
+[INFO RSZ-0039] Resized 4 instances.
+Design area 113961 um^2 30% utilization.
+[INFO RSZ-0039] Resized 5 instances.
+Design area 114174 um^2 31% utilization.
+[INFO DPL-0007] Movable instances area: 4218.62 um^2
+[INFO DPL-0008] Fixed instances area within core: 109952.33 um^2
+[INFO DPL-0020] Mirrored 3878 instances
+Design area 114174 um^2 31% utilization.
+libc++abi: terminating due to uncaught exception of type std::__1::__fs::filesystem::filesystem_error: filesystem error: in posix_stat: failed to determine attributes for the specified path: Permission denied ["(box path)
+Signal 6 received
+Stack trace:
+ 0# 0x000000000205DBD5 in ORFS/tools/install/OpenROAD/bin/openroad
+ 1# 0x0000000000045330 in /lib/x86_64-linux-gnu/libc.so.6
+ 2# pthread_kill in /lib/x86_64-linux-gnu/libc.so.6
+ 3# gsignal in /lib/x86_64-linux-gnu/libc.so.6
+ 4# abort in /lib/x86_64-linux-gnu/libc.so.6
+ 5# 0x00000000073D2D56 in ORFS/tools/install/OpenROAD/bin/openroad
+ 6# 0x00000000073EB7A9 in ORFS/tools/install/OpenROAD/bin/openroad
+ 7# 0x00000000073D3193 in ORFS/tools/install/OpenROAD/bin/openroad
+ 8# 0x00000000073D0CB6 in ORFS/tools/install/OpenROAD/bin/openroad
+ 9# 0x00000000073D0CA0 in ORFS/tools/install/OpenROAD/bin/openroad
+10# 0x0000000007379B19 in ORFS/tools/install/OpenROAD/bin/openroad
+11# 0x000000000737987A in ORFS/tools/install/OpenROAD/bin/openroad
+12# 0x000000000737971E in ORFS/tools/install/OpenROAD/bin/openroad
+13# 0x0000000007379641 in ORFS/tools/install/OpenROAD/bin/openroad
+14# 0x0000000007377E99 in ORFS/tools/install/OpenROAD/bin/openroad
+15# 0x0000000002061B0E in ORFS/tools/install/OpenROAD/bin/openroad
+16# 0x000000000205DEE2 in ORFS/tools/install/OpenROAD/bin/openroad
+17# 0x0000000006442712 in ORFS/tools/install/OpenROAD/bin/openroad
+18# 0x000000000205DA8D in ORFS/tools/install/OpenROAD/bin/openroad
+19# 0x000000000002A1CA in /lib/x86_64-linux-gnu/libc.so.6
+20# __libc_start_main in /lib/x86_64-linux-gnu/libc.so.6
+21# 0x000000000205D53A in ORFS/tools/install/OpenROAD/bin/openroad
+finished at UTC 2026-10-12 19:36:51
+annotated read at UTC 2026-10-12 19:37:08; platform asap7
+# vcd_activity: source out/asap7/gather_table_tb.vcd timescale 1ps clock gather_table_tb.dut.clk period_vcd_units 1000.03 cycles 14520 window 62504500 77025000
+# name	bit	toggles	activity	duty
+gather_table_tb.dut.clk	-1	29041	2.00007	0.500017
+gather_table_tb.dut.oset[0].bank[0].u.clk	-1	29041	2.00007	0.500017
+gather_table_tb.dut.oset[0].bank[1].u.clk	-1	29041	2.00007	0.500017
+annotated read at UTC 2026-10-12 19:37:57; platform asap7
+# vcd_activity: source out/asap7/gather_table_tb.vcd timescale 1ps clock gather_table_tb.dut.clk period_vcd_units 1000.03 cycles 14520 window 62504500 77025000
+# name	bit	toggles	activity	duty
+gather_table_tb.dut.clk	-1	29041	2.00007	0.500017
+gather_table_tb.dut.oset[0].bank[0].u.clk	-1	29041	2.00007	0.500017
+gather_table_tb.dut.oset[0].bank[1].u.clk	-1	29041	2.00007	0.500017
+annotated read at UTC 2026-10-12 19:38:35; platform asap7
+# vcd_activity: source out/asap7/gather_table_tb.vcd timescale 1ps clock gather_table_tb.dut.clk period_vcd_units 1000.03 cycles 14520 window 62504500 77025000
+# name	bit	toggles	activity	duty
+gather_table_tb.dut.clk	-1	29041	2.00007	0.500017
+gather_table_tb.dut.oset[0].bank[0].u.clk	-1	29041	2.00007	0.500017
+gather_table_tb.dut.oset[0].bank[1].u.clk	-1	29041	2.00007	0.500017
+annotated read at UTC 2026-10-12 19:39:25; platform asap7
+# vcd_activity: source out/asap7/gather_table_tb.vcd timescale 1ps clock gather_table_tb.dut.clk period_vcd_units 1000.03 cycles 14520 window 62504500 77025000
+# name	bit	toggles	activity	duty
+gather_table_tb.dut.clk	-1	29041	2.00007	0.500017
+gather_table_tb.dut.oset[0].bank[0].u.clk	-1	29041	2.00007	0.500017
+gather_table_tb.dut.oset[0].bank[1].u.clk	-1	29041	2.00007	0.500017
+map_activity: netlist nets 40010: annotated 2079 (1768 by name, 0 flop complements, 311 through inverters), port-driven 720, named unmatched 7681, unnamed interior (propagated) 29528, undriven 2; VCD bits 10407, unused 8639
+propagated: total 0.129 W, macro 0.0908 W (the kit's placeholder, set aside), logic 0.0382 W at 1 GHz over 14520 cycles for 4114 requests: 134.82 pJ per 32-lane gather, 33.71 pJ per octet gather (the logic alone)
+annotated: total 0.112 W, macro 0.0905 W (the kit's placeholder, set aside), logic 0.0215 W at 1 GHz over 14520 cycles for 4114 requests: 75.88 pJ per 32-lane gather, 18.97 pJ per octet gather (the logic alone)
+--- propagated ---
+Group                  Internal  Switching    Leakage      Total
+                          Power      Power      Power      Power (Watts)
+----------------------------------------------------------------
+Sequential             3.60e-03   1.06e-03   4.37e-07   4.66e-03   3.6%
+Combinational          8.86e-03   2.46e-02   4.11e-06   3.34e-02  25.9%
+Clock                  0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+Macro                  8.67e-02   0.00e+00   4.12e-03   9.08e-02  70.4%
+Pad                    0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+----------------------------------------------------------------
+--- annotated ---
+Group                  Internal  Switching    Leakage      Total
+                          Power      Power      Power      Power (Watts)
+----------------------------------------------------------------
+Sequential             3.97e-03   1.24e-03   4.44e-07   5.21e-03   4.7%
+Combinational          4.90e-03   1.14e-02   3.98e-06   1.63e-02  14.5%
+Clock                  0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+Macro                  8.64e-02   0.00e+00   4.12e-03   9.05e-02  80.8%
+Pad                    0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+----------------------------------------------------------------
+--- annotation ---
+Annotated 1754 pin activities.
+annotate.tcl: 2079 nets annotated (1768 by name, 0 flop complements, 311 through inverters), 720 port-driven (read_vcd), 7681 named unmatched, 29528 unnamed interior propagated, 2 undriven
+unannotated 134615
+map_activity: netlist nets 40010: annotated 2079 (1768 by name, 0 flop complements, 311 through inverters), port-driven 720, named unmatched 7681, unnamed interior (propagated) 29528, undriven 2; VCD bits 10407, unused 8639
+
+# named netlist nets with no VCD activity (7681)
+net16034
+net16033
+net16691
+net16031
+net16030
+net16692
+net16028
+net16027
+net16693

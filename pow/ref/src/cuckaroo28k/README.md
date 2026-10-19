@@ -1,0 +1,2 @@
+# cuckaroo28k: tromp's Cuckaroo headers (tromp/cuckoo 55852825, FAIR MINING licence, as vendored under pow/third_party/cuckaroo29-5585282) copied and MODIFIED for the Graph lane's 28b form (14 October 2026): the edge function keyed over the epoch dataset (cuckaroo.hpp sipblock and mean.hpp's two node sites XOR the edge key; the lines are marked IGNEUM 28b). Everything else is tromp's text unchanged.
+28c (the review's reading 5): the word fetched at the address the sip output names (igm_edge_key_at), the hook failing closed (all ones when unset).

@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Igneum Miner</title>
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="app.css">
+</head>
+<body class="phase-welcome" data-phase="welcome" data-page="mine">
+
+<!-- the rail: four sections (miner-ui-3: Mine, Earnings, Prove, Settings), Logs and Quit in the foot. Under 720 px it
+     is a bottom tab bar. The setup screens have no rail. -->
+<aside class="rail" id="rail" hidden>
+  <div class="rail-brand">
+    <img src="mark.svg" width="28" height="28" alt="">
+    <span class="word">IGNEUM</span>
+  </div>
+  <nav class="rail-nav" id="rail-nav" aria-label="Sections">
+    <button class="nav on" data-page="mine" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg><span>Mine</span></button>
+    <button class="nav" data-page="earnings"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 15h2"/></svg><span>Earnings</span></button>
+    <button class="nav" data-page="prove"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z"/><path d="m9 12 2 2 4-4"/></svg><span>Prove</span></button>
+    <button class="nav" data-page="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg><span>Settings</span><i class="nav-dot" id="nav-updates-dot" hidden></i></button>
+  </nav>
+  <div class="rail-foot">
+    <div class="rail-status mono" id="rail-status"></div>
+    <button class="nav small" id="btn-logs" aria-expanded="false" aria-controls="drawer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span id="btn-logs-text">Logs</span></button>
+    <button class="nav small danger" id="btn-quit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9"/><path d="M6.5 6.5a8 8 0 1 0 11 0"/></svg><span>Quit</span></button>
+    <div class="rail-version mono" id="foot-version"></div>
+  </div>
+</aside>
+
+<header class="top">
+  <div class="brand" id="top-brand">
+    <img src="mark.svg" width="30" height="30" alt="">
+    <span class="word">IGNEUM</span><span class="miner">MINER</span>
+  </div>
+  <div class="page-title" id="page-title" hidden>
+    <h1 id="page-title-text">Mine</h1>
+    <span class="page-sub" id="page-sub"></span>
+  </div>
+  <div class="top-right">
+    <div class="pill" id="pill"><span class="dot"></span><span id="pill-text">starting</span></div>
+  </div>
+</header>
+
+<!-- the status strip: one notice at a time (app.js, Notices) -->
+<div class="notices" id="notices" hidden>
+  <div class="notice" id="notice" role="status" aria-live="polite">
+    <span class="notice-text" id="notice-text"></span>
+    <span class="notice-actions" id="notice-actions"></span>
+    <button class="notice-close" id="notice-close" data-act="close" title="Close" aria-label="Close">&times;</button>
+    <span class="notice-detail mono" id="notice-detail" hidden></span>
+    <span class="prog" id="notice-prog" hidden><i></i></span>
+  </div>
+</div>
+
+<!-- the quit question, in place of a dialog (the viewer never shows one) -->
+<div class="ask-wrap" id="ask-quit" hidden>
+  <div class="ask">
+    <span class="ask-text">Quit Igneum Miner? Mining stops first, then the node.</span>
+    <button class="btn small primary" id="ask-quit-yes">Quit</button>
+    <button class="btn small ghost" id="ask-quit-no">Cancel</button>
+  </div>
+</div>
+
+<main id="main">
+
+  <!-- 1. welcome -->
+  <section class="screen" id="screen-welcome">
+    <div class="hero">
+      <div class="mark-wrap"><img src="mark.svg" width="72" height="72" alt=""></div>
+      <div class="eyebrow ember">devnet v4 &middot; nothing is bought or sold</div>
+      <h1>Igneum Miner</h1>
+      <p class="lead">Runs a node and mines Igneum with your graphics card. Set up in two steps.</p>
+      <div class="three">
+        <div class="tile">
+          <div class="k">01</div>
+          <div class="t">Runs in the background</div>
+          <div class="s">The window can close. The miner keeps going from the menu bar or the tray.</div>
+        </div>
+        <div class="tile">
+          <div class="k">02</div>
+          <div class="t">Uses your graphics card</div>
+          <div class="s">Each card is tuned for hashes per watt by itself. You can tune again any time.</div>
+        </div>
+        <div class="tile">
+          <div class="k">03</div>
+          <div class="t">Pays an address you own</div>
+          <div class="s">Every block this machine finds pays one address: one made here, or one you paste.</div>
+        </div>
+      </div>
+      <div class="cta">
+        <button class="btn primary big" id="btn-begin">Get started</button>
+      </div>
+      <p class="seedline mono">Nobody from Igneum will ever ask for your key.</p>
+    </div>
+  </section>
+
+  <!-- 2. cards -->
+  <section class="screen" id="screen-cards">
+    <div class="step">
+      <div class="eyebrow">step 1 of 2</div>
+      <h2>Your graphics card</h2>
+      <p class="sub" id="cards-sub">Asking the graphics cards to report in.</p>
+      <div class="cards" id="cards-list">
+        <div class="card detecting" id="cards-detecting">
+          <div class="spinner"></div>
+          <div>
+            <div class="t">Detecting</div>
+            <div class="s mono" id="detect-text">asking the graphics cards to report in</div>
+          </div>
+        </div>
+      </div>
+      <p class="note" id="cards-note" hidden></p>
+      <p class="note" id="cards-power" hidden>NVIDIA cards start at 80% of their power limit, which keeps them stable. Windows asks for administrator rights once for that. The card row has a slider.</p>
+      <p class="note" id="cards-help" hidden>An integrated GPU is off by default: it is slow and shares the machine's memory.</p>
+      <div class="cta">
+        <button class="btn primary" id="btn-cards-next" disabled>Continue</button>
+        <button class="btn ghost" id="btn-cards-retry" hidden>Detect again</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. address -->
+  <section class="screen" id="screen-address">
+    <div class="step">
+      <div class="eyebrow">step 2 of 2</div>
+      <h2>Where should rewards go?</h2>
+      <p class="sub">Every block this machine finds pays one address. Pick one way.</p>
+      <div class="options">
+        <label class="option on" id="opt-generate">
+          <input type="radio" name="mode" value="generate" checked>
+          <span class="radio"></span>
+          <span class="body">
+            <span class="t">Make me an address <span class="tag">recommended</span></span>
+            <span class="s">A key is made on this machine and stored in the app folder, readable by your user only. You see it once, to save it.</span>
+          </span>
+        </label>
+        <label class="option" id="opt-paste">
+          <input type="radio" name="mode" value="paste">
+          <span class="radio"></span>
+          <span class="body">
+            <span class="t">Use my own address</span>
+            <span class="s">Paste an Ethereum-style address you control: 0x and 40 characters.</span>
+            <input type="text" class="addr-input mono" id="addr-input" placeholder="0x" spellcheck="false" autocomplete="off">
+            <span class="err" id="addr-err" hidden>That is not an address. 0x followed by 40 hex characters.</span>
+          </span>
+        </label>
+      </div>
+      <p class="err" id="start-blocked" hidden></p>
+      <div class="cta">
+        <button class="btn primary big" id="btn-start">Continue</button>
+        <button class="btn ghost" id="btn-address-back">Back</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. the dashboard: four pages behind the rail -->
+  <section class="screen" id="screen-dashboard">
+
+    <!-- Mine -->
+    <section class="page" id="page-mine" data-page="mine">
+      <div class="clock-card" id="m-clock" hidden>
+        <p class="clock-msg" id="m-clock-msg"></p>
+        <div class="row"><button class="btn small primary" id="m-clock-sync">Sync clock</button><span class="note mono small" id="m-clock-result"></span></div>
+        <p class="note" id="m-clock-hint"></p>
+      </div>
+
+      <div class="hero-row">
+        <button class="toggle-big" id="btn-toggle" disabled>
+          <span class="ring"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9"/><path d="M6.5 6.5a8 8 0 1 0 11 0"/></svg></span>
+          <span class="tl" id="btn-toggle-text">Start mining</span>
+          <span class="ts" id="btn-toggle-sub">waiting for the engine</span>
+        </button>
+        <div class="totals" id="totals">
+          <div class="tot"><span class="v ember" id="t-hash">0</span><span class="k">MH/s</span><span class="s" id="t-hash-sub">waiting</span></div>
+          <div class="tot" id="t-power-cell"><span class="v" id="t-power">0</span><span class="k">W</span><span class="s" id="t-power-sub">drawn now</span></div>
+          <div class="tot" id="t-money-cell"><span class="v" id="t-money">£0.00</span><span class="k">a day</span><span class="s" id="t-money-sub">electricity</span></div>
+          <div class="tot"><span class="v" id="t-blocks">0</span><span class="k">blocks</span><span class="s" id="t-blocks-sub">this run</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Your cards</h3><div class="head-right"><span class="eyebrow" id="d-cards-eyebrow">detecting</span><button class="btn small" id="btn-tune-all" hidden>Tune all</button></div></div>
+        <div class="gpu-list" id="d-cards"><div class="empty">Waiting for the engine.</div></div>
+        <p class="note" id="d-cards-note" hidden></p>
+      </div>
+
+      <div class="card" id="tune-card">
+        <div class="card-head"><h3>Tuning</h3><span class="eyebrow" id="tune-eyebrow">Ember Tune</span></div>
+        <div class="goal-row">
+          <div class="seg" id="goal-seg" role="radiogroup" aria-label="Tuning goal">
+            <button class="seg-b" data-goal="efficiency" role="radio" aria-checked="false">Efficiency</button>
+            <button class="seg-b" data-goal="balanced" role="radio" aria-checked="false">Balanced</button>
+            <button class="seg-b" data-goal="rate" role="radio" aria-checked="false">Maximum</button>
+          </div>
+          <span class="goal-line" id="goal-line"></span>
+        </div>
+        <p class="line-text" id="tune-schedule"></p>
+        <label class="switch" id="m-power-row" hidden><input type="checkbox" id="m-power-control"><span class="track"></span><span class="sw-text"><b>Power control</b> <span class="dim">Lets the app set NVIDIA power and clock limits. Windows asks for administrator rights once.</span></span></label>
+      </div>
+
+      <div class="card node-card" id="node-card">
+        <button class="disclose" id="node-toggle" aria-expanded="false" aria-controls="node-details">
+          <span class="node-line"><i class="dot" id="node-dot"></i><span id="node-line-text">Node starting</span></span>
+          <span class="disclose-right"><span class="dim" id="node-sub"></span><span class="chev" aria-hidden="true"></span></span>
+        </button>
+        <div class="details" id="node-details" hidden>
+          <div class="kv">
+            <div><span class="k">state</span><span class="v mono" id="n-state-v"></span><span class="m" id="n-state-m"></span></div>
+            <div><span class="k">height</span><span class="v mono" id="n-blocks">0</span><span class="m" id="n-blocks-sub">blocks this node holds</span></div>
+            <div><span class="k">peers</span><span class="v mono" id="n-peers">0</span><span class="m" id="n-peers-sub">other nodes it talks to</span></div>
+            <div><span class="k">version</span><span class="v mono" id="n-version">--</span><span class="m" id="d-node-net">devnet v4</span></div>
+            <div><span class="k">headers</span><span class="v mono" id="n-headers">0</span><span class="m">headers arrive before blocks</span></div>
+            <div><span class="k">DAA score</span><span class="v mono" id="n-daa">0</span><span class="m">blocks the whole network has made</span></div>
+            <div><span class="k">difficulty</span><span class="v mono" id="n-diff">0</span><span class="m">how hard the next block is to find</span></div>
+            <div><span class="k">tips</span><span class="v mono" id="n-tips">0</span><span class="m">open ends of the block DAG right now</span></div>
+            <div><span class="k">blue score</span><span class="v mono" id="n-blue">0</span><span class="m">blocks on the agreed main chain</span></div>
+            <div><span class="k">next program</span><span class="v mono" id="d-eta">--:--</span><span class="m" id="d-eta-sub">the hourly mining program</span></div>
+            <div><span class="k">last lock</span><span class="v mono" id="f-lock">none yet</span><span class="m" id="f-note">a point the miners agreed can never be undone</span></div>
+            <div><span class="k">votes sent</span><span class="v mono" id="f-votes">0</span><span class="m">this machine signs a checkpoint every 30 s</span></div>
+          </div>
+          <div class="field">
+            <div class="k">rules digest</div>
+            <div class="box mono"><span id="n-digest">not printed yet</span><button class="btn tiny" data-copy="n-digest">Copy</button></div>
+            <p class="help">Every node on the network shows the same fingerprint of the rules. A peer with another one is refused.</p>
+          </div>
+          <div class="field">
+            <div class="k">next rule switch</div>
+            <div class="line-text" id="n-switch">none planned</div>
+            <p class="help" id="n-switch-help"></p>
+            <div class="switch-list mono" id="n-switches"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Activity</h3><div class="head-right"><span class="stats mono" id="d-stats"></span><button class="btn small ghost" id="btn-open-log">Open the log</button></div></div>
+        <canvas id="dag" aria-hidden="true"></canvas>
+        <div class="feed" id="d-events"><div class="empty">No events yet.</div></div>
+      </div>
+    </section>
+
+    <!-- Earnings -->
+    <section class="page" id="page-earnings" data-page="earnings" hidden>
+      <div class="card">
+        <div class="money">
+          <div class="money-row"><span class="v" id="e-earned">£0.00</span><span class="s" id="e-earned-sub">earned: nothing is bought or sold on devnet</span></div>
+          <div class="money-row"><span class="v small" id="e-ign">0.0000 IGN</span><span class="s" id="e-ign-sub">from 0 proofs</span></div>
+          <div class="money-row"><span class="v small" id="e-blocks">0 blocks</span><span class="s" id="e-blocks-sub">lifetime</span></div>
+          <div class="money-row"><span class="v small" id="e-cost">£0.00 a day</span><span class="s" id="e-cost-sub">electricity</span><button class="btn tiny ghost" id="e-price-btn">Set the price</button></div>
+        </div>
+        <label class="switch"><input type="checkbox" id="s-devfee"><span class="track"></span><span class="sw-text" id="s-devfee-text">Dev fee: 1 block in 100 pays the miner software's author</span></label>
+        <p class="help" id="r-devfee-line"></p>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Rewards address</h3><div class="eyebrow" id="r-source"></div></div>
+        <div class="addr-big mono"><span id="r-address">not set</span><button class="btn small" data-copy="r-address">Copy</button></div>
+        <p class="help" id="r-address-help">Every block this machine finds pays this address.</p>
+
+        <button class="disclose" id="addr-toggle" aria-expanded="false" aria-controls="addr-details"><span>Change address</span><span class="chev" aria-hidden="true"></span></button>
+        <div class="details" id="addr-details" hidden>
+          <div class="row">
+            <input type="text" class="addr-input mono" id="s-address-input" placeholder="0x" spellcheck="false" autocomplete="off" aria-label="New rewards address">
+            <button class="btn small" id="s-address-save">Change</button>
+          </div>
+          <div class="err" id="s-address-err" hidden></div>
+          <div class="ask inline" id="ask-address" hidden>
+            <span class="ask-text" id="ask-address-text"></span>
+            <button class="btn small primary" id="ask-address-yes">Confirm</button>
+            <button class="btn small ghost" id="ask-address-no">Cancel</button>
+          </div>
+        </div>
+
+        <button class="disclose" id="key-toggle" aria-expanded="false" aria-controls="key-details"><span id="key-toggle-text">Show my key</span><span class="chev" aria-hidden="true"></span></button>
+        <div class="details" id="key-details" hidden>
+          <p class="help" id="r-key-help"></p>
+          <div class="ask inline" id="ask-key">
+            <span class="ask-text">Show the private key on screen? Anyone who sees it can spend what the address holds.</span>
+            <button class="btn small primary" id="s-reveal">Show</button>
+            <button class="btn small ghost" id="ask-key-no">Cancel</button>
+          </div>
+          <div class="box mono key" id="s-key-box" hidden><span id="s-key"></span><button class="btn tiny" data-copy="s-key">Copy</button><button class="btn tiny ghost" id="s-hide">Hide</button></div>
+          <p class="note mono small" id="r-key-file"></p>
+        </div>
+
+        <div class="row wrap top-gap"><button class="btn small" id="r-wallet">Open the wallet</button><span class="note">Your balance is in the wallet.</span></div>
+      </div>
+    </section>
+
+    <!-- Prove -->
+    <section class="page" id="page-prove" data-page="prove" hidden>
+      <div class="card">
+        <div class="lead-row">
+          <div class="lead-text">
+            <h3>Prove on this machine</h3>
+            <p class="help">Every block is turned into a short proof. The chain hands pieces to your cards; each piece proven pays IGN.</p>
+          </div>
+          <label class="switch lg" title="Prove on this machine"><input type="checkbox" id="s-prove" aria-label="Prove on this machine"><span class="track"></span></label>
+        </div>
+        <ul class="tier-list" id="pv-tiers"></ul>
+        <p class="line-text" id="pv-line"></p>
+        <p class="note" id="pv-note"></p>
+        <div class="row" id="pv-setup-row" hidden><button class="btn small primary" id="pv-setup">Set up</button><span class="note">About 20 minutes, once.</span></div>
+        <button class="disclose" id="pv-toggle" aria-expanded="false" aria-controls="pv-details"><span>Details</span><span class="chev" aria-hidden="true"></span></button>
+        <div class="details" id="pv-details" hidden>
+          <div class="kv">
+            <div><span class="k">verifier</span><span class="v" id="pv-verifier">not read yet</span><span class="m" id="pv-verifier-help">the node checks a proof before it counts</span></div>
+            <div><span class="k">segments</span><span class="v" id="pv-seg">none yet</span><span class="m" id="pv-seg-note">whole segments this machine proved</span></div>
+          </div>
+          <div class="field">
+            <div class="k">shard program id</div>
+            <div class="box mono"><span id="pv-program">not read yet</span><button class="btn tiny" data-copy="pv-program">Copy</button></div>
+          </div>
+          <div class="field">
+            <div class="k">aggregator id</div>
+            <div class="box mono"><span id="pv-aggregator">not read yet</span><button class="btn tiny" data-copy="pv-aggregator">Copy</button></div>
+            <p class="help">Every proof names the program that made it. Other nodes accept a proof only from these two ids.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Settings -->
+    <section class="page" id="page-settings" data-page="settings" hidden>
+      <div class="card">
+        <div class="card-head"><h3>Tuning</h3><span class="eyebrow" id="s-tune-eyebrow">Ember Tune</span></div>
+        <div class="goal-row">
+          <div class="seg" id="goal-seg-2" role="radiogroup" aria-label="Tuning goal">
+            <button class="seg-b" data-goal="efficiency" role="radio" aria-checked="false">Efficiency</button>
+            <button class="seg-b" data-goal="balanced" role="radio" aria-checked="false">Balanced</button>
+            <button class="seg-b" data-goal="rate" role="radio" aria-checked="false">Maximum</button>
+          </div>
+          <span class="goal-line" id="goal-line-2"></span>
+        </div>
+        <label class="switch"><input type="checkbox" id="s-sweep"><span class="track"></span><span class="sw-text"><b>Ember Tune</b> <span class="dim">Tunes every card for hashes per watt: once after install, then every 7 days, and after a driver or program change.</span></span></label>
+        <label class="switch"><input type="checkbox" id="s-power-control"><span class="track"></span><span class="sw-text"><b>Power control</b> <span class="dim">Lets the app set NVIDIA power and clock limits. Windows asks for administrator rights once. Off, NVIDIA cards are measured only.</span><span class="dim" id="s-power-note"></span></span></label>
+        <label class="switch" id="s-climb-row" hidden><input type="checkbox" id="s-climb"><span class="track"></span><span class="sw-text"><b>Hill climb</b> <span class="dim">Searches around the best point instead of walking the ladders.</span></span></label>
+        <div class="field">
+          <div class="k">electricity price</div>
+          <div class="row">
+            <input type="number" class="addr-input mono short" id="s-price" min="0" max="200" step="0.1" placeholder="28" aria-label="Electricity price in pence per kWh"><span class="note">pence per kWh. Every £ figure uses it.</span>
+            <button class="btn small" id="s-price-save">Save</button>
+          </div>
+        </div>
+        <p class="line-text" id="s-tune-schedule"></p>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>This machine</h3></div>
+        <label class="switch"><input type="checkbox" id="s-login"><span class="track"></span><span class="sw-text"><b>Start at login</b> <span class="dim">Opens when you sign in and keeps mining in the background.</span></span></label>
+        <label class="switch"><input type="checkbox" id="s-jobs-allow"><span class="track"></span><span class="sw-text"><b>Allow remote jobs from Igneum</b> <span class="dim">Signed jobs (a benchmark, a script, logs to collect) run here once and report back.</span></span></label>
+        <div class="row wrap indent"><span class="note" id="s-jobs-note"></span><button class="btn tiny ghost" id="s-jobs-check">Check now</button><button class="btn tiny ghost" id="s-jobs-history-btn" aria-expanded="false">History</button></div>
+        <div class="details indent" id="s-jobs-history" hidden></div>
+        <p class="note mono small indent" id="s-jobs-key" hidden></p>
+        <div class="field">
+          <div class="k">name</div>
+          <div class="row">
+            <input type="text" class="addr-input" id="s-name" placeholder="a name for this machine" maxlength="40" spellcheck="false" aria-label="Machine name">
+            <button class="btn small" id="s-name-save">Rename</button>
+          </div>
+          <p class="help">A label for you only.</p>
+        </div>
+        <div class="field">
+          <div class="k">appearance</div>
+          <div class="seg" id="theme-seg" role="radiogroup" aria-label="Appearance">
+            <button class="seg-b" data-theme="system" role="radio" aria-checked="true">System</button>
+            <button class="seg-b" data-theme="light" role="radio" aria-checked="false">Light</button>
+            <button class="seg-b" data-theme="dark" role="radio" aria-checked="false">Dark</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="lead-row">
+          <div class="lead-text">
+            <h3 id="s-version">Igneum Miner</h3>
+            <p class="help" id="s-update-note">Not checked yet.</p>
+          </div>
+          <div class="row">
+            <button class="btn small primary" id="s-install" hidden>Install now</button>
+            <button class="btn small" id="s-update">Check</button>
+          </div>
+        </div>
+        <label class="switch"><input type="checkbox" id="s-auto-update"><span class="track"></span><span class="sw-text"><b>Install updates by itself</b> <span class="dim">Downloads in the background and installs at a quiet moment, never mid-program.</span></span></label>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Logs</h3></div>
+        <div class="row wrap">
+          <button class="btn small" id="s-log-copy">Copy the log</button>
+          <button class="btn small ghost" id="s-log-open">Show the log</button>
+          <span class="note">The last lines the node and the miner wrote, for a support message.</span>
+        </div>
+        <p class="note mono small" id="s-log-dir"></p>
+        <p class="note mono small" id="s-node-dir"></p>
+      </div>
+
+      <details class="card adv" id="s-advanced">
+        <summary><h3>Advanced</h3><span class="eyebrow">devnet</span></summary>
+        <label class="switch"><input type="checkbox" id="s-vote"><span class="track"></span><span class="sw-text"><b>Vote on finality checkpoints</b> <span class="dim">Signs a checkpoint every 30 s. Votes lock the chain; leave it on.</span></span></label>
+        <label class="switch"><input type="checkbox" id="s-trust"><span class="track"></span><span class="sw-text"><b>Trust proof records without verifying them</b> <span class="dim">Devnet only. Without a verifier the node includes records it never checked. Changing this restarts the node.</span></span></label>
+        <div class="ask inline" id="ask-trust" hidden>
+          <span class="ask-text" id="ask-trust-text"></span>
+          <button class="btn small primary" id="ask-trust-yes">Confirm</button>
+          <button class="btn small ghost" id="ask-trust-no">Cancel</button>
+        </div>
+        <div class="row wrap"><button class="btn small ghost" id="s-live" hidden>Open the live devnet page</button><span class="note mono small" id="s-mid"></span></div>
+      </details>
+    </section>
+  </section>
+</main>
+
+<!-- the update card (app.js, UpdateCard) -->
+<div class="upd-wrap" id="upd" hidden>
+  <div class="upd-card" id="upd-card" role="dialog" aria-modal="true" aria-labelledby="upd-name" aria-describedby="upd-line" tabindex="-1">
+    <div class="upd-mark" id="upd-mark">
+      <svg class="upd-ring" viewBox="0 0 96 96" aria-hidden="true"><circle class="track" cx="48" cy="48" r="44"></circle><circle class="arc" id="upd-arc" cx="48" cy="48" r="44"></circle></svg>
+      <img src="mark.svg" width="40" height="40" alt="">
+      <span class="upd-pct mono" id="upd-pct" hidden></span>
+    </div>
+    <div class="eyebrow ember">update</div>
+    <h2 class="upd-name" id="upd-name"></h2>
+    <p class="upd-line" id="upd-line"></p>
+    <p class="upd-cause mono" id="upd-cause" hidden></p>
+    <ul class="upd-notes" id="upd-notes"></ul>
+    <button class="upd-more" id="upd-more" type="button" aria-expanded="false" hidden>What changed</button>
+    <ul class="upd-all" id="upd-all" hidden></ul>
+    <p class="upd-meta mono" id="upd-meta"></p>
+    <div class="upd-actions" id="upd-actions"></div>
+  </div>
+</div>
+
+<!-- the key sheet, shown once -->
+<div class="sheet-wrap" id="sheet-key" hidden>
+  <div class="sheet">
+    <div class="eyebrow ember">shown once</div>
+    <h2>Save your key</h2>
+    <p class="sub">This key controls the rewards address. Keep a copy somewhere safe. Anyone with the key can spend what the address holds.</p>
+    <div class="field">
+      <div class="k">private key</div>
+      <div class="box mono key"><span id="key-private"></span><button class="btn tiny" data-copy="key-private">Copy</button></div>
+    </div>
+    <div class="field">
+      <div class="k">rewards address</div>
+      <div class="box mono"><span id="key-address"></span><button class="btn tiny" data-copy="key-address">Copy</button></div>
+    </div>
+    <p class="note">Stored at <span class="mono" id="key-file"></span>, readable by your user only. Earnings can show it again.</p>
+    <label class="check"><input type="checkbox" id="key-ack"><span>I have saved my key</span></label>
+    <div class="cta">
+      <button class="btn primary big" id="btn-key-done" disabled>Start mining</button>
+    </div>
+  </div>
+</div>
+
+<!-- the log drawer (unchanged from miner-ui-2) -->
+<div class="drawer" id="drawer" aria-label="Logs">
+  <div class="drawer-grip" id="drawer-grip" title="Drag to resize"><i></i></div>
+  <div class="drawer-head">
+    <div class="chips" id="log-chips">
+      <button class="chip on" data-src="">all</button>
+      <button class="chip" data-src="app">app</button>
+      <button class="chip" data-src="node">node</button>
+      <button class="chip" data-src="miner">miner</button>
+      <button class="chip" data-src="watch">watch</button>
+    </div>
+    <div class="log-search">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+      <input type="search" id="log-search" placeholder="search" spellcheck="false" autocomplete="off" aria-label="Search the log">
+      <span class="count mono" id="log-count"></span>
+    </div>
+    <div class="log-nav">
+      <input type="text" class="mono" id="log-time" placeholder="HH:MM:SS" maxlength="8" spellcheck="false" autocomplete="off" aria-label="Jump to a time" title="Jump to a time (Enter)">
+      <button class="chip" id="log-last-error" title="Jump to the last error">last error</button>
+      <button class="chip" id="log-last-swap" title="Jump to the last program swap">last swap</button>
+    </div>
+    <div class="log-tools">
+      <span class="mono dim at" id="log-at" title="Time of the top line in view"></span>
+      <button class="chip" id="log-wrap" title="Wrap long lines (up to 5,000 lines)">wrap</button>
+      <button class="chip" id="log-copy" title="Copy the lines in view">copy</button>
+      <label class="check small"><input type="checkbox" id="log-follow" checked><span>follow</span></label>
+      <button class="chip" id="log-close" title="Close the log">close</button>
+    </div>
+  </div>
+  <div class="log-ruler" id="log-ruler" title="Click to jump"><span class="t0 mono" id="log-ruler-0"></span><span class="t1 mono" id="log-ruler-1"></span><i class="win" id="log-ruler-win"></i></div>
+  <div class="log-view" id="log-view">
+    <div class="log-pad" id="log-pad"><pre class="log" id="log"></pre></div>
+    <div class="log-empty mono" id="log-empty" hidden>Nothing logged yet.</div>
+  </div>
+  <button class="btn small log-jump" id="log-jump" hidden><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"></path></svg><span id="log-jump-text">Newest</span></button>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>

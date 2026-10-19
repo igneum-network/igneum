@@ -1,0 +1,89 @@
+{
+  "format": "igneum-release-manifest-v1",
+  "release": "0.1.0",
+  "network": "chain 7315",
+  "written": "2026-10-08T19:10:00Z by the CI steward (F03, Review B); every component's own pin must equal this file (tools/ci/release-manifest-check.sh); the signing block is F0's; 0.2.3 opened by the shipper 9 October 2026 (the bump; the node pin follows the node lane's final 0.2.3 sha); node pin 27f54124 by the node lane's word 10:22 UK (seven suites green on the eighth build box 09:14; digest unchanged be5f4068)",
+  "node": {
+    "repo": "igneum-node (the fork)",
+    "branch": "release-0.2.3-node-k7",
+    "sha": "27f54124",
+    "pairing": "parent key-succession 4f5dab9b (proving/igneum-prove/elf/prior) with the class v5 freeze igneum-pow"
+  },
+  "generator": {
+    "class": "v5",
+    "freeze_commit": "1c420786",
+    "fingerprint": "cbc5bd0aa10585c8576e71e37a8ee47a045ae51754e9ddf749d0c21e6a535f88",
+    "label": "class-v5-freeze",
+    "frozen": "2026-10-07",
+    "rule": "packaging/pow-freeze.txt in the node fork; rule 19 at every kaspa-pow build"
+  },
+  "dataset_policy": {
+    "class_v6_dataset_steps": [
+      [
+        0,
+        4096
+      ]
+    ],
+    "class_v6_family_flags": "0xf",
+    "policy_digest": "70a6c703787d5d75cdbc486b34acf3eb901f4188bae3e948c94274d5f4ac4bba",
+    "note": "outside the consensus digest until a v6 floor is set; no network sets one tonight"
+  },
+  "acceptance_rule": {
+    "class_string": "mx8-erad810f22d+sh256x27+state (class v5)",
+    "object_digest": "be5f406802cec1227a5ef50d42181ab42444f79af170775b22c85cb9a917273b"
+  },
+  "host_abi": {
+    "worker_protocol": "ready/prepare/job/found/done lines as igneum/miner/src/pool.rs writes and reads them (job <seq> <prehash> <share target> <start nonce> <nonces> <seed bytes> <day bytes> class=<c> era=<era>; prepare <seed bytes> <day bytes> <pack dir>; found <seq> <nonce> <hash>)",
+    "prove_host": "igneum-prove-host (proving/igneum-prove/host) at the miner app's sha"
+  },
+  "miner_app": {
+    "repo": "igneum",
+    "branch": "release-0.2.1",
+    "sha": "aa0e0f45",
+    "app_crate_identity": "2ea7b43f (byte-identical app/igneum-app since)",
+    "node_source_pin": "packaging/windows/node-source.pin"
+  },
+  "pool": {
+    "crate": "pool/ (igneum-pool)",
+    "sha": "the miner app's sha (same repository)",
+    "node_checkout": "../vendor/igneum-node at the manifest's node sha (the shadow_reps seam: EpochSeeds imported from kaspa_pow, never redefined)"
+  },
+  "proof_guests": {
+    "shard": {
+      "elf": "igneum-prove-program.elf",
+      "elf_sha256": "0x150f4c05a2951fc56174a87089707a030b18df8fbe7e053a66459edb83053083",
+      "program_id": "0x2b1a81cb413236cf063077b46ed3111628f6c41036bcf6e23ee4cbbf5679ef7a",
+      "vk": "igneum-prove-program.vk",
+      "vk_sha256": "0x8b4da5bff86d963f4210a78e5d800a1cd00ab41b158f6962f4ac009edc249d4c"
+    },
+    "aggregator": {
+      "elf": "igneum-prove-aggregator.elf",
+      "elf_sha256": "0x143d9c243dd12e87e90be71f6b8cd42353e513bf8ce78903ef6f972f1bc9aa7b",
+      "program_id": "0x474678f35f7545db28055d5e5bbc308231d84a5a072202087a2a8d5b09123896",
+      "vk": "igneum-prove-aggregator.vk",
+      "vk_sha256": "0xad17bc1ae5be816554dbb13cb5b4d242678adfb8e1a4f7247ceb8b5ba9001b9f"
+    },
+    "manifest": "proving/igneum-prove/elf/manifest.json",
+    "prior": "proving/igneum-prove/elf/prior (key succession; the enforced-proving lane names the ids after the roll)"
+  },
+  "activation": {
+    "chain_id": 7315,
+    "chain_id_hex": "0x1171",
+    "emission": "18 decimals (4cdcc488's re-cut)",
+    "finality": "rule v4 (the recovery lock kept, labelled recovery; the founder 19:57)",
+    "proving": "enforced from block zero",
+    "class_v6": "every floor never"
+  },
+  "v6_12": {
+    "lockfile_sha256": "BLOCKED: the shipper hashes Cargo.lock of the cut (app) and the node fork at the pin",
+    "kernel_binaries": "BLOCKED: the kit's worker binaries by sha256 (the shipper's cut gate)",
+    "host_binaries": "BLOCKED: igneumd, igneum-miner, igneum-pool, igneum-prove-host by sha256",
+    "supported_devices": "BLOCKED: the hash lane's P02 list (NVIDIA, AMD, Apple tiers) at the cut",
+    "supported_drivers": "BLOCKED: CUDA 12.8 / ROCm 6.3 / the Metal line as the kit was built",
+    "prover_server_patch": "BLOCKED: the proving lane names it",
+    "memory_thresholds": "BLOCKED: the app's VRAM admission thresholds (F07) at the cut",
+    "tuner_identity": "BLOCKED: Ember's workload fingerprint (F11) at the cut",
+    "signature": "BLOCKED: the signing block is F0's (protocol, product, independent review) by 23:30; artifact authentication end to end and the clean-install accepted-and-paid test on an independent machine are INT-07's run",
+    "note": "V6-12 (R1 p. 213) via the master's INT-07; every BLOCKED value is a field the owner fills, never inferred"
+  }
+}

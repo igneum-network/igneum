@@ -1,0 +1,13 @@
+# The explorer's proxy with the page head of record (explorer/README.md, "The page head"): the stock nginx image with the njs
+# module loaded (proxy/nginx.conf), the head filter (proxy/igneum-head.js) and the site's icon set (static/). An override on
+# the stock compose file:
+#   docker compose -f docker-compose.yml -f <this file> up -d proxy
+# with explorer/proxy/default.conf.template copied over docker-compose/proxy/default.conf.template, explorer/proxy/nginx.conf and
+# explorer/proxy/igneum-head.js beside it, and explorer/static as docker-compose/proxy/static.
+services:
+  proxy:
+    volumes:
+      - "./proxy:/etc/nginx/templates"
+      - "./proxy/nginx.conf:/etc/nginx/nginx.conf:ro"
+      - "./proxy/igneum-head.js:/etc/nginx/njs/igneum-head.js:ro"
+      - "./proxy/static:/etc/nginx/igneum-static:ro"

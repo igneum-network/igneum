@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- docs/release/ORG-SIGNING.md section 3: the hardened runtime with what the engine and the workers need. The Metal
+         worker compiles its pipelines through the system compiler (no JIT of its own); the engine spawns the workers as
+         processes; the allowances below are the two a worker's runtime may ask for and nothing more. -->
+    <key>com.apple.security.cs.allow-jit</key>
+    <true/>
+    <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+    <true/>
+</dict>
+</plist>

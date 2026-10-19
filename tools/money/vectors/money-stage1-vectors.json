@@ -1,0 +1,186 @@
+{
+  "address_word": {
+    "address": "00000000000000000000000000000000ae915001",
+    "limbs": [
+      0,
+      0,
+      0,
+      5646691840
+    ]
+  },
+  "definitions": {
+    "commitment": "H(H(value_word(v), pk), r)",
+    "domain": "[chain_id, kind, 0, 0]; kind 1 a shield, 2 a spend",
+    "node": "H(left, right)",
+    "nullifier": "H(H(nk, cm), [index, 0, 0, 0])",
+    "pk": "H(sk_spend, nk)",
+    "shield_statement_hash": "H(H(domain, cm), value_word(v))",
+    "spend_statement_hash": "fold H over [domain, anchor, nf1, nf2, cm1, cm2, value_word(vpub), value_word(fee), address_word(public_output)]"
+  },
+  "empty_roots": {
+    "1": "36f89f79b9a8315b084b0fe64f1785e37c76508de86b2ce8e28189a1b6f37827",
+    "2": "c6118c8634c7c4e0508044dad19e1fee7048f2d84d12fd1973ffded7417fd7cd",
+    "32": "c468f9623c9fee6732375929b7800cf04fa270c5b76ee67f6cd803989a06a37e"
+  },
+  "hash": "poseidon2-goldilocks (miden-crypto 0.36.1): width 12, rate 8, capacity 4, x^7, 4+22+4 rounds; H(a,b) = merge: state [a, b, 0^4], one permutation, the first four elements out",
+  "keys": {
+    "nk": "2222222222222222222222222222222222222222222222222222222222222222",
+    "pk": "86d845f39e1038db5b8008e8c94436640e6aa5218585227c2915ed903a0c319e",
+    "sk_spend": "1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "merge": {
+    "a": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "b": [
+      5,
+      6,
+      7,
+      8
+    ],
+    "out": [
+      12175850710574191021,
+      13800397389470483709,
+      10717919348058185020,
+      5151936205780666844
+    ],
+    "out_hex": "ad51f6f9b54ff9a8fdc49dde4edc84bf3c5d4b70dcb2bd94dcc907dbae5a7f47"
+  },
+  "node_hex": {
+    "left": "0101010101010101010101010101010101010101010101010101010101010101",
+    "out": "92a3474e139aa3cc1f55fc5acf95443ab3e304aa6ae097294ef29490a965cce5",
+    "right": "0202020202020202020202020202020202020202020202020202020202020202"
+  },
+  "note": {
+    "cm": "f475e8a72c118779e388046bf44ccd6cdb5370d252b1f407368d037cdd6ce9d2",
+    "index": 7,
+    "nullifier": "3b40f9e00a78dd21c37676cc8dfd72ed1ac116a5bfd1f6830fe8e2c6376a3680",
+    "pk": "86d845f39e1038db5b8008e8c94436640e6aa5218585227c2915ed903a0c319e",
+    "r": "3333333333333333333333333333333333333333333333333333333333333333",
+    "value": "123456789"
+  },
+  "permutation": {
+    "input": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "output": [
+      17479221565885336323,
+      734915442301621324,
+      377283858163603678,
+      216052820910632955,
+      6347663762129472178,
+      12730007117582221560,
+      16792819048661925028,
+      17643437800019671490,
+      2573527637616151148,
+      15146684802819669848,
+      5692450944251311406,
+      769909420564152678
+    ]
+  },
+  "programs": {
+    "money-shield-v1": {
+      "hash": [
+        3102904459196891415,
+        9242269563728321127,
+        12573472540681506392,
+        10571119255438523109
+      ],
+      "hash_hex": "1701686e2abb0f2b675a6e5833234380580e739ca8f27daee57ab462f428b492"
+    },
+    "money-spend-v1": {
+      "hash": [
+        17509159156624573829,
+        4035998026385165641,
+        4057886282032672437,
+        14643052049844482799
+      ],
+      "hash_hex": "85c562467c07fdf2498ddd44d2be0238b5ee7ceb12825038ef3289d2419236cb"
+    }
+  },
+  "shield_statement": {
+    "chain_id": 7402,
+    "cm": "f475e8a72c118779e388046bf44ccd6cdb5370d252b1f407368d037cdd6ce9d2",
+    "hash": "cf28174ffdbd6916b91ee9f81b6dfaeee77d81eb263c7d39fa54f139ddf11832",
+    "value": "123456789"
+  },
+  "spend_statement": {
+    "anchor": "c468f9623c9fee6732375929b7800cf04fa270c5b76ee67f6cd803989a06a37e",
+    "chain_id": 7402,
+    "commitments": [
+      "f475e8a72c118779e388046bf44ccd6cdb5370d252b1f407368d037cdd6ce9d2",
+      "5555555555555555555555555555555555555555555555555555555555555555"
+    ],
+    "fee": "1000",
+    "hash": "b3ff17ca072ed0a33169a5989dddfe8a5595ba4a0b8c697123a029a82cba29a4",
+    "nullifiers": [
+      "3b40f9e00a78dd21c37676cc8dfd72ed1ac116a5bfd1f6830fe8e2c6376a3680",
+      "4444444444444444444444444444444444444444444444444444444444444444"
+    ],
+    "public_output": "00000000000000000000000000000000ae915001",
+    "public_value": "0"
+  },
+  "value_word": "a 128-bit value as four 32-bit limbs, limb 0 the least significant",
+  "value_words": [
+    {
+      "limbs": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "value": "0"
+    },
+    {
+      "limbs": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "value": "1"
+    },
+    {
+      "limbs": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "value": "4294967296"
+    },
+    {
+      "limbs": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "value": "18446744073709551616"
+    },
+    {
+      "limbs": [
+        4294967295,
+        4294967295,
+        4294967295,
+        4294967295
+      ],
+      "value": "340282366920938463463374607431768211455"
+    }
+  ],
+  "word_bytes": "a word is four field elements; its 32 bytes are the canonical elements little-endian in order"
+}

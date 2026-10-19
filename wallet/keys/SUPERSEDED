@@ -1,0 +1,7 @@
+# Keys superseded for SIGNING (RELEASE.md 3.2 and 3.3; the rotation record of 12 October 2026). A superseded key stays
+# in allowed_signers so that everything it signed before its mark keeps verifying; a signature by it over a release
+# whose MANIFEST.json written_utc is after its mark is refused by verify.sh and by the host. One line per key:
+# <fingerprint> <superseded-from UTC> <the signature that superseded it> <reason>
+# (empty until the first release is signed under igneum-release-2; the line is written then and the list re-signed by the new key)
+SHA256:umhm59z0pvL2OCPwi0zl1VcRCr4poHILz9zbzWEGCLk 2026-10-12T17:30:00Z keys/allowed_signers.sig rotation-R-3-after-the-bridge-sets-signed-by-it-tonight
+SHA256:T0hJf1nD0cHC34ozAyMoC5O62Wris2ptLEvn+hjGoqM 2026-10-13T00:00:00Z keys/allowed_signers.sig the-first-automatic-key-superseded-by-the-fresh-one-at-midnight-after-tonight-sets

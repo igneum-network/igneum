@@ -1,0 +1,15 @@
+diff -ruN -x target a/src/lib.rs b/src/lib.rs
+--- a/src/lib.rs	2026-10-18 21:46:48.855599355 +0000
++++ b/src/lib.rs	2026-10-18 21:46:48.875599252 +0000
+@@ -25,8 +25,9 @@
+ 
+     pub use miden_field::{
+         Algebra, BasedVectorSpace, Binomial, BinomialExtensionField, BinomiallyExtendable,
+-        BoundedPowers, ExtensionAlgebra, ExtensionField, Field, HasTwoAdicBinomialExtension,
+-        InjectiveMonomial, Packable, PermutationMonomial, Powers, PrimeCharacteristicRing,
++        BoundedPowers, CubicTrinomial, CubicTrinomialExtendable, CubicTrinomialExtensionField,
++        ExtensionAlgebra, ExtensionField, Field, HasTwoAdicBinomialExtension,
++        HasTwoAdicCubicExtension, InjectiveMonomial, Packable, PermutationMonomial, Powers, PrimeCharacteristicRing,
+         PrimeField, PrimeField64, QuotientMap, RawDataSerializable, TwoAdicField,
+         batch_multiplicative_inverse,
+     };

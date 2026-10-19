@@ -1,0 +1,63 @@
+# money-vault-withdraw-v1 (kind 4): the everyday key consumes the head and emits the head with the running
+# total carried and a pending note that matures after the policy's delays. Public: DOMAIN [chain_id, 4, 0, 0],
+# ANCHOR, NF_HEAD, CM_HEAD_OUT, CM_PENDING, HT = [h_decl, t_decl, 0, 0].
+# Advice, in the order read: the six public words; the policy's eight words; SK_E; NK_E; NK_V; head_in (V, VID,
+# IDX, SPENT, RECH, R, pos); the pending note's W, PKD and R; head_out's R.
+# The circuit: pk_e = H(SK_E, NK_E); nk_field opens to NK_V; the head is in the tree and its nullifier is the
+# public one; no recovery is pending; idx = h_decl / P, never below the head's period (the index only advances: the
+# lab's finding of 19 October, a request declared back into the current period after one declared ahead would
+# otherwise open a fresh allowance); spent_new = spent + w when idx is the head's period else w; spent_new <= L; w > 0; head_out = (v - w, vid, policy, idx, spent_new, 0, r'); pending = (w, vid,
+# policy, pk_dest, [h_decl, t_decl, D_b, D_s], r''). The policy hash is copied, never written: the everyday
+# key cannot shorten a delay, raise the limit or change an authority.
+begin
+    padw adv_loadw mem_storew_le.0
+    padw adv_loadw mem_storew_le.4 swapw hmerge
+    padw adv_loadw mem_storew_le.8 swapw hmerge
+    padw adv_loadw mem_storew_le.12 swapw hmerge
+    padw adv_loadw mem_storew_le.16 swapw hmerge
+    padw adv_loadw mem_storew_le.20 swapw hmerge
+    dupw.1 assert_eqw
+    mem_load.1 push.4 assert_eq
+    padw mem_loadw_le.20 u32assertw dropw
+    exec.read_policy
+    push.100 exec.hash_policy
+    padw adv_loadw mem_storew_le.260 dropw
+    padw adv_loadw mem_storew_le.264 dropw
+    padw mem_loadw_le.264 padw mem_loadw_le.260 hmerge
+    padw mem_loadw_le.100 assert_eqw
+    padw adv_loadw mem_storew_le.176 dropw
+    exec.check_nk_field
+    exec.open_head
+    padw mem_loadw_le.160 exec.word_is_zero assert
+    padw adv_loadw u32assertw mem_storew_le.220 dropw
+    padw adv_loadw mem_storew_le.232 dropw
+    padw adv_loadw mem_storew_le.240 dropw
+    push.192 exec.zero_word
+    mem_load.20 mem_load.118 u32div
+    dup.0 mem_load.152 u32gte assert
+    dup.0 mem_store.192
+    mem_load.152 eq
+    push.404 push.156 push.220 exec.v_add
+    if.true
+        push.196 push.404 exec.copy_word
+    else
+        push.196 push.220 exec.copy_word
+    end
+    push.196 push.120 exec.v_lte assert
+    padw mem_loadw_le.220 exec.word_is_zero not assert
+    push.180 push.140 push.220 exec.v_sub
+    push.184 push.144 exec.copy_word
+    push.188 push.132 exec.copy_word
+    push.200 exec.zero_word
+    padw adv_loadw mem_storew_le.204 dropw
+    push.180 exec.hash_head
+    padw mem_loadw_le.208 padw mem_loadw_le.12 assert_eqw
+    push.224 push.144 exec.copy_word
+    push.228 push.132 exec.copy_word
+    mem_load.20 mem_store.236
+    mem_load.21 mem_store.237
+    mem_load.116 mem_store.238
+    mem_load.117 mem_store.239
+    push.220 exec.hash_pending
+    padw mem_loadw_le.244 padw mem_loadw_le.16 assert_eqw
+end

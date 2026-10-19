@@ -1,0 +1,4 @@
+# built outputs: the windres objects, the assembled payload, the downloaded tools, the installer
+build/
+dist/
+ember-windows-app/

@@ -1,0 +1,1143 @@
+{
+ "candidate": "igneumhash",
+ "class": "malformed",
+ "params": {
+  "version": 4,
+  "dataset_mib": 4096,
+  "scratch_kib": 0,
+  "rounds": 64,
+  "lanes": 8,
+  "epoch_blocks": 4096,
+  "item_chain": 1,
+  "chain_id": 7310,
+  "cache_mib": 32,
+  "parents": 256
+ },
+ "generator": "the Metal worker igneum-worker-metal-3a621730 on the mini, job or-0-guard-1c (the unseen class exact: every mix and hash equal to the reference's); the flips by the Apple memory seat, 11 Oct 2026; the epoch and height cases carry the reference malformed class's own values for this document",
+ "seed": "20261009",
+ "source_job": "or-0-guard-1c",
+ "worker_sha8": "3a621730",
+ "count": 112,
+ "vectors": [
+  {
+   "height": 1,
+   "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307",
+   "nonce": "4312426439069536300",
+   "ctx_height": 1,
+   "mix": "e18f6fbf1d28a927e7d361301e374717aa77c405021c53860357a552c984ee31",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1,
+   "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307",
+   "nonce": "4312426439069536300",
+   "ctx_height": 1,
+   "mix": "e18f6fbf1d28a927e7d361301e374717aa77c405021c53860357a552c984ee31",
+   "boundary": "0000000000000000000000000000000000000000000000000000000000000000",
+   "expect": "boundary",
+   "flip": "the target below the hash"
+  },
+  {
+   "height": 1,
+   "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307",
+   "nonce": "4312426439069536300",
+   "ctx_height": 1,
+   "mix": "e08f6fbf1d28a927e7d361301e374717aa77c405021c53860357a552c984ee31",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "bit 0 of the mix's first byte"
+  },
+  {
+   "height": 1,
+   "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307",
+   "nonce": "4312426439069536301",
+   "ctx_height": 1,
+   "mix": "e18f6fbf1d28a927e7d361301e374717aa77c405021c53860357a552c984ee31",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "the nonce off by one"
+  },
+  {
+   "height": 1,
+   "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c387",
+   "nonce": "4312426439069536300",
+   "ctx_height": 1,
+   "mix": "e18f6fbf1d28a927e7d361301e374717aa77c405021c53860357a552c984ee31",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "bit 7 of the header's last byte"
+  },
+  {
+   "height": 4096,
+   "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307",
+   "nonce": "4312426439069536300",
+   "ctx_height": 1,
+   "mix": "e18f6fbf1d28a927e7d361301e374717aa77c405021c53860357a552c984ee31",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "epoch",
+   "flip": "the reference's epoch case: the height in another epoch than the context"
+  },
+  {
+   "height": 2147483648,
+   "header": "6468beee66bb5264f1191b196797b748220bf33cf2072630a7f1c030c520c307",
+   "nonce": "4312426439069536300",
+   "ctx_height": 1,
+   "mix": "e18f6fbf1d28a927e7d361301e374717aa77c405021c53860357a552c984ee31",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "height",
+   "flip": "the reference's height case: outside the schedule"
+  },
+  {
+   "height": 1,
+   "header": "d3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe9f",
+   "nonce": "16694384672230919977",
+   "ctx_height": 1,
+   "mix": "0dfa42d2c28b7144c623b858d05db4c75b53208001eaad2ca9b8bdc4ac47ec34",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1,
+   "header": "d3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe9f",
+   "nonce": "16694384672230919977",
+   "ctx_height": 1,
+   "mix": "0dfa42d2c28b7144c623b858d05db4c75b53208001eaad2ca9b8bdc4ac47ec34",
+   "boundary": "0000000000000000000000000000000000000000000000000000000000000000",
+   "expect": "boundary",
+   "flip": "the target below the hash"
+  },
+  {
+   "height": 1,
+   "header": "d3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe9f",
+   "nonce": "16694384672230919977",
+   "ctx_height": 1,
+   "mix": "0cfa42d2c28b7144c623b858d05db4c75b53208001eaad2ca9b8bdc4ac47ec34",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "bit 0 of the mix's first byte"
+  },
+  {
+   "height": 1,
+   "header": "d3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe9f",
+   "nonce": "16694384672230919978",
+   "ctx_height": 1,
+   "mix": "0dfa42d2c28b7144c623b858d05db4c75b53208001eaad2ca9b8bdc4ac47ec34",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "the nonce off by one"
+  },
+  {
+   "height": 1,
+   "header": "d3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe1f",
+   "nonce": "16694384672230919977",
+   "ctx_height": 1,
+   "mix": "0dfa42d2c28b7144c623b858d05db4c75b53208001eaad2ca9b8bdc4ac47ec34",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "bit 7 of the header's last byte"
+  },
+  {
+   "height": 4096,
+   "header": "d3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe9f",
+   "nonce": "16694384672230919977",
+   "ctx_height": 1,
+   "mix": "0dfa42d2c28b7144c623b858d05db4c75b53208001eaad2ca9b8bdc4ac47ec34",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "epoch",
+   "flip": "the reference's epoch case: the height in another epoch than the context"
+  },
+  {
+   "height": 2147483648,
+   "header": "d3a08b385349fad0cf4a3a8e9797c47282768397811689b816c66d4d295cfe9f",
+   "nonce": "16694384672230919977",
+   "ctx_height": 1,
+   "mix": "0dfa42d2c28b7144c623b858d05db4c75b53208001eaad2ca9b8bdc4ac47ec34",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "height",
+   "flip": "the reference's height case: outside the schedule"
+  },
+  {
+   "height": 1,
+   "header": "16e8c8d581c0442b834c470fbd46b9a9c065da7ce0365d40e07bd7f4a1aca153",
+   "nonce": "381917788026542773",
+   "ctx_height": 1,
+   "mix": "db1049ecfde17d4bed305a49bc5e0605a4cd64df631598e8dae2defa4c593ca7",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1,
+   "header": "16e8c8d581c0442b834c470fbd46b9a9c065da7ce0365d40e07bd7f4a1aca153",
+   "nonce": "381917788026542773",
+   "ctx_height": 1,
+   "mix": "db1049ecfde17d4bed305a49bc5e0605a4cd64df631598e8dae2defa4c593ca7",
+   "boundary": "0000000000000000000000000000000000000000000000000000000000000000",
+   "expect": "boundary",
+   "flip": "the target below the hash"
+  },
+  {
+   "height": 1,
+   "header": "16e8c8d581c0442b834c470fbd46b9a9c065da7ce0365d40e07bd7f4a1aca153",
+   "nonce": "381917788026542773",
+   "ctx_height": 1,
+   "mix": "da1049ecfde17d4bed305a49bc5e0605a4cd64df631598e8dae2defa4c593ca7",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "bit 0 of the mix's first byte"
+  },
+  {
+   "height": 1,
+   "header": "16e8c8d581c0442b834c470fbd46b9a9c065da7ce0365d40e07bd7f4a1aca153",
+   "nonce": "381917788026542774",
+   "ctx_height": 1,
+   "mix": "db1049ecfde17d4bed305a49bc5e0605a4cd64df631598e8dae2defa4c593ca7",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "the nonce off by one"
+  },
+  {
+   "height": 1,
+   "header": "16e8c8d581c0442b834c470fbd46b9a9c065da7ce0365d40e07bd7f4a1aca1d3",
+   "nonce": "381917788026542773",
+   "ctx_height": 1,
+   "mix": "db1049ecfde17d4bed305a49bc5e0605a4cd64df631598e8dae2defa4c593ca7",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "bit 7 of the header's last byte"
+  },
+  {
+   "height": 4096,
+   "header": "16e8c8d581c0442b834c470fbd46b9a9c065da7ce0365d40e07bd7f4a1aca153",
+   "nonce": "381917788026542773",
+   "ctx_height": 1,
+   "mix": "db1049ecfde17d4bed305a49bc5e0605a4cd64df631598e8dae2defa4c593ca7",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "epoch",
+   "flip": "the reference's epoch case: the height in another epoch than the context"
+  },
+  {
+   "height": 2147483648,
+   "header": "16e8c8d581c0442b834c470fbd46b9a9c065da7ce0365d40e07bd7f4a1aca153",
+   "nonce": "381917788026542773",
+   "ctx_height": 1,
+   "mix": "db1049ecfde17d4bed305a49bc5e0605a4cd64df631598e8dae2defa4c593ca7",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "height",
+   "flip": "the reference's height case: outside the schedule"
+  },
+  {
+   "height": 1,
+   "header": "f5849da3569cb5095a170747a3e93e4b4e4507d523011d7d82cfe89f6b042a31",
+   "nonce": "10151724146562529765",
+   "ctx_height": 1,
+   "mix": "98c7d153d09f767c536e6961b782b8b1266e452b6540a76cd1283a840c33237b",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1,
+   "header": "f5849da3569cb5095a170747a3e93e4b4e4507d523011d7d82cfe89f6b042a31",
+   "nonce": "10151724146562529765",
+   "ctx_height": 1,
+   "mix": "98c7d153d09f767c536e6961b782b8b1266e452b6540a76cd1283a840c33237b",
+   "boundary": "0000000000000000000000000000000000000000000000000000000000000000",
+   "expect": "boundary",
+   "flip": "the target below the hash"
+  },
+  {
+   "height": 1,
+   "header": "f5849da3569cb5095a170747a3e93e4b4e4507d523011d7d82cfe89f6b042a31",
+   "nonce": "10151724146562529765",
+   "ctx_height": 1,
+   "mix": "99c7d153d09f767c536e6961b782b8b1266e452b6540a76cd1283a840c33237b",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "bit 0 of the mix's first byte"
+  },
+  {
+   "height": 1,
+   "header": "f5849da3569cb5095a170747a3e93e4b4e4507d523011d7d82cfe89f6b042a31",
+   "nonce": "10151724146562529766",
+   "ctx_height": 1,
+   "mix": "98c7d153d09f767c536e6961b782b8b1266e452b6540a76cd1283a840c33237b",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "the nonce off by one"
+  },
+  {
+   "height": 1,
+   "header": "f5849da3569cb5095a170747a3e93e4b4e4507d523011d7d82cfe89f6b042ab1",
+   "nonce": "10151724146562529765",
+   "ctx_height": 1,
+   "mix": "98c7d153d09f767c536e6961b782b8b1266e452b6540a76cd1283a840c33237b",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "bit 7 of the header's last byte"
+  },
+  {
+   "height": 4096,
+   "header": "f5849da3569cb5095a170747a3e93e4b4e4507d523011d7d82cfe89f6b042a31",
+   "nonce": "10151724146562529765",
+   "ctx_height": 1,
+   "mix": "98c7d153d09f767c536e6961b782b8b1266e452b6540a76cd1283a840c33237b",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "epoch",
+   "flip": "the reference's epoch case: the height in another epoch than the context"
+  },
+  {
+   "height": 2147483648,
+   "header": "f5849da3569cb5095a170747a3e93e4b4e4507d523011d7d82cfe89f6b042a31",
+   "nonce": "10151724146562529765",
+   "ctx_height": 1,
+   "mix": "98c7d153d09f767c536e6961b782b8b1266e452b6540a76cd1283a840c33237b",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "height",
+   "flip": "the reference's height case: outside the schedule"
+  },
+  {
+   "height": 1,
+   "header": "46dff24d700d9aaea49784784dc7be1ae63bd8971032f1c55b6ba11d4e0198d6",
+   "nonce": "7675689303639249571",
+   "ctx_height": 1,
+   "mix": "8560d6b837192a13b22265df5e252d422db862ef3e25097cf8ef027b70b31d6c",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1,
+   "header": "46dff24d700d9aaea49784784dc7be1ae63bd8971032f1c55b6ba11d4e0198d6",
+   "nonce": "7675689303639249571",
+   "ctx_height": 1,
+   "mix": "8560d6b837192a13b22265df5e252d422db862ef3e25097cf8ef027b70b31d6c",
+   "boundary": "0000000000000000000000000000000000000000000000000000000000000000",
+   "expect": "boundary",
+   "flip": "the target below the hash"
+  },
+  {
+   "height": 1,
+   "header": "46dff24d700d9aaea49784784dc7be1ae63bd8971032f1c55b6ba11d4e0198d6",
+   "nonce": "7675689303639249571",
+   "ctx_height": 1,
+   "mix": "8460d6b837192a13b22265df5e252d422db862ef3e25097cf8ef027b70b31d6c",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "bit 0 of the mix's first byte"
+  },
+  {
+   "height": 1,
+   "header": "46dff24d700d9aaea49784784dc7be1ae63bd8971032f1c55b6ba11d4e0198d6",
+   "nonce": "7675689303639249572",
+   "ctx_height": 1,
+   "mix": "8560d6b837192a13b22265df5e252d422db862ef3e25097cf8ef027b70b31d6c",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "the nonce off by one"
+  },
+  {
+   "height": 1,
+   "header": "46dff24d700d9aaea49784784dc7be1ae63bd8971032f1c55b6ba11d4e019856",
+   "nonce": "7675689303639249571",
+   "ctx_height": 1,
+   "mix": "8560d6b837192a13b22265df5e252d422db862ef3e25097cf8ef027b70b31d6c",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "bit 7 of the header's last byte"
+  },
+  {
+   "height": 4096,
+   "header": "46dff24d700d9aaea49784784dc7be1ae63bd8971032f1c55b6ba11d4e0198d6",
+   "nonce": "7675689303639249571",
+   "ctx_height": 1,
+   "mix": "8560d6b837192a13b22265df5e252d422db862ef3e25097cf8ef027b70b31d6c",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "epoch",
+   "flip": "the reference's epoch case: the height in another epoch than the context"
+  },
+  {
+   "height": 2147483648,
+   "header": "46dff24d700d9aaea49784784dc7be1ae63bd8971032f1c55b6ba11d4e0198d6",
+   "nonce": "7675689303639249571",
+   "ctx_height": 1,
+   "mix": "8560d6b837192a13b22265df5e252d422db862ef3e25097cf8ef027b70b31d6c",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "height",
+   "flip": "the reference's height case: outside the schedule"
+  },
+  {
+   "height": 1,
+   "header": "e1b609ce9380dbb6f181d7b3bd43152b7d715e928ec0c54ab56c1180b995fbbe",
+   "nonce": "14010152031662129572",
+   "ctx_height": 1,
+   "mix": "451196e5c66248939ee94e3cc32f6258bceb4585c891f32715849b5247ea5f80",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1,
+   "header": "e1b609ce9380dbb6f181d7b3bd43152b7d715e928ec0c54ab56c1180b995fbbe",
+   "nonce": "14010152031662129572",
+   "ctx_height": 1,
+   "mix": "451196e5c66248939ee94e3cc32f6258bceb4585c891f32715849b5247ea5f80",
+   "boundary": "0000000000000000000000000000000000000000000000000000000000000000",
+   "expect": "boundary",
+   "flip": "the target below the hash"
+  },
+  {
+   "height": 1,
+   "header": "e1b609ce9380dbb6f181d7b3bd43152b7d715e928ec0c54ab56c1180b995fbbe",
+   "nonce": "14010152031662129572",
+   "ctx_height": 1,
+   "mix": "441196e5c66248939ee94e3cc32f6258bceb4585c891f32715849b5247ea5f80",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "bit 0 of the mix's first byte"
+  },
+  {
+   "height": 1,
+   "header": "e1b609ce9380dbb6f181d7b3bd43152b7d715e928ec0c54ab56c1180b995fbbe",
+   "nonce": "14010152031662129573",
+   "ctx_height": 1,
+   "mix": "451196e5c66248939ee94e3cc32f6258bceb4585c891f32715849b5247ea5f80",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "the nonce off by one"
+  },
+  {
+   "height": 1,
+   "header": "e1b609ce9380dbb6f181d7b3bd43152b7d715e928ec0c54ab56c1180b995fb3e",
+   "nonce": "14010152031662129572",
+   "ctx_height": 1,
+   "mix": "451196e5c66248939ee94e3cc32f6258bceb4585c891f32715849b5247ea5f80",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "bit 7 of the header's last byte"
+  },
+  {
+   "height": 4096,
+   "header": "e1b609ce9380dbb6f181d7b3bd43152b7d715e928ec0c54ab56c1180b995fbbe",
+   "nonce": "14010152031662129572",
+   "ctx_height": 1,
+   "mix": "451196e5c66248939ee94e3cc32f6258bceb4585c891f32715849b5247ea5f80",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "epoch",
+   "flip": "the reference's epoch case: the height in another epoch than the context"
+  },
+  {
+   "height": 2147483648,
+   "header": "e1b609ce9380dbb6f181d7b3bd43152b7d715e928ec0c54ab56c1180b995fbbe",
+   "nonce": "14010152031662129572",
+   "ctx_height": 1,
+   "mix": "451196e5c66248939ee94e3cc32f6258bceb4585c891f32715849b5247ea5f80",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "height",
+   "flip": "the reference's height case: outside the schedule"
+  },
+  {
+   "height": 1,
+   "header": "a22371aad09e6769fb2b9cb474ec35949343b0015052b275f8672fbd532cf228",
+   "nonce": "15756655952507145243",
+   "ctx_height": 1,
+   "mix": "5b9b12136c17aa16686769205890252c58f630615c9574c3ca082e2a253939ec",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1,
+   "header": "a22371aad09e6769fb2b9cb474ec35949343b0015052b275f8672fbd532cf228",
+   "nonce": "15756655952507145243",
+   "ctx_height": 1,
+   "mix": "5b9b12136c17aa16686769205890252c58f630615c9574c3ca082e2a253939ec",
+   "boundary": "0000000000000000000000000000000000000000000000000000000000000000",
+   "expect": "boundary",
+   "flip": "the target below the hash"
+  },
+  {
+   "height": 1,
+   "header": "a22371aad09e6769fb2b9cb474ec35949343b0015052b275f8672fbd532cf228",
+   "nonce": "15756655952507145243",
+   "ctx_height": 1,
+   "mix": "5a9b12136c17aa16686769205890252c58f630615c9574c3ca082e2a253939ec",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "bit 0 of the mix's first byte"
+  },
+  {
+   "height": 1,
+   "header": "a22371aad09e6769fb2b9cb474ec35949343b0015052b275f8672fbd532cf228",
+   "nonce": "15756655952507145244",
+   "ctx_height": 1,
+   "mix": "5b9b12136c17aa16686769205890252c58f630615c9574c3ca082e2a253939ec",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "the nonce off by one"
+  },
+  {
+   "height": 1,
+   "header": "a22371aad09e6769fb2b9cb474ec35949343b0015052b275f8672fbd532cf2a8",
+   "nonce": "15756655952507145243",
+   "ctx_height": 1,
+   "mix": "5b9b12136c17aa16686769205890252c58f630615c9574c3ca082e2a253939ec",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "bit 7 of the header's last byte"
+  },
+  {
+   "height": 4096,
+   "header": "a22371aad09e6769fb2b9cb474ec35949343b0015052b275f8672fbd532cf228",
+   "nonce": "15756655952507145243",
+   "ctx_height": 1,
+   "mix": "5b9b12136c17aa16686769205890252c58f630615c9574c3ca082e2a253939ec",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "epoch",
+   "flip": "the reference's epoch case: the height in another epoch than the context"
+  },
+  {
+   "height": 2147483648,
+   "header": "a22371aad09e6769fb2b9cb474ec35949343b0015052b275f8672fbd532cf228",
+   "nonce": "15756655952507145243",
+   "ctx_height": 1,
+   "mix": "5b9b12136c17aa16686769205890252c58f630615c9574c3ca082e2a253939ec",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "height",
+   "flip": "the reference's height case: outside the schedule"
+  },
+  {
+   "height": 1,
+   "header": "9c1f119ff1df3edac70c1dfdb3930c040a9180caf46b35ff1fcd9febe144dd52",
+   "nonce": "2731877639555872938",
+   "ctx_height": 1,
+   "mix": "720721596dd2f1b9e9e142584410d4379936a9fd414f9cc976c2ea8a2ebafea5",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1,
+   "header": "9c1f119ff1df3edac70c1dfdb3930c040a9180caf46b35ff1fcd9febe144dd52",
+   "nonce": "2731877639555872938",
+   "ctx_height": 1,
+   "mix": "720721596dd2f1b9e9e142584410d4379936a9fd414f9cc976c2ea8a2ebafea5",
+   "boundary": "0000000000000000000000000000000000000000000000000000000000000000",
+   "expect": "boundary",
+   "flip": "the target below the hash"
+  },
+  {
+   "height": 1,
+   "header": "9c1f119ff1df3edac70c1dfdb3930c040a9180caf46b35ff1fcd9febe144dd52",
+   "nonce": "2731877639555872938",
+   "ctx_height": 1,
+   "mix": "730721596dd2f1b9e9e142584410d4379936a9fd414f9cc976c2ea8a2ebafea5",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "bit 0 of the mix's first byte"
+  },
+  {
+   "height": 1,
+   "header": "9c1f119ff1df3edac70c1dfdb3930c040a9180caf46b35ff1fcd9febe144dd52",
+   "nonce": "2731877639555872939",
+   "ctx_height": 1,
+   "mix": "720721596dd2f1b9e9e142584410d4379936a9fd414f9cc976c2ea8a2ebafea5",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "the nonce off by one"
+  },
+  {
+   "height": 1,
+   "header": "9c1f119ff1df3edac70c1dfdb3930c040a9180caf46b35ff1fcd9febe144ddd2",
+   "nonce": "2731877639555872938",
+   "ctx_height": 1,
+   "mix": "720721596dd2f1b9e9e142584410d4379936a9fd414f9cc976c2ea8a2ebafea5",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "mix",
+   "flip": "bit 7 of the header's last byte"
+  },
+  {
+   "height": 4096,
+   "header": "9c1f119ff1df3edac70c1dfdb3930c040a9180caf46b35ff1fcd9febe144dd52",
+   "nonce": "2731877639555872938",
+   "ctx_height": 1,
+   "mix": "720721596dd2f1b9e9e142584410d4379936a9fd414f9cc976c2ea8a2ebafea5",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "epoch",
+   "flip": "the reference's epoch case: the height in another epoch than the context"
+  },
+  {
+   "height": 2147483648,
+   "header": "9c1f119ff1df3edac70c1dfdb3930c040a9180caf46b35ff1fcd9febe144dd52",
+   "nonce": "2731877639555872938",
+   "ctx_height": 1,
+   "mix": "720721596dd2f1b9e9e142584410d4379936a9fd414f9cc976c2ea8a2ebafea5",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "height",
+   "flip": "the reference's height case: outside the schedule"
+  },
+  {
+   "height": 1000,
+   "header": "da864f3bd9e5cd613828cac3fba81a38fe04c19b4df799a957c2cdaea353d4cd",
+   "nonce": "15667804625798172576",
+   "ctx_height": 1000,
+   "mix": "41447546aae50022075663ce1c3d5b85a1aeaccdfac0b889ade5096282359f94",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1000,
+   "header": "3ca87db930f13ff36047a8ff95ee34542e7f2a1a29cf752236a47c4cc11a3c59",
+   "nonce": "2716487183961909674",
+   "ctx_height": 1000,
+   "mix": "d154a8cbb6789da2561d527bfbcafdfe8371d77cc410a8fdc202a492d703597b",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1000,
+   "header": "4d40b5c8f75e471a36980c5482e7ed162088ca97acfeddd13b25e60096e45e52",
+   "nonce": "4853568129891161654",
+   "ctx_height": 1000,
+   "mix": "4a6c0b2bcde5434e1f319da1acd5bde53ebae3c3f54914642a675af1325ab4d3",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1000,
+   "header": "b6ef2e19bc00f8c75642aa7e1914f779c38a695ca85682d421825ca18415f3d0",
+   "nonce": "8427272205239566566",
+   "ctx_height": 1000,
+   "mix": "c5e259d4f6e99d34cb704c320f827413c3580abffbe754e471d1a903a82cac98",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1000,
+   "header": "3404f3eff217381e0cbea29fb6d79ae88c67ff7438d529f4616135b82952e2fa",
+   "nonce": "7017316045541148064",
+   "ctx_height": 1000,
+   "mix": "599ac3cb5f1c38aae7ed329a7dbc04b383bffaeda0e9ca6ef8b4bd78e1da9c0a",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1000,
+   "header": "3e1e5d31e0a19fdb9f16d63cad5bf08d53eff792782a9d6c562f4dea7c8cdc5b",
+   "nonce": "11039281969117969020",
+   "ctx_height": 1000,
+   "mix": "ad487682d5239c59c8d36670f3d009fbc458a1b97b476a85c27fe30e43d9704e",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1000,
+   "header": "f861c6553699a4368a558c3eba0e1b3f480869b6d17f6929f48f9ea2c5ac961a",
+   "nonce": "4092271764321335303",
+   "ctx_height": 1000,
+   "mix": "07f352a001b183f24fcd196424c02ed88448c720362320363a71b4178b46c22a",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1000,
+   "header": "dee701646de645eedfec133196b98e03eea7de3a61601993dd4077e78399bad2",
+   "nonce": "9007918699724797920",
+   "ctx_height": 1000,
+   "mix": "7ea671c11629516bce508da9391ae17dae23ae592747c786f0d0d023612f778f",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 4095,
+   "header": "416d7071b1df1c907c4b30dbc6e5c2d6944c75ed2ee6c3b35114a295dcd1aaad",
+   "nonce": "17248936220158483480",
+   "ctx_height": 4095,
+   "mix": "8681590dd30a6a7eea87165e99f833ccb98a0b72320ea8454e90bc6ce2a717ce",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 4095,
+   "header": "c2f9d85498435b04429fd7a72796252aa53e21db7d2bfc08403d88a7b45d0bb4",
+   "nonce": "2349702426490355842",
+   "ctx_height": 4095,
+   "mix": "0ac36b8b6360ef8903576dc2428ef93eae8f5a700f60fc8c604a32eae426a388",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 4095,
+   "header": "2ee7fd07a4ca09834c7855e34e28a9df3885a5777966f67b43377c2ad97e45bb",
+   "nonce": "4154257311765590874",
+   "ctx_height": 4095,
+   "mix": "235d563fa42b2b23c4fb4e301ee7eabeb4a0c3e20789a74948aa336d4ed8d37e",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 4095,
+   "header": "b7f7b300eead2486016050c25f0214f75c72c0fb04d12498a2dcf8906e15edbe",
+   "nonce": "12066737649565623317",
+   "ctx_height": 4095,
+   "mix": "ee899ad1e127c774098942149be430a9e1b8afd57baa73404a07e2de07b64a89",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 4095,
+   "header": "d4b178da23c6fd6865afce45ba63307fd4f5a7712c527b6495f2d294d0c6791d",
+   "nonce": "2335402871472788515",
+   "ctx_height": 4095,
+   "mix": "e0354531c8f0fb7d7a0944c08e5f13a361e21371d252a5c0891a79f77aa6bc69",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 4095,
+   "header": "8732aa3f6a31b31b3ff4a12a069ee1fa5602c34a1097f3e830b0ba10623e146d",
+   "nonce": "5993025501891732329",
+   "ctx_height": 4095,
+   "mix": "f252e9f2ad6c271602c5c27d3c537300eeadcac98d3258600f8bcda69206a229",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 4095,
+   "header": "144d189c1091b3f90f8cdee41fdcc0be0c5469de2eb28628af1e6309205ac9f6",
+   "nonce": "6508820804122637051",
+   "ctx_height": 4095,
+   "mix": "57c30ec57fede6af7544ca5fdac81e84a665255eecc993df60da8d5103014009",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 4095,
+   "header": "49aac91a43d8dde48ab0d3b7b665cde9d7b28014f1df8822de92715f60c90b38",
+   "nonce": "2659460743602474538",
+   "ctx_height": 4095,
+   "mix": "239669e994a003d278305f3fff990a87d0e3b8e4929adec750949dd2029ee201",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 4096,
+   "header": "3d7ad07fe58d69886a053cb35aa2c15a7707ad3a482afea47853e10fe18b9ed0",
+   "nonce": "4198721711684712248",
+   "ctx_height": 4096,
+   "mix": "7f5b03017cb3fb895056ffbe7190bbd8c700b2dafdab69d6efa844d28bbbc978",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 4096,
+   "header": "039448d71fd5dfc4e4d91567adbce045559b66adf6dfdbe378b829e07d5a0720",
+   "nonce": "5325990515673860913",
+   "ctx_height": 4096,
+   "mix": "c4d9e713bf7615fcd2ddd2c0c0b7b3153bf37cd85a5c7e566a0fc77a26574abb",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 4096,
+   "header": "133a24daad21f8e991a965ab37af3e020d2eb1ba58e3731bbdec555c38573fc1",
+   "nonce": "4522930291366514954",
+   "ctx_height": 4096,
+   "mix": "1a934aa3a18e5d5fb2d579e08f5502db4ff5452c6faf0067d8a62ea92e931cf2",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 4096,
+   "header": "6fff89caf54daab7c01902ecc4688dd963ec0a0d1168bced39e61f44f5417ff3",
+   "nonce": "10062167266668295204",
+   "ctx_height": 4096,
+   "mix": "a14c3d44e4cdd7e70b7fe6a0c9a2b274446866f6c259bf79857cfded0e0669cb",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 4096,
+   "header": "f03541d78532b8106651c3174be75450a1b8a9efbf5ef08be0075500c6776f65",
+   "nonce": "14379208914431655400",
+   "ctx_height": 4096,
+   "mix": "7f700e80196acaa8136a18a54fd269334fdf7dc8baeaba5e9a3df24ea966673f",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 4096,
+   "header": "39dd1f46837d22cf0883e4258fa75acbc6a7e922c29306fc6d76dab57b5a9fe3",
+   "nonce": "4102629308297967012",
+   "ctx_height": 4096,
+   "mix": "415eccd84279cb0d24039d977770bcf54a8a85e5dd9876a7c65733f6cb5afaaf",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 4096,
+   "header": "7683bdac4a8c74ab905a760a09ad1c2ef00e76ae6553e574dd990b5dd54c5178",
+   "nonce": "4690334261531126831",
+   "ctx_height": 4096,
+   "mix": "8daa4de2894dc42ae4115d871468a96796cf0ca59f3c11b2083c9116deca6b2a",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 4096,
+   "header": "5af14a2bfce2368193b7c4d4c2f23f37a8dbb5e316b86a722b6ef53b6ee8feef",
+   "nonce": "12274927135452641540",
+   "ctx_height": 4096,
+   "mix": "39babc12390cc73a4fb0fe6d53758970b153ac1cc4515f3551a444520a2856cb",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 8192,
+   "header": "73b46a0b4d91e29166c587cfedcceb524c4360c995c65780fa6acdd81270038f",
+   "nonce": "15371165637248759427",
+   "ctx_height": 8192,
+   "mix": "6434e2363b382bc567c5bfdf6d179fc25fa26f1680f0f634ec0b8bd8ecb5e01c",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 8192,
+   "header": "78c8f429b13cc34669de5e54c93f7b04589a47d3eca43546b6606d4b64a45694",
+   "nonce": "14341174296411373595",
+   "ctx_height": 8192,
+   "mix": "1d3fe0bc794aa04165bea57b9bd9fdcd477d9ce6ac5c8b4600fa6ec4bcd58bad",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 8192,
+   "header": "227d4629bd3b4773da9df1251b03634ee8a1db6e2110e24a3ae1b8a01ec6f95f",
+   "nonce": "18095383727933055853",
+   "ctx_height": 8192,
+   "mix": "31e001a1c1d5143da9a66cd61adbd438e1e36ff57a657a89a8f3b03a7496b90a",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 8192,
+   "header": "ea7c843d210a75adc8a7a5371e2b4ebcf95cb7b00173e1dbebccbc5f49b57d8f",
+   "nonce": "9132653759638270058",
+   "ctx_height": 8192,
+   "mix": "b5dc4bbaca1c10cf2b9df3417d05eeb624ac4c6cb21a420601c8dbbbf33852e3",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 8192,
+   "header": "c7064407a3def7c648ca20eb4a14f50c72f2ae54484595a05d239295c3cde03e",
+   "nonce": "14734338885769613392",
+   "ctx_height": 8192,
+   "mix": "956e1e9baf2a9f39cfde15f4b0e25257aa86a2bc929d840aade9048417320844",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 8192,
+   "header": "6398088fcc2a4551d52ab83b18391a77e42b788bc715b3e637eec85545ca82a1",
+   "nonce": "13126078282717094976",
+   "ctx_height": 8192,
+   "mix": "a7512e5c3a2c9ccb2a77171c335ff3b065c10a425408429fedb5a599b800faaa",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 8192,
+   "header": "a5aa718492c8d770fea7206af1dc57659ea1a9a4e3eff1fac5c8819c1c9dec54",
+   "nonce": "17685145437124597939",
+   "ctx_height": 8192,
+   "mix": "60b80e344df6eb4fc522af9c9770474ea898e90ec00f88a922c836cc385a601d",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 8192,
+   "header": "2c1638316f6a1ee30bb0b748e6218d6542d3ae2bec0845a276057f94d92f855d",
+   "nonce": "522856542727474459",
+   "ctx_height": 8192,
+   "mix": "0b65895e151e0dc17c744dcaeac67ce4b8d72bf4bedd7eab5b76a3a5d9ffc849",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1835008,
+   "header": "83d58637867c4e8a7e0e1f40fd0fe5f97085d7d069620d4227425538070f9599",
+   "nonce": "18049866815061743335",
+   "ctx_height": 1835008,
+   "mix": "dc729805af9c9dfa9b87f6120dd417c1f05d058e938ae726513ed1643dd21735",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1835008,
+   "header": "dd60d54c6dd60d072ecd9fec11d80081211525505dc879ec4b213143c0ec5ccc",
+   "nonce": "12647379919582310395",
+   "ctx_height": 1835008,
+   "mix": "2c828e26c0bccb2eb6c4f8435b97ab6c1d515cad64846af99ccacb37206e8577",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1835008,
+   "header": "65b1626a512e4451de3c845c4e995c06b3a6b1989aecf990add28a471c67b8d4",
+   "nonce": "5561394341114404153",
+   "ctx_height": 1835008,
+   "mix": "e3874a99626e3db127dffc24b127fd6641483892b914e40d09413760c76f4cfc",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1835008,
+   "header": "db4c96fb1310a88f591e7b4f0b50790515e5d1c1b4f6b124c8bf3642c89b838b",
+   "nonce": "15300397324154225745",
+   "ctx_height": 1835008,
+   "mix": "4a8b4b4a10a40fb4d6dfd183df2f9260e89ef0358943851389d0cfd599e1b7ea",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1835008,
+   "header": "9f36922161cff63803f8aab4111a5a9f67f4452c2c74e6aa7b48b577e42dfb50",
+   "nonce": "17522847840377044291",
+   "ctx_height": 1835008,
+   "mix": "151e977ff7a88abce3f938b4c0164f2dba8f99f4f2ea209bce1866943e92a6e1",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1835008,
+   "header": "ab0e10f1e15de77fde61da10279e7eee1662fcdbd33639933cedf4841861fac0",
+   "nonce": "6860673275289310676",
+   "ctx_height": 1835008,
+   "mix": "643c0b6c5c8db4ce9dd2ffce3aea6bed1c43e9fc2828507c49d2188c8c3e8acb",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1835008,
+   "header": "daa600c872e0b3cffbd63cb8ab7da8262c4df21a2cb13752c5ec4fa3c5feee4d",
+   "nonce": "17450507914035092138",
+   "ctx_height": 1835008,
+   "mix": "919aed257a7a6531b86a87738217cc949c8f95795f1b3676386a319119d5c29f",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1835008,
+   "header": "88a53e51b8c2c30f3e922d775f8f27c5f52e60b6aa13b8de303458e4033201fe",
+   "nonce": "11488997306634674176",
+   "ctx_height": 1835008,
+   "mix": "5459acb1ec1b8394002aa009a941f85b93bbeaaa6b8aa5a2a20ca6e705e5bed4",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1835085,
+   "header": "c7c559545388fc27e1980cb15c2aa48c7571bb4768cc9bf27c9434ed0205af2f",
+   "nonce": "14263415284412729317",
+   "ctx_height": 1835085,
+   "mix": "3d32e0f62fadfa24e7a6c66ede86f3f212ac1bbec8f4426301eeaa16b1452cef",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1835085,
+   "header": "48b45fdf4237ecc7dd402bb2758abf31d6fd2d9d52cb56172dfa09d4fd8f32c9",
+   "nonce": "7840155959934248155",
+   "ctx_height": 1835085,
+   "mix": "fe1dfef04559a525a180feaebfd75a1edacf282b94054c6381bea0b3a99d87a4",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1835085,
+   "header": "5bec6072cd431e6e7cd5ac5b7529c71084339671e5323138dce8ee8fb23745d0",
+   "nonce": "4412254063402692132",
+   "ctx_height": 1835085,
+   "mix": "0bff80301e28869d360b379227b2ea760efce87800588212ddcfb0c847203332",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1835085,
+   "header": "762785ddb2b951e610e5511f09d04da55f6cfe746d138c94dfa7de62d0b44c20",
+   "nonce": "799438206602302136",
+   "ctx_height": 1835085,
+   "mix": "100eca069edfe99d033f1042f9abb49156cb5159d46e696cd95581fcc8add35a",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1835085,
+   "header": "5548c60e5509f5b53c9f8e1be4d6838b899c9bb20d666c7b5933cf2e555d8b1b",
+   "nonce": "13631696346037886403",
+   "ctx_height": 1835085,
+   "mix": "38d61391fcc80eb6dfe580fb223c05a06744ad826c5b6bd582cfb1bc855c0e01",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1835085,
+   "header": "d70fd85b8b0db81728d7c29bc2c6f575b784721d1ce708e8762786cd258b1049",
+   "nonce": "13784249665342766469",
+   "ctx_height": 1835085,
+   "mix": "eb064c7ba32f8409421f0502f3c1c57f829f6f62e0b983b11b8a4bf15ca4e565",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1835085,
+   "header": "bf0b09641cf6f2b3f5f2a197cd5dd545237a120ad847ff71a0f66463d43f3545",
+   "nonce": "801903684566920854",
+   "ctx_height": 1835085,
+   "mix": "14c719f097c173355eaa033f713167a94406736c5144b4aff3a32fe64170e1fd",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 1835085,
+   "header": "e2a03560addcfe1040aedd101c629579452796cca76212a86d3d25987fd40f1a",
+   "nonce": "14633787480098827659",
+   "ctx_height": 1835085,
+   "mix": "8fff34755b5e26771d5ca9861844daa94c98968b16747990807d4b6fe3b9765d",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 2452184,
+   "header": "e17c1b7cbc9f9be32d157a2d9f9bd2eb3d3acf87927091738f816739f0e4be90",
+   "nonce": "8602049021203995197",
+   "ctx_height": 2452184,
+   "mix": "b65956b5510f239ab535b30755db14188aa23e3ff80989ee289e26961752fabf",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 2452184,
+   "header": "57499b35808cbaf47faa04b864548c73efd6f1246ae4d96c224db6cbc245a547",
+   "nonce": "891391877990264471",
+   "ctx_height": 2452184,
+   "mix": "b5aba817d834a18669b723b24b829fb15105ff2b8142c5cf79d9482a24635665",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 2452184,
+   "header": "c2776e443ae9e4ddc04dd29ec357098212c8067317c283944b97e30b0b496469",
+   "nonce": "13597690221693800491",
+   "ctx_height": 2452184,
+   "mix": "e02d9671b4e73aaabd2888375d14262f791e689dc3e0ce8159b34f34e50a0a54",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 2452184,
+   "header": "835a18ac792fb35cafb66d629373621e290c3790f24f42cfda7c770ce4b607c7",
+   "nonce": "915689014813883167",
+   "ctx_height": 2452184,
+   "mix": "5f57822b10b0e103b8d6856d836ab43180ce87b57bf51f9ebc35f9c51e775256",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 2452184,
+   "header": "38b5927b857c5d39a0f3de3845bc4ae5828b57843a185f1536b6cf5940cef594",
+   "nonce": "914340118622259828",
+   "ctx_height": 2452184,
+   "mix": "ced0ebc56d8ee8c6acd75a9bf2912118759f8b4a5a92dbbcd5f784fbbcb3aa48",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 2452184,
+   "header": "d49bd330c4ce46c08cfebc891cdaf568e28d7e4b8468acaab39df4d962eb12bf",
+   "nonce": "1865561400079230381",
+   "ctx_height": 2452184,
+   "mix": "7da2891870b7d8ced3c02daf8ffe13ad54abf3f51d9e9ab6ab927fce85d32c9b",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 2452184,
+   "header": "bae57f3deae0a8560020670e044a2234d1412a0acb11ecf0b0ca98dd0580ff9a",
+   "nonce": "16899072331661756154",
+   "ctx_height": 2452184,
+   "mix": "61392b17844132f75d24a3da9b771413274ae615fe00f7a67dee842e24895d77",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  },
+  {
+   "height": 2452184,
+   "header": "0707f1c47c09d2de0e39cd6b7ba67e78e0341c8c376c1b26e88e85c74f7a27e1",
+   "nonce": "3951428163476651645",
+   "ctx_height": 2452184,
+   "mix": "c88d3b409f189bd8c0a82371fc49e3160118fc80f3bc6b8908d0076457a87169",
+   "boundary": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "expect": "ok",
+   "flip": "none (the Metal worker's tuple)"
+  }
+ ]
+}

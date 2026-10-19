@@ -1,0 +1,18 @@
+[package]
+name = "igneum-wallet-authority"
+description = "Igneum Wallet, the work-authority side: the draw a bonded identity holds, the hostile claim's signature, the pool's signed receipts verified; linked by the CLI and the engine, never by the signer"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+# nothing in this workspace is published to a registry; the crates reference each other by path
+publish = false
+
+[dependencies]
+igneum-wallet-core = { path = "../core" }
+# the chain's two hashes outside keccak: the lottery and the receipts are BLAKE3 (the node's and the pool's form)
+blake3 = { workspace = true }
+# the bond key, the signing key and the pool's receipt key are Ed25519 (RFC 8032, deterministic)
+ed25519-dalek = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }

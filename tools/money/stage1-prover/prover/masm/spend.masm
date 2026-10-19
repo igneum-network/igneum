@@ -1,0 +1,149 @@
+# Money stage 1, cut 4: the spend statement money-spend-v1 (ADR-0001 section 4.3 item 4), Miden assembly.
+# H is Poseidon2 over Goldilocks, the VM's native hash; every H here is the two-to-one `hmerge`
+# (merge(A, B) with A the word on top of the stack). A word is four field elements, element 0 on top.
+#
+# Public input (the operand stack at the start): SH, the statement hash, one word:
+#   SH = H(H(H(H(H(H(H(H(DOMAIN, ANCHOR), NF1), NF2), CM1), CM2), VPUB), FEE), ADDR)
+#   DOMAIN = [chain_id, 2, 0, 0]; VPUB and FEE are 128-bit values as four 32-bit limbs, limb 0 on top;
+#   ADDR is the 20-byte public output as four 40-bit limbs.
+# Public output (the operand stack at the end): SH, carried through.
+# Private (the advice stack, in the order read): the nine public words above, then for each of the
+# two inputs V (four limbs), SK, NK, R, index, then for each of the two outputs V, PK, R.
+# Private (the advice Merkle store): the path of each real input's commitment under ANCHOR.
+#
+# The checks: for each input, PK = H(SK, NK), CM = H(H(V, PK), R), NF = H(H(NK, CM), [index,0,0,0])
+# equals the public nullifier, and, unless V is zero (a dummy input, Sapling's rule), CM sits at
+# depth 32, position index, under ANCHOR; for each output CM = H(H(V, PK), R) equals the public
+# commitment; every value's four limbs are below 2^32; V1 + V2 = VO1 + VO2 + FEE + VPUB as 128-bit
+# integers (limb addition with carries, the final carries equal).
+#
+# Memory (word addresses): 0 DOMAIN, 4 ANCHOR, 8 NF1, 12 NF2, 16 CM1, 20 CM2, 24 VPUB, 28 FEE, 32 ADDR;
+# input i at 100 + 40 i: +0 V, +4 SK, +8 NK, +12 R, +16 index, +24 CM, +28 NF;
+# output j at 200 + 40 j: +0 V, +4 PK, +8 R, +12 CM; the balance's limbs at 300..303, its carry at 304.
+const DEPTH = 32
+
+# [base, ...] -> [...]: one input from the advice stack (V, SK, NK, R, index); NF written at base+28.
+proc input
+    padw adv_loadw u32assertw
+    # => [V, base]
+    dup.4 mem_storew_le
+    padw adv_loadw
+    # => [SK, V, base]
+    dup.8 add.4 mem_storew_le
+    padw adv_loadw
+    # => [NK, SK, V, base]
+    dup.12 add.8 mem_storew_le
+    swapw hmerge
+    # => [PK, V, base]                      PK = H(SK, NK)
+    swapw hmerge
+    # => [T, base]                          T = H(V, PK)
+    padw adv_loadw
+    # => [R, T, base]
+    dup.8 add.12 mem_storew_le
+    swapw hmerge
+    # => [CM, base]                         CM = H(T, R)
+    dup.4 add.24 mem_storew_le
+    adv_push
+    # => [index, CM, base]
+    dup.0 dup.6 add.16 mem_store
+    padw dup.9 mem_loadw_le
+    # => [V, index, CM, base]
+    dup.0 eq.0 dup.2 eq.0 and dup.3 eq.0 and dup.4 eq.0 and
+    # => [dummy, V, index, CM, base]
+    movdn.4 dropw
+    # => [dummy, index, CM, base]
+    not
+    if.true
+        # a real input: CM at (DEPTH, index) under ANCHOR
+        movdn.4 dropw
+        # => [index, base]
+        padw mem_loadw_le.4
+        # => [ANCHOR, index, base]
+        movup.4 push.DEPTH
+        # => [DEPTH, index, ANCHOR, base]
+        padw dup.10 add.24 mem_loadw_le
+        # => [CM, DEPTH, index, ANCHOR, base]
+        mtree_verify
+        dropw drop drop dropw
+        # => [base]
+    else
+        drop dropw
+        # => [base]
+    end
+    padw dup.4 add.8 mem_loadw_le
+    # => [NK, base]
+    padw dup.8 add.24 mem_loadw_le
+    # => [CM, NK, base]
+    swapw hmerge
+    # => [X, base]                          X = H(NK, CM)
+    push.0.0.0 dup.7 add.16 mem_load
+    # => [IW, X, base]                      IW = [index, 0, 0, 0]
+    swapw hmerge
+    # => [NF, base]                         NF = H(X, IW)
+    dup.4 add.28 mem_storew_le
+    dropw drop
+end
+
+# [base, ...] -> [...]: one output from the advice stack (V, PK, R); CM written at base+12.
+proc output
+    padw adv_loadw u32assertw
+    # => [V, base]
+    dup.4 mem_storew_le
+    padw adv_loadw
+    # => [PK, V, base]
+    dup.8 add.4 mem_storew_le
+    swapw hmerge
+    # => [T, base]                          T = H(V, PK)
+    padw adv_loadw
+    # => [R, T, base]
+    dup.8 add.8 mem_storew_le
+    swapw hmerge
+    # => [CM, base]                         CM = H(T, R)
+    dup.4 add.12 mem_storew_le
+    dropw drop
+end
+
+# [] -> []: V1 + V2 = VO1 + VO2 + FEE + VPUB over four 32-bit limbs with carries.
+proc balance
+    push.0
+    mem_load.100 mem_load.140 u32overflowing_add3 swap mem_store.300
+    mem_load.101 mem_load.141 u32overflowing_add3 swap mem_store.301
+    mem_load.102 mem_load.142 u32overflowing_add3 swap mem_store.302
+    mem_load.103 mem_load.143 u32overflowing_add3 swap mem_store.303
+    mem_store.304
+    push.0
+    mem_load.200 mem_load.240 u32overflowing_add3 swap mem_load.24 mem_load.28 u32overflowing_add3 movup.2 add swap mem_load.300 assert_eq
+    mem_load.201 mem_load.241 u32overflowing_add3 swap mem_load.25 mem_load.29 u32overflowing_add3 movup.2 add swap mem_load.301 assert_eq
+    mem_load.202 mem_load.242 u32overflowing_add3 swap mem_load.26 mem_load.30 u32overflowing_add3 movup.2 add swap mem_load.302 assert_eq
+    mem_load.203 mem_load.243 u32overflowing_add3 swap mem_load.27 mem_load.31 u32overflowing_add3 movup.2 add swap mem_load.303 assert_eq
+    mem_load.304 assert_eq
+end
+
+begin
+    # => [SH]
+    padw adv_loadw mem_storew_le.0
+    padw adv_loadw mem_storew_le.4 swapw hmerge
+    padw adv_loadw mem_storew_le.8 swapw hmerge
+    padw adv_loadw mem_storew_le.12 swapw hmerge
+    padw adv_loadw mem_storew_le.16 swapw hmerge
+    padw adv_loadw mem_storew_le.20 swapw hmerge
+    padw adv_loadw mem_storew_le.24 swapw hmerge
+    padw adv_loadw mem_storew_le.28 swapw hmerge
+    padw adv_loadw mem_storew_le.32 swapw hmerge
+    # => [SH', SH]
+    dupw.1 assert_eqw
+    # => [SH]
+    mem_load.1 push.2 assert_eq
+    padw mem_loadw_le.24 u32assertw dropw
+    padw mem_loadw_le.28 u32assertw dropw
+    push.100 exec.input
+    push.140 exec.input
+    padw mem_loadw_le.128 padw mem_loadw_le.8 assert_eqw
+    padw mem_loadw_le.168 padw mem_loadw_le.12 assert_eqw
+    push.200 exec.output
+    push.240 exec.output
+    padw mem_loadw_le.212 padw mem_loadw_le.16 assert_eqw
+    padw mem_loadw_le.252 padw mem_loadw_le.20 assert_eqw
+    exec.balance
+    # => [SH]
+end

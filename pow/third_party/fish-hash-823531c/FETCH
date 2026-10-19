@@ -1,0 +1,25 @@
+# FishHash control (C2): fetched by manifest, not vendored, until D-GA-04 is
+# decided (the upstream repository carries no licence file at the pinned
+# commit; default = measure-only in the harness, no redistribution).
+#
+# upstream: https://github.com/iron-fish/fish-hash
+# commit:   823531c002e78259759f8b1f36ac9121c32059b1 (branch main, 13 Feb 2024)
+# named by: blueprint 1.0 R08 (FishHash audit report), docs/PHASE-ZERO.md candidate C2
+# fetch:    pow/third_party/fetch.sh fish-hash-823531c   (verifies every git blob sha1 below, then applies the patches)
+# patch:    cpp/3rdParty/blake3.c guard-neon-include
+#           (the pinned blake3.c includes blake3_neon.c unconditionally, so the tree builds only on ARM hosts;
+#            the include is wrapped in "#if BLAKE3_USE_NEON == 1", the switch the upstream's own blake3_impl.h
+#            defines; nothing else changes; the x86 build then uses the upstream's portable path)
+#
+# path                         git blob sha1                              bytes
+cpp/3rdParty/blake3.c          74146cba62137676c48415f7f9605e06661c5f4c   27639
+cpp/3rdParty/blake3.h          7eb429032e000190bc3c310359ded144d644f36d   2089
+cpp/3rdParty/blake3_dispatch.c 7f160e06490bfc386857f9372836aec461e55583   7544
+cpp/3rdParty/blake3_impl.h     cc5672f2274be24e5a92961bd2524b6ed6fb06a8   10219
+cpp/3rdParty/blake3_neon.c     8a818fc78f7726de9361ac553f075b5fc8767aa3   13818
+cpp/3rdParty/blake3_portable.c 76c9b1f99cb7cc3d9b5b9692203a6058d0e968a8   7164
+cpp/3rdParty/keccak.c          fcf3f976939da1cf8d1acd7a9202669696019a59   8145
+cpp/3rdParty/keccak.h          f21b8c2c493ff52ad6b828e17608a6d765fe0f7c   243
+cpp/CMakeLists.txt             effe1e300e863c15ffbee237899062aeddc1ed83   330
+cpp/FishHash.cpp               dc9a2dd165d3983c40b1c20dc62c9f8eaff1d8c0   9137
+cpp/FishHash.h                 459db3575fe3fa04e35b5f0a9255826800708752   944

@@ -1,0 +1,31 @@
+# BeamHash III control, measured but not vendored (D-GA-04, founder's decision-6 10 Oct 2026)
+# upstream: https://github.com/BeamMW/beam
+# tag: beam-7.5.14493
+# commit: 9c4366aae08e7fbde7bc8d65f828a0deace68bfc
+# licence: Apache License, Version 2.0 (LICENSE beside this manifest, the lock in dependencies.lock.json)
+# path  git-blob-sha1  bytes
+3rdparty/crypto/beamHashIII.h 5303c0fe6ee8e8fd12725aa58af6b0f9e98aac6e 1396
+3rdparty/crypto/beamHashIII_impl.cpp 63ea2d0f2144b69a13ea466fe1bb02ffe7ada8fd 9639
+3rdparty/crypto/blake/CMakeLists.txt a4a2120c51f8b9657bd662ed175874e7e70e867a 262
+3rdparty/crypto/blake/ref/blake2-impl.h c1df82e0c95dc8e57ee98342f5328ca57407816d 4201
+3rdparty/crypto/blake/ref/blake2.h 0b3296a9cc32ca202932e9ef07f84052dcca772c 6471
+3rdparty/crypto/blake/ref/blake2b-ref.c cd38b1ba0083c4d8125b2f27e03498376946dc37 10057
+3rdparty/crypto/blake/sse/blake2-config.h ef6fd6b4c275d87ef19b9fb105241b8c08e64a87 1510
+3rdparty/crypto/blake/sse/blake2-impl.h 16219dbcb7b48f5d8ff067d460dc3f7ac7280c0a 3360
+3rdparty/crypto/blake/sse/blake2-round.h 400ed203404c9fcd10873dbc2eb25014970939b3 2606
+3rdparty/crypto/blake/sse/blake2.h 397fef422fa18929df1d33f443daa189f0e242cc 5348
+3rdparty/crypto/blake/sse/blake2b-load-sse2.h 1ba153c87d7352bd7b2d60c55f06dc6b72cf2ab7 4815
+3rdparty/crypto/blake/sse/blake2b-load-sse41.h f6c1bc8393f167df6974a57143802b01e7b9e981 6570
+3rdparty/crypto/blake/sse/blake2b-round.h aeb3bb134da628464d49d0d4847015e3042633a7 5511
+3rdparty/crypto/blake/sse/blake2b.cpp 1ff374b8fd3dab4c9b28a77cec560db835558493 9207
+3rdparty/crypto/common.h 55fb54d26b0f817cc282619e5893288e08bd0601 1543
+3rdparty/crypto/equihashR.h 657dce0eb65079c44f0de31420d189f5d1bf5bf5 8683
+3rdparty/crypto/equihashR_impl.cpp d839965f5b1ee22674cc5f3909d925779d4b613a 26057
+3rdparty/crypto/powScheme.h 8051ddc8549e1308cb2ef42cd0395ab7c5f36a6f 1093
+core/block_crypt.cpp 292e12c526fbfc5c7ffe95775edc4d09a724ac01 96771
+core/block_crypt.h 3a9b6b8af068ea678717420b6415d1683b5ad805 55698
+pow/beamHash.cpp 3e237e726a314ef38379fee2012d9d5c91c9ef35 3115
+pow/external_pow.h 83c7d8e21157e7855ced4678fa653341cb6a1d28 2292
+pow/stratum.cpp 643974313ef974da37aefe0671521d2eb0aabda3 7536
+pow/stratum.h 3ec57aee64bee1e4eb2c926988df9e62d33f8898 4414
+pow/unittests/equihash_test.cpp b4534c68ea6587c13d66981933fa52b2a841a5a0 4191

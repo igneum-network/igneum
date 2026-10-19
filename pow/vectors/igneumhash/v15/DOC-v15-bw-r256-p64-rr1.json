@@ -1,0 +1,1 @@
+{"version": 15, "dataset_mib": 4096, "cache_mib": 64, "parents": 256, "item_bytes": 256, "epoch_blocks": 4096, "period_blocks": 300, "rounds": 256, "program_ops": 64, "read_rule": 1, "chain_id": 7358, "program_anchor": "0000000000000000000000000000000000000000000000000000000000000000"}

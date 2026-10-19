@@ -1,0 +1,287 @@
+diff -ruN -x target a/src/config.rs b/src/config.rs
+--- a/src/config.rs	2026-10-18 21:46:48.908599080 +0000
++++ b/src/config.rs	2026-10-18 21:46:48.914599048 +0000
+@@ -5,7 +5,11 @@
+ 
+ use alloc::vec;
+ 
+-use miden_core::{Felt, Word, crypto::hash::Poseidon2, field::QuadFelt};
++use miden_core::{
++    Felt, Word,
++    crypto::hash::Poseidon2,
++    field::{CubicTrinomialExtensionField, QuadFelt},
++};
+ use miden_crypto::{
+     field::Field,
+     hash::{
+@@ -43,6 +47,19 @@
+ pub type MidenStarkConfig<L, Ch> =
+     GenericStarkConfig<Felt, QuadFelt, L, Radix2DitParallel<Felt>, Ch>;
+ 
++/// IGNEUM MONEY stage one, the 128-bit cut (tools/money/stage1-prover/patches): the cubic extension of Goldilocks, F_p[X]/(X^3 - X - 1), as the
++/// Miden VM proof's challenge field (192 bits in place of the quadratic extension's 128), so the
++/// lookup, composition, out-of-domain and DEEP rounds are no longer bound by the field size and
++/// the conjectured level can reach the commitment hash's 128 bits. The VM's own extension-field
++/// instructions (ext2mul, horner_eval_ext, fri_ext2fold4) keep `QuadFelt`; the precompile VM keeps
++/// `MidenStarkConfig`. Only the Miden VM prover and verifier (miden-prover, miden-verifier) use
++/// these types, through the `*_cubic_config` factories below.
++pub type CubeFelt = CubicTrinomialExtensionField<Felt>;
++
++/// Miden VM STARK configuration over the cubic challenge field (see [`CubeFelt`]).
++pub type MidenCubicStarkConfig<L, Ch> =
++    GenericStarkConfig<Felt, CubeFelt, L, Radix2DitParallel<Felt>, Ch>;
++
+ type PackedFelt = <Felt as Field>::Packing;
+ 
+ /// Number of inputs to the Merkle compression function.
+@@ -62,7 +79,12 @@
+ /// Proof-of-work bits for DEEP composition polynomial.
+ pub const DEEP_POW_BITS: usize = 12;
+ /// Number of FRI query repetitions.
+-const NUM_QUERIES: usize = 27;
++// IGNEUM MONEY stage one, the 128-bit cut (tools/money/stage1-prover/patches): 38 FRI queries in place of the release's 27. At LOG_BLOWUP 3 over
++// the 192-bit challenge field a query is worth 2.967 conjectured bits (p3-security fixed::bits_per_query:
++// 3 - log2((192 + log2 e + 3) / 192)); with QUERY_POW_BITS 17 the query round reads 38 x 2.967 + 17 =
++// 129.7 bits, over the 128-bit cap, where 37 queries read 126.8. The release's 27 read 96 over the
++// quadratic field (2.951 bits a query); the join's 31 read 108.
++const NUM_QUERIES: usize = 38;
+ /// Proof-of-work bits for the query phase. Together with 27 queries, this gives the query round
+ /// exactly 96 conjectured bits; lowering either value drops the preset below that target.
+ const QUERY_POW_BITS: usize = 17;
+@@ -267,6 +289,53 @@
+ /// Concrete STARK configuration type for RPX.
+ pub type RpxConfig = MidenStarkConfig<AlgLmcs<RpxPermutation256>, AlgChallenger<RpxPermutation256>>;
+ 
++/// Concrete cubic-field STARK configuration types (see [`CubeFelt`]).
++pub type RpoCubicConfig =
++    MidenCubicStarkConfig<AlgLmcs<RpoPermutation256>, AlgChallenger<RpoPermutation256>>;
++pub type Poseidon2CubicConfig =
++    MidenCubicStarkConfig<AlgLmcs<Poseidon2Permutation256>, AlgChallenger<Poseidon2Permutation256>>;
++pub type RpxCubicConfig =
++    MidenCubicStarkConfig<AlgLmcs<RpxPermutation256>, AlgChallenger<RpxPermutation256>>;
++
++/// Creates an RPO-based cubic-field STARK configuration bound to `relation_digest`.
++pub fn rpo_cubic_config(params: PcsParams, relation_digest: RelationDigest) -> RpoCubicConfig {
++    alg_cubic_config(params, RpoPermutation256, relation_digest)
++}
++
++/// Creates a Poseidon2-based cubic-field STARK configuration bound to `relation_digest`.
++pub fn poseidon2_cubic_config(
++    params: PcsParams,
++    relation_digest: RelationDigest,
++) -> Poseidon2CubicConfig {
++    alg_cubic_config(params, Poseidon2Permutation256, relation_digest)
++}
++
++/// Creates an RPX-based cubic-field STARK configuration bound to `relation_digest`.
++pub fn rpx_cubic_config(params: PcsParams, relation_digest: RelationDigest) -> RpxCubicConfig {
++    alg_cubic_config(params, RpxPermutation256, relation_digest)
++}
++
++/// Internal helper: `alg_config` over the cubic challenge field.
++fn alg_cubic_config<P>(
++    params: PcsParams,
++    perm: P,
++    relation_digest: RelationDigest,
++) -> MidenCubicStarkConfig<AlgLmcs<P>, AlgChallenger<P>>
++where
++    P: CryptographicPermutation<[Felt; SPONGE_WIDTH]> + Copy,
++{
++    let lmcs = LmcsConfig::new(StatefulSponge::new(perm), TruncatedPermutation::new(perm));
++    let mut state = [Felt::ZERO; SPONGE_WIDTH];
++    state[CAPACITY_RANGE].copy_from_slice(&relation_digest);
++    let challenger = DuplexChallenger {
++        sponge_state: state,
++        input_buffer: vec![],
++        output_buffer: vec![],
++        permutation: perm,
++    };
++    GenericStarkConfig::new(params, lmcs, Radix2DitParallel::default(), challenger)
++}
++
+ /// Creates an RPO-based STARK configuration bound to `relation_digest`.
+ pub fn rpo_config(params: PcsParams, relation_digest: RelationDigest) -> RpoConfig {
+     alg_config(params, RpoPermutation256, relation_digest)
+@@ -330,6 +399,23 @@
+ /// Concrete STARK configuration type for Blake3.
+ pub type Blake3Config = MidenStarkConfig<BlakeLmcs, BlakeChallenger>;
+ 
++/// Concrete cubic-field STARK configuration type for Blake3 (see [`CubeFelt`]).
++pub type Blake3CubicConfig = MidenCubicStarkConfig<BlakeLmcs, BlakeChallenger>;
++
++/// Creates a Blake3_256-based cubic-field STARK configuration bound to `relation_digest`.
++pub fn blake3_256_cubic_config(
++    params: PcsParams,
++    relation_digest: RelationDigest,
++) -> Blake3CubicConfig {
++    let lmcs = LmcsConfig::new(
++        ChainingHasher::new(Blake3Hasher),
++        CompressionFunctionFromHasher::new(Blake3Hasher),
++    );
++    let mut challenger = SerializingChallenger64::from_hasher(vec![], Blake3Hasher);
++    challenger.observe_slice(&relation_digest);
++    GenericStarkConfig::new(params, lmcs, Radix2DitParallel::default(), challenger)
++}
++
+ /// Creates a Blake3_256-based STARK configuration bound to `relation_digest`.
+ pub fn blake3_256_config(params: PcsParams, relation_digest: RelationDigest) -> Blake3Config {
+     let lmcs = LmcsConfig::new(
+@@ -373,6 +459,20 @@
+ /// Concrete STARK configuration type for Keccak.
+ pub type KeccakConfig = MidenStarkConfig<KeccakLmcs, KeccakChallenger>;
+ 
++/// Concrete cubic-field STARK configuration type for Keccak (see [`CubeFelt`]).
++pub type KeccakCubicConfig = MidenCubicStarkConfig<KeccakLmcs, KeccakChallenger>;
++
++/// Creates a Keccak-based cubic-field STARK configuration.
++pub fn keccak_cubic_config(params: PcsParams, relation_digest: RelationDigest) -> KeccakCubicConfig {
++    let mmcs_sponge = KeccakMmcsSponge::new(KeccakF {});
++    let compress = CompressionFunctionFromHasher::new(mmcs_sponge);
++    let sponge = SerializingStatefulSponge::new(StatefulSponge::new(KeccakF {}));
++    let lmcs = LmcsConfig::new(sponge, compress);
++    let mut challenger = SerializingChallenger64::from_hasher(vec![], Keccak256Hash {});
++    challenger.observe_slice(&relation_digest);
++    GenericStarkConfig::new(params, lmcs, Radix2DitParallel::default(), challenger)
++}
++
+ /// Creates a Keccak-based STARK configuration.
+ ///
+ /// Uses the stateful binary sponge with the Keccak permutation and `[Felt; VECTOR_LEN]` packing
+diff -ruN -x target a/src/memory.rs b/src/memory.rs
+--- a/src/memory.rs	2026-10-18 21:46:48.911599064 +0000
++++ b/src/memory.rs	2026-10-18 21:46:48.917599033 +0000
+@@ -24,7 +24,8 @@
+ const FELT_BYTES: u64 = size_of::<Felt>() as u64;
+ 
+ /// Extension-field dimension in base-field elements.
+-const EXT_DIMENSION: u64 = <QuadFelt as BasedVectorSpace<Felt>>::DIMENSION as u64;
++// IGNEUM MONEY stage one, the 128-bit cut (tools/money/stage1-prover/patches): the proof's challenge field is the cubic one (config::CubeFelt).
++const EXT_DIMENSION: u64 = <crate::config::CubeFelt as BasedVectorSpace<Felt>>::DIMENSION as u64;
+ 
+ /// Digest size, in bytes, common to every STARK-configuration hash function Miden VM supports:
+ /// 4 [`Felt`] elements for the algebraic configs, 32 raw bytes for Blake3 and Keccak.
+diff -ruN -x target a/src/security.rs b/src/security.rs
+--- a/src/security.rs	2026-10-18 21:46:48.911599064 +0000
++++ b/src/security.rs	2026-10-18 21:46:48.918599028 +0000
+@@ -54,6 +54,15 @@
+ /// Base field elements per challenge-field element.
+ const EXTENSION_DEGREE: usize = <QuadFelt as BasedVectorSpace<Felt>>::DIMENSION;
+ 
++/// IGNEUM MONEY stage one, the 128-bit cut (tools/money/stage1-prover/patches): the Miden VM proof's challenge field is the cubic extension
++/// (config::CubeFelt): its degree and its conservative Q16 log2 size, 3 x floor_log2(p). These grade
++/// the native MVM report (`proof_security_parameters`, `security_report`, `num_deep_terms`); the
++/// quadratic constants above and the derived MASM-mirror constants below are left as the release's,
++/// for the precompile VM and the recursive estimator, which this cut does not use.
++const MVM_EXTENSION_DEGREE: usize = <config::CubeFelt as BasedVectorSpace<Felt>>::DIMENSION;
++pub const MVM_CHALLENGE_FIELD_BITS: u64 =
++    MVM_EXTENSION_DEGREE as u64 * fixed::floor_log2(Felt::ORDER_U64);
++
+ /// Column alignment of the commitment scheme, in base field elements.
+ ///
+ /// The commitment sponge absorbs whole rates, so a committed matrix is padded up to a multiple of
+@@ -140,13 +149,13 @@
+ 
+     aligned(BaseAir::<Felt>::preprocessed_width(&air), alignment)
+         + aligned(BaseAir::<Felt>::width(&air), alignment)
+-        + aligned(LiftedAir::<Felt, QuadFelt>::aux_width(&air) * EXTENSION_DEGREE, alignment)
++        + aligned(LiftedAir::<Felt, QuadFelt>::aux_width(&air) * MVM_EXTENSION_DEGREE, alignment)
+ }
+ 
+ /// Committed base columns in the quotient group: one chunk per unit of degree above the vanishing
+ /// polynomial, rounded up to a power of two, committed as a single extension-valued matrix.
+ fn quotient_column_count(max_constraint_degree: usize, alignment: usize) -> usize {
+-    aligned(quotient_chunk_count(max_constraint_degree) * EXTENSION_DEGREE, alignment)
++    aligned(quotient_chunk_count(max_constraint_degree) * MVM_EXTENSION_DEGREE, alignment)
+ }
+ 
+ /// Committed quotient chunks: one per unit of degree above the vanishing polynomial, rounded up to
+@@ -255,7 +264,7 @@
+ const fn deployed_instance(log_max_height: u32) -> InstanceShape {
+     InstanceShape {
+         log_max_height,
+-        field_bits: CHALLENGE_FIELD_BITS,
++        field_bits: MVM_CHALLENGE_FIELD_BITS,
+         collision_resistance: COLLISION_RESISTANCE,
+     }
+ }
+@@ -294,10 +303,36 @@
+         .div_ceil(height)
+ }
+ 
+-fn apply_lookup_correction(report: SecurityReport, correction: u64) -> SecurityReport {
++// IGNEUM MONEY stage one, the 128-bit cut (tools/money/stage1-prover/patches): the boundary correction
++// is part of the lookup round's error (`M = fractions_per_row * 2^H + boundary terms`), so it is
++// subtracted from the round's uncapped bound and the transcript cap (`InstanceShape::cap`) is applied
++// last, as the budget applies it to every other round. The release subtracts it from the already
++// capped term, which reads a round the cap binds at 2^-13 bits under the cap (127 whole bits under a
++// 128-bit commitment hash). Below the cap the two orders agree exactly (the join's 108 bits).
++fn apply_lookup_correction(
++    report: SecurityReport,
++    correction: u64,
++    params: &ProtocolParams,
++    instance: &InstanceShape,
++    air: &AirShape,
++) -> SecurityReport {
++    let cap = instance.cap();
+     let terms = (*report.terms()).map(|term| {
+         if term.label == LOOKUP_LABEL {
+-            SecurityTerm::new(term.label, term.bits.saturating_sub(correction))
++            let uncapped = match air.lookup {
++                Some(lookup) if lookup.fractions_per_row > 0 => {
++                    let coefficient =
++                        (lookup.max_message_width as u64 + 2) * lookup.fractions_per_row as u64;
++                    let error =
++                        fixed::ceil_log2(coefficient) + fixed::from_bits(instance.log_max_height);
++                    let pow = fixed::from_bits(params.lookup_pow_bits);
++                    if error >= instance.field_bits { pow } else { instance.field_bits - error + pow }
++                },
++                Some(_) => 0,
++                None => cap,
++            };
++            let corrected = uncapped.saturating_sub(correction);
++            SecurityTerm::new(term.label, if corrected < cap { corrected } else { cap })
+         } else {
+             term
+         }
+@@ -322,7 +357,13 @@
+             self.air_shape.lookup.map_or(0, |lookup| lookup.fractions_per_row),
+             self.instance_shape.log_max_height,
+         );
+-        apply_lookup_correction(report, correction)
++        apply_lookup_correction(
++            report,
++            correction,
++            &self.protocol_params,
++            &self.instance_shape,
++            &self.air_shape,
++        )
+     }
+ 
+     /// Returns the conjectured security level for the verified proof.
+@@ -366,7 +407,7 @@
+         log_final_degree,
+         instance_shape: InstanceShape {
+             log_max_height,
+-            field_bits: CHALLENGE_FIELD_BITS,
++            field_bits: MVM_CHALLENGE_FIELD_BITS,
+             collision_resistance,
+         },
+         air_shape: AirShape {
+@@ -494,7 +535,7 @@
+ ) -> SecurityReport {
+     let instance = InstanceShape {
+         log_max_height,
+-        field_bits: CHALLENGE_FIELD_BITS,
++        field_bits: MVM_CHALLENGE_FIELD_BITS,
+         collision_resistance,
+     };
+     let report = p3_security::budget::security_report(params, &instance, &AIR_SHAPE);
+@@ -503,7 +544,7 @@
+         LOOKUP_SHAPE.fractions_per_row,
+         log_max_height,
+     );
+-    apply_lookup_correction(report, correction)
++    apply_lookup_correction(report, correction, params, &instance, &AIR_SHAPE)
+ }
+ 
+ #[cfg(test)]

@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<!-- the page runs only its own files and speaks only to its own engine (wallet-security's G14, 12 October 2026): no inline script, no remote script, style or font, no frame; a violation is a console error the page smoke reads -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Igneum Wallet</title>
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="mark.svg" type="image/svg+xml">
+<link rel="icon" href="icon-512.png" type="image/png" sizes="512x512">
+<link rel="apple-touch-icon" href="icon-512.png">
+<link rel="stylesheet" href="app.css">
+</head>
+<body class="ig-ground" data-density="window" data-phase="welcome" data-page="home">
+<svg width="0" height="0" class="sprite" aria-hidden="true"><symbol id="i-fp" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 7.7A9.2 9.2 0 0 1 12 4.1c1.5 0 2.9.3 4.1.9"/><path d="M5.2 16.6A12.5 12.5 0 0 1 4.6 12a7.4 7.4 0 0 1 14.8 0v4"/><path d="M8.5 20a9 9 0 0 1-1.3-4.7V12a4.8 4.8 0 0 1 9.6 0v1.5"/><path d="M12 11a1 1 0 0 1 1 1v2a6 6 0 0 1-1 3.3"/><path d="M15.6 20a10 10 0 0 0 .9-2.6"/></g></symbol></svg>
+
+<!-- the rail (the kept look, wallet-ui-3): five sections, Lock and Quit in the foot. Under 720 px it is a bottom
+     tab bar. The welcome, create, import and lock screens have no rail. -->
+<aside class="rail" id="rail" hidden>
+  <div class="rail-brand">
+    <img src="mark.svg" width="28" height="28" alt="">
+    <span class="word">IGNEUM</span>
+  </div>
+  <nav class="rail-nav" id="rail-nav" aria-label="Sections">
+    <button class="nav on" data-page="home" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></button>
+    <button class="nav" data-page="send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg><span id="nav-send-word">Send</span></button>
+    <button class="nav" data-page="receive"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg><span>Receive</span></button>
+    <button class="nav" data-page="history"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>History</span></button>
+    <button class="nav" data-page="mining" id="nav-mining"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="4"/></svg><span>Mining</span></button>
+    <button class="nav" data-page="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg><span>Settings</span></button>
+  </nav>
+  <div class="rail-foot">
+    <div class="rail-status mono" id="rail-status"></div>
+    <button class="nav small" id="btn-lock"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>Lock</span></button>
+    <button class="nav small danger" id="btn-quit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9"/><path d="M6.5 6.5a8 8 0 1 0 11 0"/></svg><span>Quit</span></button>
+    <div class="rail-version mono" id="foot-version"></div>
+  </div>
+</aside>
+
+<header class="top">
+  <div class="brand" id="top-brand">
+    <img src="mark.svg" width="36" height="36" alt="">
+    <span class="word">IGNEUM</span><span class="miner">WALLET</span>
+  </div>
+  <div class="page-title" id="page-title" hidden>
+    <h1 id="page-title-text">Home</h1>
+    <span class="page-sub" id="page-sub"></span>
+  </div>
+  <div class="top-right">
+    <div class="pill" id="pill"><span class="dot"></span><span id="pill-text">starting</span><span id="pill-short">starting</span></div>
+    <button class="btn small ghost narrow-only" id="btn-lock-top" hidden>Lock</button>
+  </div>
+</header>
+
+<div class="notices" id="notices" hidden>
+  <div class="notice" id="notice" role="status" aria-live="polite">
+    <span class="notice-text" id="notice-text"></span>
+    <span class="notice-actions" id="notice-actions"></span>
+    <button class="notice-close" id="notice-close" title="Close" aria-label="Close">&times;</button>
+  </div>
+</div>
+
+<div class="ask-wrap" id="ask-quit" hidden>
+  <div class="ask">
+    <span class="ask-text">Quit Igneum Wallet? The wallet locks and the engine stops.</span>
+    <button class="btn small primary" id="ask-quit-yes">Quit</button>
+    <button class="btn small ghost" id="ask-quit-no">Cancel</button>
+  </div>
+</div>
+
+<main id="main">
+
+  <!-- welcome -->
+  <section class="screen" id="screen-welcome">
+    <div class="hero">
+      <div class="mark-wrap"><img src="mark.svg" width="72" height="72" alt=""></div>
+      <div class="eyebrow ember" id="welcome-eyebrow">Igneum &middot; the public test network</div>
+      <h1>Igneum Wallet</h1>
+      <p class="lead">Your IGN and your key, on this machine. The key is made here in its own process and never leaves it. The wallet reads and sends through the chain's public endpoint, or through a node you name.</p>
+      <div class="three">
+        <div class="tile"><div class="k">01</div><div class="t">Your key stays here</div><div class="s">Sealed with your password; only the signer process ever holds it.</div></div>
+        <div class="tile"><div class="k">02</div><div class="t">Readable settlement</div><div class="s">Sent, included, settled: each step read from the chain.</div></div>
+        <div class="tile"><div class="k">03</div><div class="t">Watch without a key</div><div class="s">Add an address alone; prepare payments here, sign where the key is.</div></div>
+      </div>
+      <div class="cta">
+        <button class="btn primary big" id="go-create">Create a wallet</button>
+        <button class="btn big" id="go-import">Import or watch</button>
+      </div>
+      <p class="seedline">Nobody from Igneum will ever ask for your words or your key. Test network. Test IGN has no monetary value.</p>
+    </div>
+  </section>
+
+  <!-- create -->
+  <section class="screen" id="screen-create">
+    <div class="step" id="create-1">
+      <div class="eyebrow">Step 1 of 3</div>
+      <h2>Choose a password</h2>
+      <p class="sub">It locks the key on this machine. Nobody can reset it for you. At least 12 characters; any characters you like.</p>
+      <label class="field"><span class="k">Password</span><input type="password" id="create-pw" autocomplete="new-password"></label>
+      <p class="note" id="create-meter"></p>
+      <label class="field"><span class="k">Again</span><input type="password" id="create-pw2" autocomplete="new-password"></label>
+      <div class="err" id="create-err"></div>
+      <div class="cta"><button class="btn primary big" id="create-next">Make my words</button><button class="btn ghost" id="create-back">Back</button></div>
+    </div>
+    <div class="step" id="create-2" hidden>
+      <div class="eyebrow">Step 2 of 3</div>
+      <h2>Write these 24 words down</h2>
+      <p class="sub">They are the wallet. Anyone with them has your IGN. They are shown once.</p>
+      <ol class="words" id="words"></ol>
+      <p class="id-help">The wallet never asks for your words on a web page. Only this window shows them, once; any page or message that asks for them is not the wallet.</p>
+      <div class="field"><div class="k">your address</div><div class="box mono"><span id="create-address"></span><button class="btn tiny" data-copy="create-address">Copy</button></div></div>
+      <div class="cta"><button class="btn primary big" id="create-written">I wrote them down</button></div>
+    </div>
+    <div class="step" id="create-3" hidden>
+      <div class="eyebrow">Step 3 of 3</div>
+      <h2>Type three of them</h2>
+      <p class="sub">So the paper is right before the words are gone from the screen.</p>
+      <p class="note">Three words are checked here. The real check of a backup is restoring from it on another machine; the words allow that at any time.</p>
+      <div class="checks" id="checks"></div>
+      <div class="err" id="confirm-err"></div>
+      <div class="cta"><button class="btn primary big" id="create-confirm">Open my wallet</button></div>
+    </div>
+  </section>
+
+  <!-- import -->
+  <section class="screen" id="screen-import">
+    <div class="step">
+      <div class="eyebrow">Import or watch</div>
+      <h2>Bring a key here, or only an address</h2>
+      <p class="sub">Words from any wallet, a raw private key, or an address to watch without any key on this machine.</p>
+      <div class="seg" id="import-mode" role="radiogroup" aria-label="What to import">
+        <button class="seg-b on" data-mode="seed" role="radio" aria-checked="true">Words</button>
+        <button class="seg-b" data-mode="key" role="radio" aria-checked="false">Private key</button>
+        <button class="seg-b" data-mode="watch" role="radio" aria-checked="false">Address only</button>
+      </div>
+      <label class="field" id="import-data-field"><span class="k" id="import-data-label">The words, in order</span><textarea id="import-data" rows="4" spellcheck="false" autocomplete="off"></textarea></label>
+      <p class="note" id="import-carry-note">Carry the words between machines by typing or pasting them here; never in a file, a message or a photo. If you paste them, they stay on this machine's clipboard until something else replaces them: copy anything else afterwards.</p>
+      <p class="note" id="import-watch-note" hidden>A watch-only wallet sees balances and history and prepares payments. Signing happens where the key is: this wallet writes an envelope you carry there and brings the signed one back.</p>
+      <label class="field" id="import-pw-field"><span class="k">New password for this machine</span><input type="password" id="import-pw" autocomplete="new-password"></label>
+      <p class="note" id="import-meter"></p>
+      <label class="field" id="import-pw2-field"><span class="k">Again</span><input type="password" id="import-pw2" autocomplete="new-password"></label>
+      <div class="err" id="import-err"></div>
+      <div class="cta"><button class="btn primary big" id="import-go">Import</button><button class="btn ghost" id="import-back">Back</button></div>
+    </div>
+  </section>
+
+  <!-- the lock screen (the kept look, 0.1.4): the mark on the ember glow, the name, the short address, one control -->
+  <section class="screen lock" id="screen-unlock">
+    <div class="lock-body">
+      <div class="lock-coin"><span class="lock-glow" aria-hidden="true"></span><div class="mark-wrap lock-mark"><img src="mark.svg" width="88" height="88" alt=""></div></div>
+      <h1 class="lock-title">Igneum Wallet</h1>
+      <p class="lock-address mono" id="unlock-address"></p>
+      <p class="lock-line bridge-waiting" id="unlock-bridge" hidden></p>
+      <div class="lock-controls">
+        <!-- the prompt's control (lock-screen.js, OLD-BASE.md step 3, the page): shown when Touch ID or Windows Hello is
+             enrolled and the app window is the host; the sheet is raised on a tap, and once by itself on the first
+             arrival when the setting is on; "Use password" reveals the field in place -->
+        <div class="lock-touch" id="unlock-bio" hidden>
+          <button class="btn primary big fp lock-btn" id="unlock-touch" type="button"><svg width="22" height="22" aria-hidden="true"><use href="#i-fp"></use></svg><span id="unlock-touch-text">Unlock with Touch ID</span></button>
+          <div class="lock-line" id="unlock-bio-note" aria-live="polite"></div>
+          <button class="lock-link" id="unlock-use-pw" type="button">Use password</button>
+        </div>
+        <form id="unlock-form" class="unlock lock-form">
+          <input type="password" id="unlock-pw" placeholder="Password" autocomplete="current-password" aria-label="Password">
+          <button class="btn primary big" type="submit" id="unlock-submit">Unlock</button>
+        </form>
+        <div class="err lock-err" id="unlock-err"></div>
+      </div>
+      <p class="seedline lock-foot">Forgot it? Only the 24 words or the key open this wallet again.</p>
+    </div>
+  </section>
+
+  <!-- home: five pages behind the rail -->
+  <section class="screen" id="screen-home">
+
+    <section class="page" id="page-home" data-page="home">
+      <!-- the owner's money, nothing of the network's pulse (the founder's design word, 14 October 2026): the balance
+           as the hero figure in the display face with the mark, the address as a quiet line, the two actions, the
+           last five movements; the status pill in the header's corner is the node's whole presence here -->
+      <div class="home-hero">
+        <div class="home-figure">
+          <img src="mark.svg" width="40" height="40" alt="" class="home-mark">
+          <div class="home-amount"><b id="h-balance">0</b><span class="home-unit">IGN</span></div>
+        </div>
+        <p class="home-sub" id="h-balance-line"></p>
+        <p class="ig-sub money-line" id="h-money" hidden></p>
+        <div class="home-addr"><span class="mono" id="home-address">not set</span><button class="btn copy small" data-copy="home-address">Copy</button><span class="eyebrow ember" id="home-watch" hidden>Watch-only</span></div>
+        <div class="row wrap actions home-actions">
+          <button class="btn primary big" id="go-send">Send</button>
+          <button class="btn big" id="go-receive">Receive</button>
+          <button class="btn small ghost" id="faucet-go-home" hidden>Get test IGN</button>
+          <span class="note" id="backup-note" hidden>Your words are not written down yet. <a href="#" id="backup-link">Back up now</a>.</span>
+        </div>
+      </div>
+
+      <div class="home-activity">
+        <div class="card-head"><h3>Activity</h3><button class="btn small ghost" id="recent-all">All history</button></div>
+        <div class="activity" id="recent"></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-send" data-page="send" hidden>
+      <div class="card">
+        <div class="card-head"><h3 id="send-title">Send IGN</h3><span class="eyebrow" id="send-eyebrow"></span></div>
+        <div class="send-form" id="send-form">
+          <label class="field"><span class="k">To</span><input type="text" id="send-to" class="mono" placeholder="0x" spellcheck="false" autocomplete="off"></label>
+          <label class="field"><span class="k">Amount</span><div class="row"><input type="text" id="send-amount" class="mono" placeholder="0.0" inputmode="decimal" autocomplete="off"><span class="unit-word mono">IGN</span><span class="note" id="send-balance"></span></div></label>
+          <div class="fee-row">
+            <span class="k mono">fee</span>
+            <span class="line-text" id="fee-line">shown when you review</span>
+          </div>
+          <div class="err" id="send-err"></div>
+          <div class="cta" id="send-cta"><button class="btn primary big" id="send-quote">Review</button></div>
+        </div>
+        <div class="ask inline" id="ask-send" hidden>
+          <ul class="upd-notes" id="ask-send-lines"></ul>
+          <span class="ask-text err" id="ask-send-chain"></span>
+          <span class="ask-text" id="ask-send-sim"></span>
+          <button class="btn small primary" id="send-go"><svg class="fp-ico" width="16" height="16" hidden aria-hidden="true"><use href="#i-fp"></use></svg><span id="send-go-text">Send now</span></button>
+          <span class="ask-text" id="send-bio-line"></span>
+          <button class="btn small" id="send-export" hidden>Export the envelope</button>
+          <button class="btn small ghost" id="ask-send-no">Cancel</button>
+          <span class="ask-foot err" id="confirm-send-err"></span>
+        </div>
+        <div class="details" id="envelope-box" hidden>
+          <p class="help">Unsigned envelope: carry it to where the key is (the same wallet on another machine, or the CLI), sign it there, and paste the signed envelope below.</p>
+          <div class="box mono key"><span id="envelope-out"></span><button class="btn tiny" data-copy="envelope-out">Copy</button></div>
+          <label class="field"><span class="k">Signed envelope</span><textarea id="envelope-in" rows="4" spellcheck="false" autocomplete="off"></textarea></label>
+          <div class="err" id="envelope-err"></div>
+          <div class="cta"><button class="btn small primary" id="envelope-broadcast">Broadcast</button></div>
+        </div>
+        <div class="sent" id="send-done" hidden>
+          <div class="hrow sent-row" id="sent-row"></div>
+          <div class="box mono"><span id="sent-hash"></span><button class="btn tiny" data-copy="sent-hash">Copy</button></div>
+          <div class="cta"><button class="btn small" id="sent-view">View in History</button><button class="btn small ghost" id="sent-again">Send another</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-receive" data-page="receive" hidden>
+      <div class="card">
+        <div class="card-head"><h3>Your address</h3></div>
+        <div class="addr-big mono"><span id="receive-address">not set</span><button class="btn small" data-copy="receive-address">Copy</button></div>
+        <div class="qr-row">
+          <div class="qr" id="qr"><canvas id="qr-canvas" width="1" height="1" aria-label="Your address as a QR code"></canvas></div>
+          <p class="help">Scan the code with any wallet to get this address. Only IGN on the Igneum network, and tokens on it. A miner that pays this address needs nothing else from this wallet: an address, never the key.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-history" data-page="history" hidden>
+      <div class="card">
+        <div class="card-head"><h3>History</h3><span class="eyebrow" id="hist-eyebrow"></span></div>
+        <div class="hist" id="history"></div>
+        <p class="help" id="hist-policy"></p>
+      </div>
+      <details class="card adv" id="history-more">
+        <summary><h3>Money arriving per block</h3><span class="eyebrow">The Live Work Ledger, read again here</span></summary>
+      <div class="card inner" id="ledger-card">
+        <p class="id-help">Paste the miner view Ember or the ledger tool wrote for this address (igneum/ledger/miner-view/v1). Every block row is read again by this wallet from the chain, the balance step at that height, and marked reproduced or differs; shares and the sealer's cut are kept apart as the chain pays them apart. Nothing here is estimated or taken from a pool.</p>
+        <label class="id-field"><span class="ig-label">Miner view (JSON)</span><textarea id="ledger-view" rows="4" spellcheck="false" autocomplete="off"></textarea></label>
+        <div class="id-cta"><button class="btn" id="ledger-go">Read it against the chain</button></div>
+        <div class="err" id="ledger-err"></div>
+        <p class="ig-sub" id="ledger-sum" hidden></p>
+        <div class="hist" id="ledger-rows"></div>
+        <p class="ig-sub" id="ledger-identity" hidden></p>
+      </div>
+      </details>
+    </section>
+
+    <section class="page" id="page-mining" data-page="mining" hidden>
+      <!-- the Mining page to the Home's standard (main's 0.0.18 order, 16 October 2026 00:3x UK): one card on the first
+           screen with the big number (the share of the draw, or "Not bonded yet"), three tiles beneath it, ONE bond
+           action, the identity key short with a copy control; the Desk's figures as tiles with the head stamp; the rule
+           folded under one disclosure; the identity path and the faucet as two lines; the other actions under Advanced -->
+      <div class="card" id="mining-card-draw">
+        <div class="card-head"><h3>Your share of the draw</h3><span class="ig-pill is-open" id="draw-pill"><i></i><span id="draw-pill-word">No identity yet</span></span></div>
+        <div class="ig-num" id="draw-num"><b id="draw-share">No identity yet</b><small id="draw-share-unit">make one to bond</small></div>
+        <div class="ig-sub" id="draw-read"></div>
+        <div class="err" id="draw-err"></div>
+        <div class="tiles" id="draw-tiles">
+          <div class="tile"><span class="k">Units held</span><b class="t" id="tile-units">&middot;</b><span class="s" id="tile-units-s">of 65,536 in the draw's table</span></div>
+          <div class="tile"><span class="k">IGN bonded</span><b class="t" id="tile-bonded">&middot;</b><span class="s" id="tile-bonded-s">locked to your identity</span></div>
+          <div class="tile"><span class="k">Next draw</span><b class="t" id="tile-next">&middot;</b><span class="s" id="tile-next-s">at the chain's pace</span></div>
+        </div>
+        <div class="id-fields bond-row" id="bond-action-row">
+          <label class="id-field"><span class="ig-label">Bond this much</span><div class="id-unit"><input type="text" id="holder-amount" inputmode="decimal" placeholder="up to the balance, less fees" spellcheck="false" autocomplete="off"><span>IGN</span></div><span class="ig-sub" id="holder-units"></span></label>
+          <button class="btn primary" id="holder-bond">Bond</button>
+        </div>
+        <div class="err" id="holder-err"></div>
+        <div class="id-line" id="identity-line">
+          <span class="ig-label">Identity key</span>
+          <span class="mono" id="identity-short" hidden></span><span id="identity-public" hidden></span><span class="ig-sub dim" id="identity-watch" hidden>none here: a watch-only wallet has no key; the identity is made where the key is</span>
+          <button class="btn tiny" id="identity-copy" data-copy="identity-public" hidden>Copy</button>
+          <button class="btn small" id="identity-make">Make an identity</button>
+          <span class="ig-sub dim" id="identity-eyebrow"></span>
+        </div>
+        <div class="err" id="identity-err"></div>
+        <p class="ig-sub dim" id="identity-words">Made from this wallet's own key, so your words restore it on any machine. A sealer on a server makes its own from a seed file (igneum-wallet identity --seed-file) and bonds it here by its key.</p>
+        <p class="ig-sub dim" id="desk-faucet-note" hidden>On the public test network a bond faucet gives a bond's worth and the fee (87 IGN) once per key and per address, twenty keys a day. <button class="btn tiny" id="desk-faucet">Get a bond's worth for this key</button></p>
+        <div class="ask inline" id="ask-bond" hidden>
+          <div id="bond-screen" hidden>
+            <div class="eyebrow" id="bond-screen-eyebrow"></div>
+            <ol class="upd-notes" id="bond-screen-lines"></ol>
+            <label class="ask-text"><input type="checkbox" id="bond-screen-read"> I have read these</label>
+          </div>
+          <ul class="upd-notes" id="ask-bond-lines"></ul>
+          <span class="ask-text" id="ask-bond-sim"></span>
+          <button class="btn small primary" id="bond-go">Send now</button>
+          <button class="btn small ghost" id="ask-bond-no">Cancel</button>
+          <span class="ask-foot err" id="confirm-bond-err"></span>
+        </div>
+        <div class="sent" id="bond-done" hidden>
+          <div class="hrow sent-row" id="bond-row"><span class="hw running">sent</span> <span class="dim">waiting for a block</span></div>
+          <div class="box mono"><span id="bond-hash"></span><button class="btn tiny" data-copy="bond-hash">Copy</button></div>
+          <div class="id-cta"><button class="btn small" id="bond-view">View in History</button><button class="btn small" id="bond-again">Done</button></div>
+        </div>
+      </div>
+
+      <div class="card" id="mining-more">
+        <div class="card-head"><h3>The Desk</h3><span class="ig-label" id="desk-eyebrow">A key's numbers from the chain</span></div>
+        <div class="tiles" id="desk-tiles">
+          <div class="tile"><span class="k">Posted at</span><b class="t" id="tile-posted">&middot;</b><span class="s" id="tile-posted-s">the height the lock counts from</span></div>
+          <div class="tile"><span class="k">Earliest exit</span><b class="t" id="tile-exit">&middot;</b><span class="s" id="tile-exit-s">after the lock, to the exit address</span></div>
+          <div class="tile"><span class="k">Draws a day</span><b class="t" id="tile-draws">&middot;</b><span class="s" id="tile-draws-s">predicted at the chain's pace</span></div>
+          <div class="tile"><span class="k">Pay a seal</span><b class="t" id="tile-pay">&middot;</b><span class="s" id="tile-pay-s">the sealer's quarter of the block's subsidy</span></div>
+          <div class="tile"><span class="k">Most you can lose</span><b class="t" id="tile-loss">&middot;</b><span class="s" id="tile-loss-s">all of it, by an equivocation or a thief of the bond secret</span></div>
+        </div>
+        <div class="err" id="desk-err"></div>
+        <details class="rule-more" id="holder-rule"><summary>The rule</summary>
+          <p class="id-help" id="holder-words">Reading the chain's table.</p>
+          <p class="ig-sub" id="holder-risk"></p>
+          <p class="ig-sub" id="holder-rule-full"></p>
+          <p class="ig-sub dim" id="holder-eyebrow"></p>
+          <p class="ig-sub dim" id="desk-source-line" hidden><span class="ig-label">Sources</span> <span id="desk-source"></span></p>
+          <div class="id-cta"><button class="btn small" id="holder-read">Read again</button></div>
+        </details>
+        <details class="adv-link" id="draw-advanced"><summary>Advanced</summary>
+          <div class="id-read" id="draw-read-row">
+            <label class="id-field"><span class="ig-label">Read another identity</span><input type="text" id="draw-key" placeholder="0x, 32 bytes; empty for the node's own key" spellcheck="false" autocomplete="off"></label>
+            <button class="btn" id="draw-go">Read</button>
+          </div>
+          <div id="draw-out" hidden>
+            <span class="ig-label">Identity key</span>
+            <div class="id-key" id="draw-key-box"></div>
+            <div class="id-kv" id="draw-kv"></div>
+            <p class="ig-sub" id="draw-words"></p>
+          </div>
+          <div class="id-fields">
+            <label class="id-field"><span class="ig-label">Bond key for the Desk</span><input type="text" id="desk-key" placeholder="0x, 32 bytes; empty for the node's own key" spellcheck="false" autocomplete="off"></label>
+            <button class="btn" id="desk-go">Read</button>
+          </div>
+          <div id="desk-out" hidden>
+            <div class="id-kv" id="desk-kv"></div>
+            <p class="ig-sub" id="desk-draws"></p>
+            <p class="ig-sub" id="desk-endorse"></p>
+            <p class="ig-sub" id="desk-exit"></p>
+            <div class="id-cta"><button class="btn" id="desk-release" hidden>Release the bond to its exit address</button></div>
+            <div class="id-kv" id="desk-penalties"></div>
+            <p class="ig-sub" id="desk-loss"></p>
+          </div>
+          <div class="card-head top-gap"><h3 class="h4">Other actions</h3><span class="ig-sub" id="bond-eyebrow">Frozen rules</span></div>
+          <div id="bond-form">
+            <label class="id-field"><span class="ig-label">Action</span>
+              <select id="bond-action" aria-label="Action">
+                <option value="set-signer">Rotate the signing key</option>
+                <option value="release">Release the bond to its exit address (at or past the lock, registry version 4)</option>
+                <option value="set-exit">Change the exit address, with a top-up</option>
+                <option value="claim-exit">Claim with the proof pi: your own release to the exit address, or a hostile claim (DEV-ONLY, registry version 3)</option>
+              </select>
+            </label>
+            <p class="id-help" id="bond-action-words"></p>
+            <label class="id-field"><span class="ig-label">Identity key</span><input type="text" id="bond-key" placeholder="0x, the 32-byte identity key (not the signing key)" spellcheck="false" autocomplete="off"></label>
+            <label class="id-field" id="bond-amount-field" hidden><span class="ig-label">Amount</span><div class="id-unit"><input type="text" id="bond-amount" placeholder="0.0" inputmode="decimal" autocomplete="off"><span class="ig-label">IGN</span></div></label>
+            <label class="id-field" id="bond-signer-field" hidden><span class="ig-label">Signing key</span><input type="text" id="bond-signer" placeholder="0x, 32 bytes (an Ed25519 public key)" spellcheck="false" autocomplete="off"></label>
+            <label class="id-field" id="bond-exit-field" hidden><span class="ig-label">Exit address</span><input type="text" id="bond-exit" placeholder="0x" spellcheck="false" autocomplete="off"></label>
+            <p class="ig-sub dim" id="bond-exit-note" hidden>The exit address is where the whole bond goes at its release: this wallet's address unless you set another; it can be changed only after the lock.</p>
+            <label class="id-field" id="bond-pi-field" hidden><span class="ig-label">Proof file</span><input type="text" id="bond-pi" placeholder="the path of the proof pi-claim wrote (never the secret)" spellcheck="false" autocomplete="off"></label>
+            <label class="id-field" id="bond-share-field" hidden><span class="ig-label">Share s_0</span><input type="text" id="bond-share" placeholder="0x, 32 bytes, printed by pi-claim prove" spellcheck="false" autocomplete="off"></label>
+            <p class="id-help">Review shows the words the signer will see, the simulated result and the fee before anything is sent.</p>
+            <div class="err" id="bond-err"></div>
+            <div class="id-cta"><button class="btn primary" id="bond-quote">Review</button><button class="btn" id="bond-clear">Cancel</button></div>
+          </div>
+        </details>
+      </div>
+
+      <div class="card inner" id="mining-card-receipts">
+        <div class="card-head"><h3>Pool receipts</h3><span class="ig-label">Your proof of credit</span></div>
+        <details class="rule-more" id="receipts-what"><summary>What a receipt proves</summary>
+          <p class="id-help" id="mining-fees">Ember's dev fee is one block template in a hundred, paid to the company's declared address, shown in Ember's Earnings page; a pool's fee is the rate the pool declares. The chain itself takes nothing from a miner.</p>
+          <p class="id-help">Paid by the public pool for your shares; on the research chain the chain pays shares to your address itself.</p>
+          <p class="id-help">A pool that signs receipts answers every accepted share with one. Paste the receipt lines your miner kept, the pool's receipt key from its subscribe reply, and your member key: the wallet checks every signature, the chain between receipts and the running total against your own count, and names the first receipt where the pool's record and yours part ways.</p>
+        </details>
+        <label class="id-field"><span class="ig-label">Pool receipt key</span><input type="text" id="rc-pool" placeholder="64 hex" spellcheck="false" autocomplete="off"></label>
+        <label class="id-field"><span class="ig-label">Your member key</span><input type="text" id="rc-member" placeholder="64 hex" spellcheck="false" autocomplete="off"></label>
+        <label class="id-field"><span class="ig-label">Receipts</span><textarea id="rc-lines" rows="5" spellcheck="false" autocomplete="off" placeholder="one mining.receipt per line"></textarea></label>
+        <div class="err" id="rc-err"></div>
+        <div class="id-cta"><button class="btn" id="rc-go">Verify</button></div>
+        <div class="hrow sent-row" id="rc-summary" hidden></div>
+        <div class="hist" id="rc-rows"></div>
+      </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-settings" data-page="settings" hidden>
+      <div class="card node-card" id="node-card">
+        <div class="card-head"><h3>The node</h3></div>
+        <button class="disclose" id="node-toggle" aria-expanded="false" aria-controls="node-details">
+          <span class="node-line"><i class="dot" id="node-dot"></i><span id="node-line-text">Node starting</span></span>
+          <span class="disclose-right"><span class="dim" id="node-sub"></span><span class="chev" aria-hidden="true"></span></span>
+        </button>
+        <div class="details" id="node-details" hidden>
+          <div class="kv" id="node-kv"></div>
+          <p class="note" id="node-scan" hidden></p>
+          <div class="hrow" id="explorer-row" hidden><span class="k">explorer</span><span class="v"><a id="explorer-link" href="#" target="_blank" rel="noopener noreferrer"></a> <span class="dim">this address on the chain's explorer</span></span></div>
+          <div class="hrow" id="faucet-row" hidden>
+            <button class="btn small" id="faucet-go">Get test IGN</button>
+            <span class="dim">25 IGN a day per address from the chain's faucet; the faucet pays the fee, worth nothing</span>
+            <span class="err" id="faucet-err"></span>
+          </div>
+          <p class="note" id="faucet-note" hidden></p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Security</h3></div>
+        <div class="srow" id="idle-row">
+          <div class="sw-text"><b>Lock when idle</b> <span class="dim">The key leaves memory after this long without you.</span></div>
+          <select class="select" id="idle-lock" aria-label="Lock when idle">
+            <option value="1">after 1 minute</option>
+            <option value="5">after 5 minutes</option>
+            <option value="15">after 15 minutes</option>
+            <option value="60">after 1 hour</option>
+            <option value="0">never</option>
+          </select>
+        </div>
+        <!-- Touch ID and Windows Hello (the previous wallet's card; the engine's gate behind it): on, off, the one
+             automatic sheet on arrival; the sealed password lives in the app window's host, so a browser tab says so -->
+        <div class="srow" id="bio-row">
+          <div class="sw-text"><b id="bio-title">Touch ID</b> <span class="dim" id="bio-sentence"></span></div>
+          <div class="row"><button class="btn small" id="bio-toggle-btn">Turn on</button></div>
+        </div>
+        <div class="details indent" id="bio-enrol" hidden>
+          <div class="row wrap"><input type="password" class="addr-input" id="bio-pw" placeholder="Your password" autocomplete="current-password" aria-label="Your password"><button class="btn small primary fp" id="bio-enrol-go"><svg width="16" height="16" aria-hidden="true"><use href="#i-fp"></use></svg><span id="bio-enrol-text">Turn on Touch ID</span></button><button class="btn small ghost" id="bio-enrol-cancel">Cancel</button></div>
+          <p class="note">Your password is checked here and handed once to the app window, which seals it to this machine; the page never keeps it.</p>
+        </div>
+        <div class="err indent" id="bio-err"></div>
+        <label class="switch" id="ask-on-open-row" hidden><input type="checkbox" id="ask-on-open"><span class="track"></span><span class="sw-text"><b id="ask-on-open-text">Ask for Touch ID when the wallet opens</b> <span class="dim">Once, on the first arrival; never after an idle lock.</span></span></label>
+        <p class="help" id="isolation-rows"><span id="idle-lock-note">Your key is cleared after 5 minutes without you; Touch ID or your password opens it again.</span> The signer runs as its own process with no network and signs nothing before your yes.</p>
+      </div>
+
+      <div class="card" id="backup-card">
+        <div class="card-head"><h3>Backup</h3><span class="eyebrow" id="backup-eyebrow"></span></div>
+        <button class="disclose" id="backup-toggle" aria-expanded="false" aria-controls="backup-details"><span>Show my words and key</span><span class="chev" aria-hidden="true"></span></button>
+        <div class="details" id="backup-details" hidden>
+          <div class="ask inline" id="ask-backup">
+            <span class="ask-text">Show the words and the key on screen? Anyone who sees them has your IGN.</span>
+            <input type="password" class="addr-input" id="backup-pw" placeholder="Your password" autocomplete="current-password">
+            <button class="btn small primary" id="backup-show">Show</button>
+            <button class="btn small primary fp" id="backup-touch" hidden><svg width="16" height="16" aria-hidden="true"><use href="#i-fp"></use></svg><span>Show with Touch ID</span></button>
+            <button class="btn small ghost" id="backup-cancel">Cancel</button>
+          </div>
+          <div class="err" id="backup-err"></div>
+          <div id="backup-out" hidden>
+            <ol class="words small" id="backup-words"></ol>
+            <p class="id-help">The wallet never asks for your words on a web page; only this window shows them.</p>
+            <p class="id-help">The real check of a backup is restoring from it on another machine; the words allow that at any time.</p>
+            <div class="field"><div class="k">private key</div><div class="box mono key"><span id="backup-key"></span><button class="btn tiny ghost" id="backup-hide">Hide</button></div></div>
+          </div>
+        </div>
+        <p class="help">The words are the only recovery that does not depend on this software. The vault file in the data folder is a second copy that is useless without your password.</p>
+      </div>
+
+      <!-- updates (update.rs): the release host's signed manifest read at start and every ten minutes, the signature judged against
+           the two-key list, the set checked by SHA256SUMS and its signature, the package downloaded and applied at the
+           next idle moment with a restart; a failed verification leaves the install untouched and names its reason here -->
+      <div class="card" id="update-card-settings">
+        <div class="card-head"><h3>Updates: automatic, over the air</h3><span class="eyebrow" id="update-eyebrow"></span></div>
+        <div class="srow">
+          <div class="sw-text"><b id="s-update-line">Not checked yet.</b> <span class="dim" id="s-update-sub"></span></div>
+          <div class="row"><button class="btn small primary" id="s-open" hidden>Open the download</button><button class="btn small" id="s-update">Check now</button></div>
+        </div>
+        <p class="dim" id="s-update-log"></p>
+        <label class="switch"><input type="checkbox" id="auto-update"><span class="track"></span><span class="sw-text"><b>Install updates by itself</b> <span class="dim">Each release is checked against the signed key list and its sums before anything is kept; it installs at the next idle moment and the wallet restarts. Off, the download waits for you.</span></span></label>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Websites</h3><span class="eyebrow" id="sites-eyebrow">Page bridge</span></div>
+        <label class="switch" id="bridge-on-row"><input type="checkbox" id="bridge-on"><span class="track"></span><span class="sw-text"><b>Let websites connect</b> <span class="dim" id="bridge-status"></span></span></label>
+        <div class="sites" id="sites"></div>
+        <p class="note" id="sites-note">A site asks once; you answer in this window. Each site sees your address and can ask you to sign or send; every request is shown here first, in words, before anything is signed. A bare hash is never signed. Disconnect a site any time.</p>
+        <p class="note" id="sites-refused" hidden></p>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Settlement policy</h3><span class="eyebrow" id="policy-eyebrow"></span></div>
+        <div class="kv" id="policy-kv"></div>
+        <p class="help" id="policy-source"></p>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>This machine</h3></div>
+        <div class="field">
+          <div class="k">appearance</div>
+          <div class="seg" id="theme-seg" role="radiogroup" aria-label="Appearance">
+            <button class="seg-b" data-theme="dark" role="radio" aria-checked="true">Dark</button>
+            <button class="seg-b" data-theme="light" role="radio" aria-checked="false">Light</button>
+            <button class="seg-b" data-theme="system" role="radio" aria-checked="false">System</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Node</h3><span class="eyebrow" id="node-eyebrow"></span></div>
+        <div class="field">
+          <div class="k">endpoint in use</div>
+          <div class="row wrap"><input type="text" class="addr-input" id="node-endpoint" spellcheck="false" autocomplete="off"><button class="btn small" id="node-save">Use</button></div>
+        </div>
+        <p class="line-text" id="node-source-line"></p>
+        <p class="help">A node you run yourself is the only one that cannot lie to you about balances. Any node sees your addresses; none can spend.</p>
+      </div>
+
+      <div class="card" id="help-card">
+        <div class="card-head"><h3>Help</h3><span class="eyebrow">People and the paper</span></div>
+        <div class="hrow"><span class="k">questions</span><span class="v"><a id="help-discord" href="https://discord.com/invite/igneum" target="_blank" rel="noopener noreferrer">the #support channel on Discord</a></span></div>
+        <div class="hrow"><span class="k">how it works</span><span class="v"><a id="help-litepaper" href="https://igneum.network/litepaper#the-wallet" target="_blank" rel="noopener noreferrer">the litepaper's wallet section</a></span></div>
+        <p class="note">This card only points to where the answers are. Nothing here is signed or sent.</p>
+      </div>
+
+      <details class="card adv" id="s-advanced">
+        <summary><h3>Advanced</h3><span class="eyebrow">This machine</span></summary>
+        <p class="note mono small" id="s-version"></p>
+        <div class="row wrap top-gap"><button class="btn small danger" id="remove-start">Remove this wallet from this machine</button></div>
+        <div class="ask inline" id="ask-remove" hidden>
+          <span class="ask-text" id="ask-remove-text">Remove this wallet from this machine? The vault file is deleted. Only your 24 words or the key bring it back.</span>
+          <input type="password" class="addr-input short-pw" id="remove-pw" placeholder="Your password" autocomplete="current-password" aria-label="Password">
+          <button class="btn small primary" id="remove-go">Remove</button>
+          <button class="btn small ghost" id="ask-remove-no">Cancel</button>
+          <span class="ask-foot err" id="remove-err"></span>
+        </div>
+      </details>
+    </section>
+  </section>
+</main>
+
+<!-- the page bridge: a website's request, answered here and nowhere else (the kept look's card) -->
+<div class="upd-wrap bridge-wrap" id="bridge" hidden>
+  <div class="upd-card bridge-card" id="bridge-card" role="dialog" aria-modal="true" aria-labelledby="bridge-title" tabindex="-1">
+    <div class="eyebrow ember" id="bridge-eyebrow">A website asks</div>
+    <h2 class="upd-name" id="bridge-title"></h2>
+    <ul class="upd-notes" id="bridge-lines"></ul>
+    <p class="upd-meta mono" id="bridge-origin"></p>
+    <div class="upd-actions" id="bridge-actions">
+      <button class="btn primary big" id="bridge-yes"><span id="bridge-yes-text">Connect</span></button>
+      <button class="btn ghost" id="bridge-no">Decline</button>
+    </div>
+    <p class="ask-foot" id="bridge-note"></p>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+<!-- the update card (update-card.js, app.js renderUpdateCard; the previous wallet's): one update, centred over the
+     window; Later, Escape or the backdrop hides this version at this stage -->
+<div class="upd-wrap" id="upd" hidden>
+  <div class="upd-card" id="upd-card" role="dialog" aria-modal="true" aria-labelledby="upd-name" aria-describedby="upd-line" tabindex="-1">
+    <div class="upd-mark" id="upd-mark">
+      <svg class="upd-ring" viewBox="0 0 96 96" aria-hidden="true"><circle class="track" cx="48" cy="48" r="44"></circle><circle class="arc" id="upd-arc" cx="48" cy="48" r="44"></circle></svg>
+      <img src="mark.svg" width="40" height="40" alt="">
+      <span class="upd-pct mono" id="upd-pct" hidden></span>
+    </div>
+    <div class="eyebrow ember">Update</div>
+    <h2 class="upd-name" id="upd-name"></h2>
+    <p class="upd-line" id="upd-line"></p>
+    <p class="upd-cause mono" id="upd-cause" hidden></p>
+    <ul class="upd-notes" id="upd-notes"></ul>
+    <button class="upd-more" id="upd-more" type="button" aria-expanded="false" hidden>What changed</button>
+    <ul class="upd-all" id="upd-all" hidden></ul>
+    <p class="upd-meta mono" id="upd-meta"></p>
+    <div class="upd-actions" id="upd-actions"></div>
+  </div>
+</div>
+
+<script src="settlement.js"></script>
+<script src="qr.js"></script>
+<script src="lock-screen.js"></script>
+<script src="update-card.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

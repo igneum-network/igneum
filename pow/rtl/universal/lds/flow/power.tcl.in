@@ -1,0 +1,19 @@
+# The power read of the placed gather_table (OpenSTA inside openroad): the placed design from ORFS's ODB with its
+# parasitics estimated from placement, the SDC at the VCD's clock, the ports' activity from the testbench's VCD, the
+# nets dump of the annotation kit, then (annotated run) every matched register and named net's driver pins set from
+# the same VCD's per-bit activity measured per simulation cycle; the power by group and per instance.
+# Placeholders: @ORFS@ @PLAT@ @ODB@ @SDC@ @VCD@ @SCOPE@ @NETS@ @NETSTCL@ @ANNOTATE@ (or "") @REPORT@
+foreach lib [glob @ORFS@/flow/platforms/@PLAT@/lib/*.lib* @ORFS@/flow/platforms/@PLAT@/lib/NLDM/*.lib*] { catch { read_liberty $lib } }
+read_db @ODB@
+read_sdc @SDC@
+source @ORFS@/flow/platforms/@PLAT@/setRC.tcl
+estimate_parasitics -placement
+if {[catch { read_vcd -scope @SCOPE@ @VCD@ } err]} { puts "read_vcd: $err" }
+set ::nets_out @NETS@
+source @NETSTCL@
+set annotate "@ANNOTATE@"
+if {$annotate ne ""} { source $annotate }
+report_activity_annotation
+report_power > @REPORT@
+report_power -instances [get_cells *] > @REPORT@.inst
+puts [exec cat @REPORT@]
